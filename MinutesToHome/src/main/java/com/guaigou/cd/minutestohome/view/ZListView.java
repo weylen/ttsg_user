@@ -3,6 +3,7 @@ package com.guaigou.cd.minutestohome.view;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
+import android.graphics.drawable.ColorDrawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,6 +48,7 @@ public class ZListView extends ListView implements AbsListView.OnScrollListener{
     private void init(Context context){
         setOnScrollListener(this);
         addFooter(context);
+        setFooterDividersEnabled(false);
     }
 
     /**
@@ -99,9 +101,20 @@ public class ZListView extends ListView implements AbsListView.OnScrollListener{
             loadCompleteView.setVisibility(View.VISIBLE);
             loadingView.setVisibility(View.GONE);
         }else{
+            if (!isFooterVisible()){
+                footerView.setVisibility(View.VISIBLE);
+            }
             loadCompleteView.setVisibility(View.GONE);
             loadingView.setVisibility(View.VISIBLE);
         }
+    }
+
+    public void setFooterVisible(boolean isVisible){
+        footerView.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+    }
+
+    public boolean isFooterVisible(){
+        return footerView.getVisibility() == View.VISIBLE;
     }
 
     /**

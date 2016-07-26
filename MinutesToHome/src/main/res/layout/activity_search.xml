@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/divider"
+    android:layout_height="match_parent" android:background="@color/grayBg"
+    android:id="@+id/Container"
     >
 
     <LinearLayout
@@ -23,8 +23,9 @@
             >
 
             <EditText
+                android:id="@+id/edit_query"
                 android:layout_width="0dip"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1.0"
                 android:background="@color/transparent"
                 android:textSize="@dimen/TextSize_12"
@@ -62,13 +63,10 @@
 
     </LinearLayout>
 
-    <GridView
-        android:id="@+id/grid_product"
+    <com.guaigou.cd.minutestohome.view.ZListView
+        android:id="@+id/Generic_List"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:numColumns="3"
-        android:horizontalSpacing="5dp"
-        android:verticalSpacing="5dp"
         android:listSelector="@color/transparent"
         android:cacheColorHint="@color/transparent"
         />

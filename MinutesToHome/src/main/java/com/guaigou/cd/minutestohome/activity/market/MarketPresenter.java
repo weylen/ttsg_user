@@ -1,6 +1,7 @@
 package com.guaigou.cd.minutestohome.activity.market;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
@@ -165,6 +166,7 @@ public class MarketPresenter implements BasePresenter{
      * @param typeId
      */
     private void getRemoteProductData(String typeId, int pageNum){
+        DebugUtil.d("getRemoteProductData：" + typeId +", pageNum -->");
         RetrofitFactory.getRetrofit().create(HttpService.class)
                 .getRegionProducts(entity.getId(), typeId, pageNum)
                 .subscribeOn(Schedulers.io())
@@ -185,7 +187,7 @@ public class MarketPresenter implements BasePresenter{
 
                     @Override
                     public void onNext(JsonObject s) {
-                        DebugUtil.d("LoginPresenter onNext s:" + s);
+                        DebugUtil.d("getRemoteProductData onNext s:" + s);
                         int status = ResponseMgr.getStatus(s);
                         if (status == 1){
                             parseProductData(entity.getId(), pageNum, s);

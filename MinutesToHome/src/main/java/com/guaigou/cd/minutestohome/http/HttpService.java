@@ -9,6 +9,7 @@ import rx.Observable;
 
 /**
  * Created by weylen on 2016-07-20.
+ * 数据请求类
  */
 public interface HttpService {
 

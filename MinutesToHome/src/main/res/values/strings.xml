@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">十分到家</string>
-    <string name="RegionTitle">选择地址</string>
+    <string name="RegionCommunity">选择小区</string>
     <string name="Orders">订单</string>
     <string name="Login">登录</string>
     <string name="Register">注册</string>

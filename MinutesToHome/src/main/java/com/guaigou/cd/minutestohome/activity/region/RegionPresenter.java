@@ -37,7 +37,7 @@ public class RegionPresenter implements BasePresenter{
             regionView.onStartLoading();
             getRemoteRegionData();
         }else{
-            setProvinceRegionData(regionData);
+            setFirstRegionData(regionData);
         }
     }
 
@@ -69,7 +69,7 @@ public class RegionPresenter implements BasePresenter{
                             regionView.onLoadSuccess();
                             // 缓存数据
                             RegionData.INSTANCE.setRegionData(s);
-                            setProvinceRegionData(s);
+                            setFirstRegionData(s);
                         }else {
                             regionView.onLoadFailure();
                         }
@@ -78,11 +78,13 @@ public class RegionPresenter implements BasePresenter{
     }
 
     /**
-     * 设置省份数据
+     * 设置第一级数据
+     * classify字段 表示分类数据
+     * chaos字段 表示所有的数据
      */
-    public void setProvinceRegionData(JsonObject regionData){
-        JsonObject provinceData = ResponseMgr.getData(regionData);
-        JsonArray array = provinceData.get("0").getAsJsonArray();
+    public void setFirstRegionData(JsonObject regionData){
+        JsonObject firstData = ResponseMgr.getData(regionData);
+        JsonArray array = firstData.get("classify").getAsJsonObject().get("0").getAsJsonArray();
         Gson gson = new Gson();
         List<RegionEntity> data = gson.fromJson(array, new TypeToken<List<RegionEntity>>(){}.getType());
         regionView.onSetProvinceData(data);
@@ -90,12 +92,14 @@ public class RegionPresenter implements BasePresenter{
 
     /**
      * 设置下一级视图
-     * @param entity
+     * classify字段 表示分类数据
+     * chaos字段 表示所有的数据
+     * @param entity 父级id
      */
     public void setNextLevelData(RegionEntity entity){
         String id = entity.getId();
         JsonObject jsonObject = ResponseMgr.getData(RegionData.INSTANCE.getRegionData());
-        JsonElement element = jsonObject.get(id);
+        JsonElement element = jsonObject.get("classify").getAsJsonObject().get(id);
         if (element == null){ // 没有下一级
             regionView.onNextNone(entity);
         }else{
@@ -106,9 +110,17 @@ public class RegionPresenter implements BasePresenter{
         }
     }
 
+    /**
+     * 返回上一级数据\
+     * classify字段 表示分类数据
+     * chaos字段 表示所有的数据
+     * @param pid
+     */
     public void onBackClick(String pid){
         JsonObject jsonObject = ResponseMgr.getData(RegionData.INSTANCE.getRegionData());
-        JsonArray array = jsonObject.get(pid).getAsJsonArray();
+        String id = jsonObject.get("chaos").getAsJsonObject().get(pid).getAsJsonObject().get("pid").getAsString();
+        JsonArray array = jsonObject.get("classify").getAsJsonObject().get(id).getAsJsonArray();
+        DebugUtil.d("RegionPresenter-onBackClick array:" + array);
         Gson gson = new Gson();
         List<RegionEntity> data = gson.fromJson(array, new TypeToken<List<RegionEntity>>(){}.getType());
         regionView.onSetBackLevelData(data);

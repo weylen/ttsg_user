@@ -8,13 +8,12 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.guaigou.cd.minutestohome.BaseFragment;
-import com.guaigou.cd.minutestohome.Fragment_Search;
+import com.guaigou.cd.minutestohome.activity.search.SearchActivity;
 import com.guaigou.cd.minutestohome.MainActivity;
 import com.guaigou.cd.minutestohome.R;
 import com.guaigou.cd.minutestohome.entity.RegionEntity;
@@ -170,7 +169,8 @@ public class MarketFragment extends BaseFragment implements MarketView{
      */
     @OnClick(R.id.img_search)
     void onSearchClick(){
-        ((MainActivity)getActivity()).replaceFragment(new Fragment_Search(), Fragment_Search.TAG, true);
+        Intent intent = new Intent(getActivity(), SearchActivity.class);
+        startActivity(intent);
     }
 
     /**
@@ -238,14 +238,16 @@ public class MarketFragment extends BaseFragment implements MarketView{
     @Override
     public void onLoadProductData(List<ProductEntity> dataEntityList, boolean isLoadComplete, boolean isLoadmore) {
         dismissProgressDialog();
-        if (!isLoadmore){
-            adapter.setData(dataEntityList);
-        }else {
-            adapter.addData(dataEntityList);
+        if (isActive()){
+            if (!isLoadmore){
+                adapter.setData(dataEntityList);
+            }else {
+                adapter.addData(dataEntityList);
+            }
+            zRefreshingView.setRefreshing(false);
+            emptyViewHelper.setRefreshing(false);
+            zListView.setLoadComplete(isLoadComplete);
         }
-        zRefreshingView.setRefreshing(false);
-        emptyViewHelper.setRefreshing(false);
-        zListView.setLoadComplete(isLoadComplete);
     }
 
     @Override

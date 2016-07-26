@@ -12,6 +12,7 @@ import com.guaigou.cd.minutestohome.MainActivity;
 import com.guaigou.cd.minutestohome.R;
 import com.guaigou.cd.minutestohome.adapter.RegionAdapter;
 import com.guaigou.cd.minutestohome.entity.RegionEntity;
+import com.guaigou.cd.minutestohome.util.DebugUtil;
 
 import java.util.List;
 
@@ -42,7 +43,7 @@ public class RegionActivity extends BaseActivity implements RegionView{
         setContentView(R.layout.activity_region);
         ButterKnife.bind(this);
 
-        mTextTitleView.setText(R.string.RegionTitle);
+        mTextTitleView.setText(R.string.RegionCommunity);
 
         regionPresenter = new RegionPresenter(this);
         setPresenter(regionPresenter);
@@ -59,6 +60,7 @@ public class RegionActivity extends BaseActivity implements RegionView{
 
     @OnClick(R.id.img_back)
     void onBackClick(){
+        DebugUtil.d("RegionActivity-onBackClick pid:" + pid);
         if (pid == null || "0".equalsIgnoreCase(pid)){
             finish();
         }else{
@@ -69,7 +71,7 @@ public class RegionActivity extends BaseActivity implements RegionView{
     @OnItemClick(R.id.Generic_List)
     void onItemClick(int position){
         RegionEntity entity = adapter.getData().get(position);
-        pid = entity.getPid();
+        pid = entity.getId();
         regionPresenter.setNextLevelData(entity);
     }
 
