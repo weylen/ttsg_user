@@ -25,6 +25,7 @@ public class ZListView extends ListView implements AbsListView.OnScrollListener{
     private View footerView; // 尾部视图
     private View loadingView; // 加载视图
     private TextView loadCompleteView; // 加载完成视图
+    private boolean isShowFooterView = true; // 是否显示footerView
 
     public ZListView(Context context) {
         super(context);
@@ -97,13 +98,14 @@ public class ZListView extends ListView implements AbsListView.OnScrollListener{
      * @param isLoadComplete true表示加载完成 false表示没有加载完成
      */
     public void setLoadComplete(boolean isLoadComplete) {
+        if (!isFooterVisible() && isShowFooterView){
+            footerView.setVisibility(View.VISIBLE);
+        }
+
         if (isLoadComplete){ // 加载完成
             loadCompleteView.setVisibility(View.VISIBLE);
             loadingView.setVisibility(View.GONE);
         }else{
-            if (!isFooterVisible()){
-                footerView.setVisibility(View.VISIBLE);
-            }
             loadCompleteView.setVisibility(View.GONE);
             loadingView.setVisibility(View.VISIBLE);
         }
@@ -115,6 +117,11 @@ public class ZListView extends ListView implements AbsListView.OnScrollListener{
 
     public boolean isFooterVisible(){
         return footerView.getVisibility() == View.VISIBLE;
+    }
+
+    public void setShowFooterView(boolean isShowFooterView){
+        this.isShowFooterView = isShowFooterView;
+        setFooterVisible(isShowFooterView);
     }
 
     /**

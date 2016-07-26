@@ -166,7 +166,7 @@ public class MarketPresenter implements BasePresenter{
      * @param typeId
      */
     private void getRemoteProductData(String typeId, int pageNum){
-        DebugUtil.d("getRemoteProductData：" + typeId +", pageNum -->");
+        DebugUtil.d("getRemoteProductData：" + typeId +", pageNum -->" + pageNum);
         RetrofitFactory.getRetrofit().create(HttpService.class)
                 .getRegionProducts(entity.getId(), typeId, pageNum)
                 .subscribeOn(Schedulers.io())
@@ -178,11 +178,7 @@ public class MarketPresenter implements BasePresenter{
                     @Override
                     public void onError(Throwable e) {
                         DebugUtil.d(e.getMessage());
-                        if (pageNum > 1){
-                            marketView.onLoadMoreFailure();
-                        }else {
-                            marketView.onLoadProductData(null, false, false);
-                        }
+                        doError(pageNum);
                     }
 
                     @Override
@@ -192,10 +188,22 @@ public class MarketPresenter implements BasePresenter{
                         if (status == 1){
                             parseProductData(entity.getId(), pageNum, s);
                         }else {
-                            marketView.onLoadProductData(null, false, false);
+                            doError(pageNum);
                         }
                     }
                 });
+    }
+
+    /**
+     * 处理请求错误
+     * @param pageNum
+     */
+    private void doError(int pageNum){
+        if (pageNum > 1){
+            marketView.onLoadMoreFailure();
+        }else {
+            marketView.onLoadProductData(null, false, false);
+        }
     }
 
     /**

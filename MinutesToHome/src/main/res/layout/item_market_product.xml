@@ -9,7 +9,7 @@
         android:id="@+id/img_product"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:src="@mipmap/img_default"
+        android:src="@mipmap/img_load_default"
         android:scaleType="centerInside"
         android:layout_gravity="center_horizontal"
         />
@@ -19,6 +19,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_toRightOf="@id/img_product"
+        android:paddingLeft="5dp"
         >
 
         <TextView

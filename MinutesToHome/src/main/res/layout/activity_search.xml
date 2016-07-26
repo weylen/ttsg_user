@@ -77,7 +77,7 @@
         <TextView
             android:orientation="vertical" android:layout_width="wrap_content"
             android:layout_height="wrap_content" android:id="@+id/text_empty"
-            android:text="没有数据" android:textSize="12sp"
+            android:text="没有找到商品" android:textSize="12sp"
             android:gravity="center" android:layout_centerInParent="true"
             android:drawableTop="@mipmap/img_load_failure"
             android:drawablePadding="3dp"

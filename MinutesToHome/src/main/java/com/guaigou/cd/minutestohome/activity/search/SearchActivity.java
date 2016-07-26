@@ -53,6 +53,7 @@ public class SearchActivity extends BaseActivity implements SearchView{
         zListView.setEmptyView(emptyView);
         zListView.setAdapter(adapter);
         zListView.setFooterVisible(false);
+        emptyView.setVisibility(View.GONE);
 
         RegionEntity entity = RegionPrefs.getRegionData(getApplicationContext());
         Preconditions.checkNotNull(entity);
@@ -88,12 +89,14 @@ public class SearchActivity extends BaseActivity implements SearchView{
     @Override
     public void onSearchFailure() {
         dismissProgressDialog();
+        emptyView.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void onSearchSuccess(List<ProductEntity> data, boolean isComplete) {
         dismissProgressDialog();
         adapter.setData(data);
+        emptyView.setVisibility(View.VISIBLE);
         zListView.setLoadComplete(isComplete);
     }
 

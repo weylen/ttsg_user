@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:background="@color/divider">
+    android:layout_height="match_parent" android:background="@color/grayBg"
+    android:id="@+id/Container"
+    >
 
     <include layout="@layout/layout_title"
         android:id="@+id/titleLayout"/>
@@ -21,7 +23,7 @@
                 android:id="@+id/image"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/img_default"
+                android:src="@mipmap/img_load_default"
                 android:layout_gravity="center_horizontal"
                 android:background="@color/white"
                 />
@@ -85,69 +87,17 @@
 
     </ScrollView>
 
-    <RelativeLayout
+    <com.rey.material.widget.FloatingActionButton
+        android:id="@+id/fab_add"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="20dp"
+        app:fab_iconSrc="@mipmap/icon_white_add48"
+        app:fab_backgroundColor="@color/themeColor"
+        android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
+        android:layout_marginRight="16dp"
         android:layout_marginBottom="50dp"
-        >
-
-        <RelativeLayout
-            android:id="@+id/layout_price"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            >
-
-            <ImageView
-                android:id="@+id/img_add"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/abc_num_addbig"
-                android:layout_alignParentRight="true"
-                android:padding="5dp"
-                />
-
-        </RelativeLayout>
-
-        <LinearLayout
-            android:id="@+id/layout_num"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:visibility="gone"
-            android:layout_alignParentRight="true"
-            >
-            <ImageView
-                android:id="@+id/img_num_les"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/abc_num_lesbig"
-                android:padding="5dp"
-                />
-
-            <TextView
-                android:id="@+id/text_num"
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:textColor="@color/themeColor"
-                android:text="0"
-                android:layout_centerVertical="true"
-                android:gravity="center"
-                android:textSize="30sp"
-                />
-
-            <ImageView
-                android:id="@+id/img_num_add"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/abc_num_addbig"
-                android:padding="5dp"
-                />
-
-        </LinearLayout>
-
-    </RelativeLayout>
+        />
 
 </RelativeLayout>

@@ -5,9 +5,9 @@ package com.guaigou.cd.minutestohome.http;
  */
 public class Constants {
 
-//    public static final String BASE_URL = "http://s-280082.gotocdn.com/";
+    public static final String BASE_URL = "http://s-280082.gotocdn.com/";
     // 测试
-    public static final String BASE_URL = "http://192.168.1.167:8080/cs_app/";
+//    public static final String BASE_URL = "http://192.168.1.167:8080/cs_app/";
 
     /**
      * 每页默认获取的商品数量

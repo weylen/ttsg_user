@@ -1,6 +1,7 @@
 package com.guaigou.cd.minutestohome.adapter;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.text.TextUtils;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
@@ -77,6 +78,7 @@ public class CartAdapter extends GenericBaseAdapter<ProductEntity>{
             holder.lesNumView = (ImageView) view.findViewById(R.id.img_num_les);
             holder.checkBox = (CheckBox) view.findViewById(R.id.item_box);
             holder.promotionView = (TextView) view.findViewById(R.id.text_promotion);
+            holder.oldPriceView = (TextView) view.findViewById(R.id.text_old_price);
             holder.lesLayout = view.findViewById(R.id.layout_les);
 
             view.setTag(holder);
@@ -86,18 +88,24 @@ public class CartAdapter extends GenericBaseAdapter<ProductEntity>{
 
         final ProductEntity entity = getItem(position);
         holder.titleView.setText(entity.getName());
-        holder.formatView.setText(entity.getStandard());
+        holder.formatView.setText("(" + entity.getStandard() +")");
         holder.priceView.setText(entity.getPrice());
 
         // 促销信息
-        String promotionPrice = entity.getPrice();
-        String promotionMessage = entity.getPromote();
+        String promotionPrice = entity.getPromote();
+        String promotionMessage = entity.getInfo();
         if (!TextUtils.isEmpty(promotionPrice)){
+            holder.oldPriceView.setVisibility(View.VISIBLE);
+            holder.oldPriceView.getPaint().setFlags(Paint. STRIKE_THRU_TEXT_FLAG);
+            holder.oldPriceView.setText("￥" + entity.getPrice());
+            holder.priceView.setText(entity.getPromote());
             holder.promotionView.setText(entity.getBegin()+"到"+entity.getEnd()+promotionMessage);
+        }else {
+            holder.oldPriceView.setVisibility(View.GONE);
         }
 
         // 设置CheckBox的显示状态
-        holder.checkBox.setVisibility(isEditable ? View.VISIBLE : View.INVISIBLE);
+        holder.checkBox.setVisibility(isEditable ? View.VISIBLE : View.GONE);
         // 设置CheckBox的点击事件
         holder.checkBox.setOnClickListener(v -> statusArray.put(position, holder.checkBox.isChecked()));
         // 设置CheckBox的选择状态
@@ -142,7 +150,7 @@ public class CartAdapter extends GenericBaseAdapter<ProductEntity>{
 
     private class ViewHolder{
         private ImageView imageView, addNumView, lesNumView;
-        private TextView titleView, formatView, priceView, numView, promotionView;
+        private TextView titleView, formatView, priceView, numView, promotionView, oldPriceView;
         private View lesLayout;
         private CheckBox checkBox;
     }
