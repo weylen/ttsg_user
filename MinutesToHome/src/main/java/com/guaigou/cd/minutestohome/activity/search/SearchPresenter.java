@@ -13,7 +13,6 @@ import com.guaigou.cd.minutestohome.http.ResponseMgr;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observer;
@@ -45,18 +44,9 @@ public class SearchPresenter implements BasePresenter {
 
     public void onSearch(String keyword){
         searchView.onStartSearch();
-
         SearchData.INSTANCE.keyword = keyword; // 保存搜索关键字
         SearchData.INSTANCE.pageNum = 1;
-//        requestRemoteData(keyword, 1);
-
-        List<ProductEntity> data = new ArrayList<>();
-        for (int i = 0; i < 20; i++){
-            ProductEntity entity = new ProductEntity();
-            entity.setName("111");
-            data.add(entity);
-        }
-        searchView.onSearchSuccess(data, false);
+        requestRemoteData(keyword, 1);
     }
 
     /**

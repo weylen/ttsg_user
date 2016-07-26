@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.common.base.Preconditions;
 import com.guaigou.cd.minutestohome.BaseActivity;
@@ -37,6 +38,7 @@ public class SearchActivity extends BaseActivity implements SearchView{
     @Bind(R.id.Generic_List) ZListView zListView;
     @Bind(R.id.Container) View containerView;
     @Bind(R.id.edit_query) EditText editText;
+    @Bind(R.id.text_empty) TextView emptyView;
 
     private MarketProductAdapter adapter;
     private SearchPresenter searchPresenter;
@@ -48,6 +50,7 @@ public class SearchActivity extends BaseActivity implements SearchView{
         ButterKnife.bind(this);
 
         adapter = new MarketProductAdapter(this, null);
+        zListView.setEmptyView(emptyView);
         zListView.setAdapter(adapter);
         zListView.setFooterVisible(false);
 
