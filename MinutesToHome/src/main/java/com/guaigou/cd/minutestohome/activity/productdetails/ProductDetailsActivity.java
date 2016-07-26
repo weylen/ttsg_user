@@ -17,14 +17,8 @@ import butterknife.OnClick;
  */
 public class ProductDetailsActivity extends BaseActivity {
 
-    public static final String TAG = ProductDetailsActivity.class.getName();
-
     @Bind(R.id.text_title) TextView mTitleView;
-    @Bind(R.id.layout_price) View addView;
-    @Bind(R.id.layout_num) View controllerNumView;
-    @Bind(R.id.text_num) TextView numView;
-
-    private int num = 0;
+    @Bind(R.id.Container) View containerView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,28 +40,8 @@ public class ProductDetailsActivity extends BaseActivity {
         finish();
     }
 
-    @OnClick(R.id.img_add)
-    void onImgAddClick(){
-        num = 1;
-        numView.setText(String.valueOf(num));
-        addView.setVisibility(View.GONE);
-        controllerNumView.setVisibility(View.VISIBLE);
-    }
-
-    @OnClick(R.id.img_num_add)
-    public void onAddClick(){
-        num++;
-        numView.setText(String.valueOf(num));
-    }
-
-    @OnClick(R.id.img_num_les)
-    public void onLesClick(){
-        num--;
-        if (num <= 0){
-            num = 0;
-            addView.setVisibility(View.VISIBLE);
-            controllerNumView.setVisibility(View.GONE);
-        }
-        numView.setText(String.valueOf(num));
+    @OnClick(R.id.fab_add)
+    void onFabAddClick(){
+        showSnakeView(containerView, "fab btn");
     }
 }
