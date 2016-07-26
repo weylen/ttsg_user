@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/divider" android:id="@id/Container"
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/themeColor"
+        >
+
+        <TextView
+            android:id="@+id/text_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="购物车"
+            android:textColor="@color/white"
+            android:textSize="@dimen/TextSize_16"
+            android:padding="10dp"
+            android:layout_centerInParent="true"
+            />
+
+        <TextView
+            android:id="@+id/text_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/abc_generic_pressed"
+            android:text="编辑"
+            android:textColor="@color/white"
+            android:textSize="@dimen/TextSize_12"
+            android:padding="5dp"
+            android:gravity="center"
+            android:layout_alignParentRight="true"
+            />
+
+    </RelativeLayout>
+
+    <include layout="@layout/layout_generic_refresh_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.0"
+        />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        >
+
+        <LinearLayout
+            android:id="@+id/payment_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:background="@color/white"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/grayText"
+                android:text="合计："
+                android:textSize="@dimen/TextSize_12"
+                android:paddingLeft="10dp"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/redText"
+                android:text="￥"
+                android:textSize="@dimen/TextSize_10"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/redText"
+                android:text="20.00"
+                android:textSize="20sp"
+                android:layout_weight="1.0"
+                />
+
+            <TextView
+                android:id="@+id/text_settlement"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:text="去结算"
+                android:textColor="@color/white"
+                android:textSize="@dimen/TextSize_14"
+                android:gravity="center"
+                android:background="@drawable/abc_generic_theme_btn"
+                />
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/action_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:background="@color/white"
+            >
+
+            <CheckBox
+                android:id="@+id/box_all"
+                style="@style/MyCheckBoxStyle"
+                android:text="全选"
+                android:textColor="@color/grayText"
+                android:gravity="center"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                />
+
+            <TextView
+                android:id="@+id/text_delete"
+                style="@style/ContentTextView"
+                android:layout_alignParentRight="true"
+                android:gravity="center"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:textColor="@color/themeColor"
+                android:text="删除"
+                android:paddingLeft="@dimen/item_padding_horizontal"
+                android:paddingRight="@dimen/item_padding_horizontal"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp"
+                android:background="@drawable/generic_btn_border_bg"
+                />
+
+        </RelativeLayout>
+
+    </FrameLayout>
+
+</LinearLayout>

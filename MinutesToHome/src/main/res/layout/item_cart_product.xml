@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="5dp" android:background="@color/white"
+    >
+
+    <CheckBox
+        android:id="@+id/item_box"
+        style="@style/MyCheckBoxStyle"
+        android:layout_gravity="center_vertical"
+        android:visibility="invisible"
+        />
+
+    <ImageView
+        android:id="@+id/img_product"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@mipmap/img_default"
+        android:scaleType="centerInside"
+        android:layout_gravity="center_vertical"
+        />
+
+    <RelativeLayout
+        android:id="@+id/desc_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_toRightOf="@id/img_product"
+        >
+
+        <TextView
+            android:id="@+id/text_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/grayText"
+            android:textSize="@dimen/TextSize_12"
+            android:text="巧克力"
+            android:maxLines="2"
+            />
+
+        <TextView
+            android:id="@+id/text_format"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/grayText"
+            android:textSize="@dimen/TextSize_10"
+            android:text="11g"
+            android:layout_marginTop="2dp"
+            android:layout_below="@id/text_title"
+            />
+
+        <TextView
+            android:id="@+id/text_promotion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/themeColor"
+            android:textSize="@dimen/TextSize_10"
+            android:text="促销信息：今明2天半价"
+            android:layout_marginTop="2dp"
+            android:layout_below="@id/text_format"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
+            android:gravity="center_vertical"
+            android:layout_below="@id/text_promotion"
+            >
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="bottom"
+                android:baselineAligned="false"
+                android:layout_weight="1.0"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="￥"
+                    android:textSize="@dimen/TextSize_10"
+                    android:textColor="@color/redText"
+                    />
+
+                <TextView
+                    android:id="@+id/text_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/redText"
+                    android:text="2.5"
+                    android:layout_centerVertical="true"
+                    android:layout_marginTop="3dp"
+                    android:textSize="@dimen/TextSize_14"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_les"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:id="@+id/img_num_les"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@mipmap/abc_num_les"
+                    android:layout_alignParentRight="true"
+                    />
+
+                <TextView
+                    android:id="@+id/text_num"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/themeColor"
+                    android:text="0"
+                    android:layout_centerVertical="true"
+                    android:layout_weight="1.0"
+                    android:gravity="center"
+                    android:textSize="@dimen/TextSize_16"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    />
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/img_num_add"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@mipmap/abc_num_add"
+                android:layout_alignParentRight="true"
+                />
+
+        </LinearLayout>
+    </RelativeLayout>
+
+
+
+</LinearLayout>

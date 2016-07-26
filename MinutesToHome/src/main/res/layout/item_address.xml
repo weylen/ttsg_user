@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <ImageView
+            android:id="@+id/img_arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/icon_right"
+            android:padding="5dp"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            />
+
+        <LinearLayout
+            android:layout_width="0dip"
+            android:layout_weight="1.0"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:orientation="vertical"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/text_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="张三"
+                    android:textSize="@dimen/TextSize_16"
+                    android:textColor="@color/blackText"
+                    />
+
+                <TextView
+                    android:id="@+id/text_phone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1891234513"
+                    android:textSize="@dimen/TextSize_16"
+                    android:textColor="@color/blackText"
+                    android:layout_marginLeft="20dp"
+                    />
+            </LinearLayout>
+
+
+
+            <TextView
+                android:id="@+id/text_address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="成都市锦江区锦江城市花园2栋3单元102"
+                android:textSize="@dimen/TextSize_14"
+                android:textColor="@color/grayText"
+                android:layout_below="@id/text_name"
+                android:layout_marginTop="10dp"
+                />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/divider"/>
+
+        <ImageView
+            android:id="@+id/img_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:src="@mipmap/icon_edit"
+            android:layout_alignParentRight="true"
+            android:padding="10dp"
+            android:background="@drawable/abc_generic_pressed"
+            />
+
+    </LinearLayout>
+
+</LinearLayout>

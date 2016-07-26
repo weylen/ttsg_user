@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grayBg"
+    android:id="@+id/Container"
+    >
+
+    <RelativeLayout
+        android:id="@+id/head_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/themeColor"
+        >
+
+        <ImageView
+            android:id="@+id/img_arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/img_arrow_right_white"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"
+            />
+
+        <ImageView
+            android:id="@+id/img_head"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/default_head"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/img_arrow"
+            android:layout_toRightOf="@id/img_head"
+            android:orientation="vertical"
+            android:layout_marginLeft="10dp"
+            android:layout_centerVertical="true"
+            >
+
+            <TextView
+                android:id="@+id/text_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:text="点击登录"
+                android:textSize="@dimen/TextSize_14"
+                />
+
+            <TextView
+                android:id="@+id/text_phone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:text="159****1341"
+                android:textSize="@dimen/TextSize_14"
+                android:layout_marginTop="5dp"
+                android:drawableLeft="@mipmap/icon_phone"
+                android:gravity="center"
+                android:visibility="gone"
+                />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
+        android:orientation="horizontal"
+        android:background="@color/white"
+        >
+
+        <TextView
+            android:id="@+id/text_order"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="@color/grayText"
+            android:text="订单"
+            android:textSize="@dimen/TextSize_14"
+            android:layout_weight="1.0"
+            android:drawableTop="@mipmap/abc_icon_order"
+            android:drawablePadding="5dp"
+            android:gravity="center"
+            android:padding="10dp"
+            android:background="@drawable/abc_generic_pressed"
+            />
+
+        <ImageView
+            android:layout_width="0.5dp"
+            android:layout_height="match_parent"
+            android:background="@color/divider"
+            />
+
+        <TextView
+            android:id="@+id/text_score"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="@color/grayText"
+            android:text="积分"
+            android:textSize="@dimen/TextSize_14"
+            android:drawableTop="@mipmap/abc_icon_score"
+            android:drawablePadding="5dp"
+            android:gravity="center"
+            android:layout_weight="1.0"
+            android:padding="10dp"
+            android:background="@drawable/abc_generic_pressed"
+            />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/text_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:drawableLeft="@mipmap/icon_address"
+        android:drawableRight="@mipmap/icon_arrow_right"
+        android:text="收货地址"
+        android:gravity="center_vertical"
+        android:drawablePadding="20dp"
+        android:padding="10dp"
+        android:background="@drawable/abc_item_pressed"
+        android:textSize="@dimen/TextSize_14"
+        />
+
+    <TextView
+        android:id="@+id/text_contacts_shopper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:drawableLeft="@mipmap/icon_phone_02"
+        android:drawableRight="@mipmap/icon_arrow_right"
+        android:text="联系店主"
+        android:gravity="center_vertical"
+        android:drawablePadding="20dp"
+        android:padding="10dp"
+        android:background="@drawable/abc_item_pressed"
+        android:textSize="@dimen/TextSize_14"
+        />
+
+    <TextView
+        android:id="@+id/text_feedback"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:drawableLeft="@mipmap/icon_opinion"
+        android:drawableRight="@mipmap/icon_arrow_right"
+        android:text="意见反馈"
+        android:gravity="center_vertical"
+        android:drawablePadding="20dp"
+        android:padding="10dp"
+        android:background="@drawable/abc_item_pressed"
+        android:textSize="@dimen/TextSize_14"
+        />
+
+</LinearLayout>

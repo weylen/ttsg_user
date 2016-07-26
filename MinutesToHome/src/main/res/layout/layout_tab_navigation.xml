@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content" android:background="@color/white">
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="3dp"
+        android:baselineAligned="false"
+        >
+
+        <RadioButton
+            android:id="@+id/Generic_Rb01"
+            style="@style/TabNavigation"
+            android:text="超市"
+            android:drawableTop="@drawable/abc_tab_supermarket"
+            android:checked="true"
+            />
+
+        <RadioButton
+            android:id="@+id/Generic_Rb02"
+            style="@style/TabNavigation"
+            android:text="购物车"
+            android:drawableTop="@drawable/abc_tab_cart"
+            />
+
+        <RadioButton
+            android:id="@+id/Generic_Rb03"
+            style="@style/TabNavigation"
+            android:text="我"
+            android:drawableTop="@drawable/abc_tab_me"
+            />
+
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/text_cartnum"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/red_badge"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="18dp"
+        android:layout_marginTop="5dp"
+        android:textSize="@dimen/TextSize_10"
+        android:textColor="@color/white"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:visibility="gone"
+        />
+
+</FrameLayout>

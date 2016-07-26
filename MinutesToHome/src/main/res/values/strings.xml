@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">十分到家</string>
+    <string name="RegionTitle">选择地址</string>
+    <string name="Orders">订单</string>
+    <string name="Login">登录</string>
+    <string name="Register">注册</string>
+    <string name="GetValidateCode">获取验证码</string>
+    <string name="SetPwd">设置密码</string>
+    <string name="ResetPwd">重置密码</string>
+    <string name="OrderDetails">订单详情</string>
+    <string name="Pay">支付</string>
+    <string name="Feedback">意见反馈</string>
+    <string name="FeedbackHint">在这里输入反馈的内容</string>
+    <string name="Score_Building">正在建设中</string>
+</resources>

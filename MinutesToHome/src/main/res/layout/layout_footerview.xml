@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+
+    <LinearLayout
+        android:id="@+id/footerLoading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:padding="8dp"
+        android:gravity="center_vertical"
+        >
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@android:style/Widget.Holo.ProgressBar.Small"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="加载中..."
+            android:paddingLeft="5dp"
+            android:textSize="@dimen/TextSize_10"
+            android:textColor="@color/grayText"
+            />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/footerMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="没有更多了"
+        android:visibility="gone"
+        android:layout_centerInParent="true"
+        android:textSize="@dimen/TextSize_9"
+        android:padding="4dp"
+        />
+
+</RelativeLayout>

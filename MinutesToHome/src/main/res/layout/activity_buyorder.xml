@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:background="@color/grayBg">
+
+    <include layout="@layout/layout_title"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1.0"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                >
+                <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@color/white"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    >
+                    <TableRow android:padding="8dp">
+                        <TextView style="@style/ContentTextView"
+                            android:text="订单号"
+                            android:textColor="@color/blackText"
+                            android:textSize="@dimen/TextSize_14"
+                            />
+                        <TextView android:id="@+id/orderCodeView"
+                            android:textColor="@color/grayText"
+                            android:textSize="@dimen/TextSize_14"
+                            android:text="BJ5446546546"
+                            android:layout_marginLeft="@dimen/order_item_padding_left"
+                            />
+                    </TableRow>
+                    <TableRow android:padding="8dp">
+                        <TextView style="@style/ContentTextView"
+                            android:text="订单状态"
+                            android:textColor="@color/blackText"
+                            android:textSize="@dimen/TextSize_14"
+                            />
+                        <TextView android:id="@+id/orderStatusView"
+                            android:textColor="@color/themeColor"
+                            android:textSize="@dimen/TextSize_14"
+                            android:text="待付款"
+                            android:layout_marginLeft="@dimen/order_item_padding_left"
+                            />
+                    </TableRow>
+                    <TableRow android:padding="8dp">
+                        <TextView style="@style/ContentTextView"
+                            android:text="下单时间"
+                            android:textColor="@color/blackText"
+                            android:textSize="@dimen/TextSize_14"
+                            />
+                        <TextView android:id="@+id/orderTimeView"
+                            android:textColor="@color/grayText"
+                            android:textSize="@dimen/TextSize_14"
+                            android:text="2015-09-20 19:33"
+                            android:layout_marginLeft="@dimen/order_item_padding_left"
+                            />
+                    </TableRow>
+                    <TableRow android:padding="8dp">
+                        <TextView style="@style/ContentTextView"
+                            android:text="配送时间"
+                            android:textColor="@color/blackText"
+                            android:textSize="@dimen/TextSize_14"
+                            />
+                        <TextView android:id="@+id/orderDeliveryView"
+                            android:textColor="@color/grayText"
+                            android:textSize="@dimen/TextSize_14"
+                            android:text="2015-09-20 19:33"
+                            android:layout_marginLeft="@dimen/order_item_padding_left"
+                            />
+                    </TableRow>
+                    <TableRow android:padding="8dp">
+                        <TextView style="@style/ContentTextView"
+                            android:text="备注"
+                            android:textColor="@color/blackText"
+                            android:textSize="@dimen/TextSize_14"
+                            />
+                        <TextView android:id="@+id/orderNoteView"
+                            android:textColor="@color/grayText"
+                            android:textSize="@dimen/TextSize_14"
+                            android:text="无"
+                            android:layout_marginLeft="@dimen/order_item_padding_left"
+                            />
+                    </TableRow>
+                </TableLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="28dp"
+                    android:text="费用明细"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@color/white"
+                    />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="@color/divider"/>
+
+                <LinearLayout
+                    android:id="@+id/CostDetailsContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:orientation="vertical"
+                    android:background="@color/white"
+                    />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="@color/divider"/>
+                <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:background="@color/white"
+                    >
+                    <TableRow android:padding="8dp">
+                        <TextView style="@style/ContentTextView"
+                            android:text="商品价格"
+                            android:textColor="@color/blackText"
+                            android:textSize="@dimen/TextSize_14"
+                            android:layout_weight="1.0"
+                            />
+                        <TextView android:id="@+id/orderProductsPriceView"
+                            android:textColor="@color/grayText"
+                            android:textSize="@dimen/TextSize_14"
+                            android:text="￥8.5"
+                            android:layout_marginLeft="@dimen/order_item_padding_left"
+                            android:gravity="right"
+                            />
+                    </TableRow>
+                    <TableRow android:padding="8dp">
+                        <TextView style="@style/ContentTextView"
+                            android:text="运费"
+                            android:textColor="@color/blackText"
+                            android:textSize="@dimen/TextSize_14"
+                            android:layout_weight="1.0"
+                            />
+                        <TextView android:id="@+id/orderFreightPriceView"
+                            android:textColor="@color/grayText"
+                            android:textSize="@dimen/TextSize_14"
+                            android:text="￥1.5"
+                            android:layout_marginLeft="@dimen/order_item_padding_left"
+                            android:gravity="right"
+                            />
+                    </TableRow>
+                    <TableRow android:padding="8dp"
+                        android:visibility="gone"
+                        >
+                        <TextView style="@style/ContentTextView"
+                            android:text="积分"
+                            android:textColor="@color/blackText"
+                            android:textSize="@dimen/TextSize_14"
+                            android:layout_weight="1.0"
+                            />
+                        <TextView android:id="@+id/orderScorePriceView"
+                            android:textColor="@color/grayText"
+                            android:textSize="@dimen/TextSize_14"
+                            android:text="-￥1.5"
+                            android:layout_marginLeft="@dimen/order_item_padding_left"
+                            android:gravity="right"
+                            />
+                    </TableRow>
+                </TableLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="@color/divider"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="0dip"
+                        android:layout_height="wrap_content"
+                        android:text="实付￥"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
+                        android:layout_marginTop="1dp"
+                        android:background="@color/white"
+                        android:gravity="right"
+                        android:textSize="@dimen/TextSize_14"
+                        android:layout_weight="1.0"
+                        />
+                    <TextView
+                        android:id="@+id/orderPaymentView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="12.5"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
+                        android:layout_marginTop="1dp"
+                        android:paddingRight="20dp"
+                        android:background="@color/white"
+                        android:gravity="right"
+                        android:textColor="@color/redText"
+                        />
+                </LinearLayout>
+
+                <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@color/white"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    >
+                    <TableRow android:padding="8dp">
+                        <TextView style="@style/ContentTextView"
+                            android:text="收货人"
+                            android:textColor="@color/blackText"
+                            android:textSize="@dimen/TextSize_14"
+                            />
+                        <TextView android:id="@+id/orderContactsView"
+                            android:textColor="@color/grayText"
+                            android:textSize="@dimen/TextSize_14"
+                            android:text="张三   13451515164"
+                            android:layout_marginLeft="@dimen/order_item_padding_left"
+                            />
+                    </TableRow>
+                    <TableRow android:padding="8dp">
+                        <TextView style="@style/ContentTextView"
+                            android:text="收货地址"
+                            android:textColor="@color/blackText"
+                            android:textSize="@dimen/TextSize_14"
+                            />
+                        <TextView android:id="@+id/orderAddressView"
+                            android:textColor="@color/grayText"
+                            android:textSize="@dimen/TextSize_14"
+                            android:text="成都市锦江区"
+                            android:layout_marginLeft="@dimen/order_item_padding_left"
+                            />
+                    </TableRow>
+                </TableLayout>
+            </LinearLayout>
+        </ScrollView>
+
+        <LinearLayout
+            android:id="@+id/payment_layout"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal"
+            android:background="@color/white"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/grayText"
+                android:text="实际支付："
+                android:textSize="@dimen/TextSize_12"
+                android:paddingLeft="10dp"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/redText"
+                android:text="￥"
+                android:textSize="@dimen/TextSize_10"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/redText"
+                android:text="20.00"
+                android:textSize="20sp"
+                android:layout_weight="1.0"
+                />
+
+            <TextView
+                android:id="@+id/text_payment"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:text="去支付"
+                android:textColor="@color/white"
+                android:textSize="@dimen/TextSize_14"
+                android:gravity="center"
+                android:background="@drawable/abc_generic_theme_btn"
+                />
+
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

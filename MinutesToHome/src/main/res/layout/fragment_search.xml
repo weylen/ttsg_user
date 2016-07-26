@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/divider"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/themeColor"
+        android:gravity="center_vertical"
+        >
+
+        <LinearLayout
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.0"
+            android:background="@drawable/abc_search_bg"
+            android:gravity="center"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            >
+
+            <EditText
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"
+                android:background="@color/transparent"
+                android:textSize="@dimen/TextSize_12"
+                android:textColor="@color/themeColor"
+                android:hint="输入商品关键字"
+                android:paddingLeft="10dp"
+                />
+
+            <ImageView
+                android:id="@+id/img_search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/icon_search"
+                android:layout_gravity="center"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:background="@drawable/abc_search_btn_bg"
+                />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/text_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="取消"
+            android:gravity="center_vertical"
+            android:padding="10dp"
+            android:background="@drawable/abc_generic_pressed"
+            android:textColor="@color/white"
+            android:textSize="@dimen/TextSize_14"
+            />
+
+    </LinearLayout>
+
+    <GridView
+        android:id="@+id/grid_product"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:numColumns="3"
+        android:horizontalSpacing="5dp"
+        android:verticalSpacing="5dp"
+        android:listSelector="@color/transparent"
+        android:cacheColorHint="@color/transparent"
+        />
+
+</LinearLayout>
