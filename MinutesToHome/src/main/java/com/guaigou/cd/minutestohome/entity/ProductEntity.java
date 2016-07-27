@@ -1,9 +1,12 @@
 package com.guaigou.cd.minutestohome.entity;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by weylen on 2016-07-23.
  */
-public class ProductEntity {
+public class ProductEntity implements Parcelable{
     private String id;
     private String name;
     /**
@@ -44,6 +47,33 @@ public class ProductEntity {
 
     public ProductEntity() {
     }
+
+    protected ProductEntity(Parcel in) {
+        id = in.readString();
+        name = in.readString();
+        standard = in.readString();
+        kind = in.readString();
+        img = in.readString();
+        price = in.readString();
+        reserve = in.readString();
+        promote = in.readString();
+        begin = in.readString();
+        end = in.readString();
+        info = in.readString();
+        number = in.readInt();
+    }
+
+    public static final Creator<ProductEntity> CREATOR = new Creator<ProductEntity>() {
+        @Override
+        public ProductEntity createFromParcel(Parcel in) {
+            return new ProductEntity(in);
+        }
+
+        @Override
+        public ProductEntity[] newArray(int size) {
+            return new ProductEntity[size];
+        }
+    };
 
     public String getId() {
         return id;
@@ -139,5 +169,26 @@ public class ProductEntity {
 
     public void setNumber(int number) {
         this.number = number;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(name);
+        dest.writeString(standard);
+        dest.writeString(kind);
+        dest.writeString(img);
+        dest.writeString(price);
+        dest.writeString(reserve);
+        dest.writeString(promote);
+        dest.writeString(begin);
+        dest.writeString(end);
+        dest.writeString(info);
+        dest.writeInt(number);
     }
 }

@@ -13,18 +13,18 @@ public class KeybordUtil {
     public static void hide(Activity context){
         View view = context.getWindow().peekDecorView();
         if (view != null) {
-            InputMethodManager inputmanger = (InputMethodManager)
+            InputMethodManager inputManager = (InputMethodManager)
                     context.getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputmanger.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            inputManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
 
     public static void show(Activity context){
         View view = context.getWindow().peekDecorView();
         if (view != null) {
-            InputMethodManager inputmanger = (InputMethodManager)
+            InputMethodManager inputManager = (InputMethodManager)
                     context.getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputmanger.showSoftInput(view, 0);
+            inputManager.showSoftInput(view, 0);
         }
     }
 }

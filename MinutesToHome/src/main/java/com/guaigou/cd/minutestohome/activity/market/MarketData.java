@@ -29,8 +29,8 @@ public enum MarketData {
         this.regionKindData = regionKindData;
     }
 
-    String id; // 当前数据的地区id
-    String name; // 当前数据的地区名字
+    public String id; // 当前数据的地区id
+    public String name; // 当前数据的地区名字
 
-    String currentProductId; // 当前的商品分类id
+    public String currentProductId; // 当前的商品分类id
 }

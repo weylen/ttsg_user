@@ -13,6 +13,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.guaigou.cd.minutestohome.BaseFragment;
+import com.guaigou.cd.minutestohome.activity.productdetails.ProductDetailsActivity;
 import com.guaigou.cd.minutestohome.activity.search.SearchActivity;
 import com.guaigou.cd.minutestohome.MainActivity;
 import com.guaigou.cd.minutestohome.R;
@@ -33,6 +34,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnItemClick;
 
 /**
  * Created by Administrator on 2016-06-18.
@@ -101,6 +103,13 @@ public class MarketFragment extends BaseFragment implements MarketView{
 
         marketPresenter = new MarketPresenter(this, regionEntity);
         setPresenter(marketPresenter);
+    }
+
+    @OnItemClick(R.id.Generic_List)
+    public void onItemClick(int position){
+        Intent intent = new Intent(getActivity(), ProductDetailsActivity.class);
+        intent.putExtra("Entity", adapter.getData().get(position));
+        startActivity(intent);
     }
 
     /**
@@ -234,6 +243,7 @@ public class MarketFragment extends BaseFragment implements MarketView{
         if (isActive()){
             if (!isLoadmore){
                 adapter.setData(dataEntityList);
+                zListView.smoothScrollToPosition(0);
             }else {
                 adapter.addData(dataEntityList);
             }

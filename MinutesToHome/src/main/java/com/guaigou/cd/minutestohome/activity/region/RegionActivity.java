@@ -3,6 +3,7 @@ package com.guaigou.cd.minutestohome.activity.region;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -10,9 +11,13 @@ import com.google.common.base.Preconditions;
 import com.guaigou.cd.minutestohome.BaseActivity;
 import com.guaigou.cd.minutestohome.MainActivity;
 import com.guaigou.cd.minutestohome.R;
+import com.guaigou.cd.minutestohome.activity.market.MarketData;
 import com.guaigou.cd.minutestohome.adapter.RegionAdapter;
+import com.guaigou.cd.minutestohome.cache.DataCache;
 import com.guaigou.cd.minutestohome.entity.RegionEntity;
+import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
+import com.rey.material.app.SimpleDialog;
 
 import java.util.List;
 
@@ -126,9 +131,37 @@ public class RegionActivity extends BaseActivity implements RegionView{
 
     @Override // 没有下一级 则跳转到主页面
     public void onNextNone(RegionEntity entity) {
+        RegionEntity saveEntity = RegionPrefs.getRegionData(this);
+            // 两次选择不一样
+        if (saveEntity != null && !saveEntity.getId().equalsIgnoreCase(entity.getId())){
+            // 清除所有缓存的数据
+            showChangeRegionDialog(entity);
+        }else{
+            forward(entity);
+        }
+    }
+
+    private void forward(RegionEntity entity){
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.putExtra("RegionEntity", entity);
         startActivity(intent);
+    }
+
+    /**
+     * 显示切换地区对话框
+     * @param entity
+     */
+    private void showChangeRegionDialog(RegionEntity entity){
+        SimpleDialog dialog = new SimpleDialog(this);
+        dialog.title("注意");
+        dialog.message("切换地区将清空购物车");
+        dialog.negativeAction("取消")
+                .negativeActionClickListener(v -> dialog.dismiss())
+                .positiveAction("确定")
+                .positiveActionClickListener(v->{
+                    dialog.dismiss();
+                    forward (entity);
+                }).show();
     }
 }

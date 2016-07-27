@@ -24,7 +24,7 @@ public enum CartData {
 
     CartData(){
         observable = Observable.create((Observable.OnSubscribe<Integer>) subscriber1 -> {
-            subscriber1.onNext(data.size());
+            subscriber1.onNext(getNumberAll());
         });
     }
 
@@ -44,21 +44,89 @@ public enum CartData {
         return data;
     }
 
-    public void setData(List<ProductEntity> data) {
-        this.data = data;
+    /**
+     * 获取指定id的数量
+     * @param id
+     * @return
+     */
+    public int getNumber(String id){
+        int number = 0;
+        if (data != null && data.size() > 0){
+            for (ProductEntity entity : data){
+                if (entity.getId().equalsIgnoreCase(id)){
+                    number += entity.getNumber();
+                }
+            }
+        }
+        return number;
     }
 
-    public void addData(ProductEntity entity){
+    /**
+     * 获取所有商品的数量
+     * @return
+     */
+    public int getNumberAll(){
         ensureData();
-        data.add(entity);
-        notifyDataChanged();
+        int number = 0;
+        for (ProductEntity entity : data){
+            number += entity.getNumber();
+        }
+        return number;
     }
 
-    public void addAll(List<ProductEntity> listData){
-        ensureData();
-        data.addAll(listData);
+    /**
+     * 减少指定商品的数量
+     * @param entity
+     */
+    public int numberLes(ProductEntity entity){
+        int num = 0;
+        for (ProductEntity productEntity : data){
+            if (productEntity.getId().equalsIgnoreCase(entity.getId())){
+                num = productEntity.getNumber();
+                num--;
+                num = num <= 0 ? 0 : num;
+                productEntity.setNumber(num);
+                if (num == 0){
+                    data.remove(productEntity);
+                }
+                break;
+            }
+        }
         notifyDataChanged();
+        return num;
     }
+
+    /**
+     * 增加商品的数量
+     * @param entity
+     */
+    public int numberAdd(ProductEntity entity){
+        ensureData();
+        int num = 0;
+        if (data.size() == 0){ // 如果没有列表数据
+            entity.setNumber(1);
+            data.add(entity);
+            num = 1;
+        }else {
+            boolean isSame = false; // 判断是否有相同的数据
+            for (ProductEntity productEntity : data){
+                if (productEntity.getId().equalsIgnoreCase(entity.getId())){
+                    isSame = true;
+                    num = productEntity.getNumber() + 1;
+                    productEntity.setNumber(num);
+                    break;
+                }
+            }
+            if (!isSame){
+                entity.setNumber(1);
+                data.add(entity);
+                num = 1;
+            }
+        }
+        notifyDataChanged();
+        return num;
+    }
+
 
     public void removeAll(List<ProductEntity> deleteData){
         ensureData();

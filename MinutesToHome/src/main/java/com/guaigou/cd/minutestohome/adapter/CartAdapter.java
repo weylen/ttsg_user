@@ -1,5 +1,6 @@
 package com.guaigou.cd.minutestohome.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Paint;
 import android.text.TextUtils;
@@ -11,8 +12,13 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.guaigou.cd.minutestohome.R;
+import com.guaigou.cd.minutestohome.activity.shoppingcart.CartData;
 import com.guaigou.cd.minutestohome.entity.ProductEntity;
+import com.guaigou.cd.minutestohome.http.Constants;
+import com.guaigou.cd.minutestohome.util.ParseUtil;
+import com.rey.material.app.SimpleDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,9 +30,11 @@ public class CartAdapter extends GenericBaseAdapter<ProductEntity>{
 
     private boolean isEditable;
     private SparseBooleanArray statusArray;
+    private Activity context;
 
-    public CartAdapter(Context context, List<ProductEntity> data) {
+    public CartAdapter(Activity context, List<ProductEntity> data) {
         super(context, data);
+        this.context = context;
         statusArray = new SparseBooleanArray();
     }
 
@@ -88,7 +96,7 @@ public class CartAdapter extends GenericBaseAdapter<ProductEntity>{
 
         final ProductEntity entity = getItem(position);
         holder.titleView.setText(entity.getName());
-        holder.formatView.setText("(" + entity.getStandard() +")");
+        holder.formatView.setText(entity.getStandard());
         holder.priceView.setText(entity.getPrice());
 
         // 促销信息
@@ -122,30 +130,57 @@ public class CartAdapter extends GenericBaseAdapter<ProductEntity>{
         holder.numView.setText(String.valueOf(n));
 
         holder.addNumView.setOnClickListener(v -> {
+            int num = ParseUtil.parseInt(entity.getReserve());
+            // 要么库存小于0 要么添加此类的商品已经达到库存的数量
+//            if (num <= 0 || CartData.INSTANCE.getNumber(entity.getId()) >= num){
+//                Toast.makeText(context, "库存不足，无法添加", Toast.LENGTH_SHORT).show();
+//                return;
+//            }
+
             if (holder.lesLayout.getVisibility() != View.VISIBLE){
                 holder.lesLayout.setVisibility(View.VISIBLE);
             }
-            int num = entity.getNumber() + 1;
+            num = CartData.INSTANCE.numberAdd(entity);
             entity.setNumber(num);
             holder.numView.setText(String.valueOf(num));
-            // TODO 总价格和购物车的改变
         });
 
         holder.lesNumView.setOnClickListener(v -> {
-            int num = entity.getNumber() - 1;
-            if (num <= 1){
-                num = 1;
+            // 先检查数量
+            int num = CartData.INSTANCE.getNumber(entity.getId());
+            if (num == 1){
+                showDeleteDialog(entity);
+                return;
             }
-            entity.setNumber(num);
+            num = CartData.INSTANCE.numberLes(entity);
             holder.numView.setText(String.valueOf(num));
-            if (num <= 0){
-                getData().remove(position);
-                notifyDataSetChanged();
-            }
-            // TODO 总价格和购物车的改变
         });
 
+        Glide.with(context)
+                .load(Constants.BASE_URL+entity.getImg())
+                .fitCenter()
+                .placeholder(R.mipmap.img_load_default)
+                .crossFade()
+                .dontAnimate()
+                .error(R.mipmap.img_load_error)
+                .into(holder.imageView);
+
         return view;
+    }
+
+    private void showDeleteDialog(ProductEntity entity){
+        SimpleDialog dialog = new SimpleDialog(context);
+        dialog.title("提示");
+        dialog.message("确定删除该商品")
+                .negativeAction("取消")
+                .negativeActionClickListener(v -> dialog.dismiss())
+                .positiveAction("确定")
+                .positiveActionClickListener(v1 -> {
+                    dialog.dismiss();
+                    CartData.INSTANCE.numberLes(entity);
+                    notifyDataSetChanged();
+                })
+                .show();
     }
 
     private class ViewHolder{

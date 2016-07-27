@@ -7,9 +7,11 @@ import android.view.View;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import com.guaigou.cd.minutestohome.activity.market.MarketData;
 import com.guaigou.cd.minutestohome.activity.mine.MeFragment;
 import com.guaigou.cd.minutestohome.activity.shoppingcart.CartData;
 import com.guaigou.cd.minutestohome.activity.shoppingcart.CartFragment;
+import com.guaigou.cd.minutestohome.cache.DataCache;
 import com.guaigou.cd.minutestohome.entity.RegionEntity;
 import com.guaigou.cd.minutestohome.activity.market.MarketFragment;
 import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
@@ -47,10 +49,21 @@ public class MainActivity extends BaseActivity{
 
         entity = getIntent().getParcelableExtra("RegionEntity");
         if (entity != null){
-            DebugUtil.d("MainActivity onCreate name : " + entity.getName());
-            RegionPrefs.saveRegionData(this, entity);
-        }
+            RegionEntity saveEntity = RegionPrefs.getRegionData(this);
+            if (saveEntity == null ){
+                RegionPrefs.saveRegionData(this, entity);
+            }else{
+                // 两次选择不一样
+                if (!saveEntity.getId().equalsIgnoreCase(entity.getId())){
+                    // 清除所有缓存的数据
+                    MarketData.INSTANCE.currentProductId = null;
+                    MarketData.INSTANCE.setKindData(null);
+                    DataCache.INSTANCE.removeAll();
+                    RegionPrefs.saveRegionData(this, entity);
+                }
+            }
 
+        }
         initViews();
     }
 
@@ -113,20 +126,20 @@ public class MainActivity extends BaseActivity{
                 .commit();
     }
 
-    public void replaceFragment(Fragment fragment, String tag, boolean addToBackStack){
-        getSupportFragmentManager()
-                .beginTransaction()
-                .setCustomAnimations(R.anim.activity_open_enter, R.anim.activity_open_exit)
-                .replace(R.id.Container, fragment, tag)
-                .addToBackStack(null)
-                .commit();
-    }
-
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
         // 默认加载超市
-        replaceFragment(new MarketFragment(), MarketFragment.TAG);
+        // 是否选中超市
+        boolean isChooseCart = getIntent().getBooleanExtra("ChooseCart", false);
+        if (isChooseCart){
+            lastChoiceId = R.id.Generic_Rb02;
+            rb02.setChecked(true);
+            replaceFragment(new CartFragment(), CartFragment.TAG);
+        }else {
+            replaceFragment(new MarketFragment(), MarketFragment.TAG);
+        }
+
     }
 
     @Override

@@ -57,7 +57,7 @@ public class RegionPresenter implements BasePresenter{
 
                     @Override
                     public void onError(Throwable e) {
-                        DebugUtil.d(e.getMessage());
+                        DebugUtil.d("e:" + e.getMessage());
                         regionView.onLoadFailure();
                     }
 

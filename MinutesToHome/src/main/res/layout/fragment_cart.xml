@@ -74,10 +74,10 @@
                 />
 
             <TextView
+                android:id="@+id/text_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/redText"
-                android:text="20.00"
                 android:textSize="20sp"
                 android:layout_weight="1.0"
                 />

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -43,6 +44,7 @@ public class CartFragment extends BaseFragment {
     @Bind(R.id.Generic_List) ZListView zListView; // 列表视图
     @Bind(R.id.refreshLayout) ZRefreshingView zRefreshingView; // 下拉刷新视图
     @Bind(R.id.parentFrameLayout) FrameLayout parentFrameLayout; // 刷新父视图
+    @Bind(R.id.text_price) TextView allPriceView; // 总价格
     @Bind(R.id.Container) View containerView;
 
     private EmptyViewHelper emptyViewHelper; // 空视图
@@ -67,45 +69,19 @@ public class CartFragment extends BaseFragment {
         emptyViewHelper.setRefreshListener(() -> refresh());
         // 空视图点击事件
         emptyViewHelper.setOnEmptyTouchListener(()->{});
-
-        // -----------------------------测试数据
-        List<ProductEntity> data = new ArrayList<>();
-        ProductEntity entity = new ProductEntity();
-        entity.setNumber(1);
-        entity.setStandard("瓶");
-        entity.setName("矿泉水");
-        entity.setBegin("2016-09-01");
-        entity.setEnd("2016-09-05");
-        entity.setReserve("3");
-        entity.setPromote("1.0");
-        entity.setInfo("限时半价");
-        entity.setPrice("2.0");
-        entity.setKind("水");
-
-        ProductEntity entity1 = new ProductEntity();
-        entity1.setNumber(1);
-        entity1.setStandard("瓶");
-        entity1.setName("矿泉水");
-        entity1.setBegin("2016-09-01");
-        entity1.setEnd("2016-09-05");
-        entity1.setReserve("3");
-        entity1.setInfo("限时半价");
-        entity1.setPrice("2.0");
-        entity1.setKind("水");
-
-        data.add(entity);
-        data.add(entity1);
-        data.add(entity);
-        data.add(entity1);
-        data.add(entity);
-        List<ProductEntity> saveData = CartData.INSTANCE.getData();
-        if (saveData == null || saveData.size() == 0){
-            CartData.INSTANCE.addAll(data);
-        }
-        // -----------------------------测试数据
         adapter = new CartAdapter(getActivity(), CartData.INSTANCE.getData());
         zListView.setAdapter(adapter);
         zListView.setLoadComplete(true);
+
+        // TODO 请求服务器数据
+        if (adapter.getCount() == 0){
+            editView.setVisibility(View.GONE);
+            paymentLayout.setVisibility(View.GONE);
+        }else{
+            // TODO 计算总价格
+            calculateAllPrice();
+        }
+
     }
 
     void refresh(){
@@ -136,6 +112,7 @@ public class CartFragment extends BaseFragment {
     @OnItemClick(R.id.Generic_List)
     void onItemClick(int position){
         Intent intent = new Intent(getActivity(), ProductDetailsActivity.class);
+        intent.putExtra("Entity", adapter.getData().get(position));
         startActivity(intent);
     }
 
@@ -221,7 +198,6 @@ public class CartFragment extends BaseFragment {
 
         @Override
         public void onNext(Integer count) {
-            DebugUtil.d("CartFragment onNext count:" + count);
             String text = editView.getText().toString();
             if (count == 0){
                 editView.setVisibility(View.GONE);
@@ -237,6 +213,42 @@ public class CartFragment extends BaseFragment {
                     actionLayout.setVisibility(View.VISIBLE);
                 }
             }
+
+            // 计算总价格
+            calculateAllPrice();
         }
     };
+
+    /**
+     * 计算总价格
+     */
+    private void calculateAllPrice(){
+        List<ProductEntity> data = adapter.getData();
+        double allPrice = 0;
+        if (data != null && data.size() != 0){
+            for (ProductEntity entity : data){
+                int number = entity.getNumber();
+                double price;
+                // 促销价格
+                String promotionPrice = entity.getPromote();
+                if (!TextUtils.isEmpty(promotionPrice)){
+                    price = parsePrice(promotionPrice);
+                }else {
+                    price = parsePrice(entity.getPrice());
+                }
+                allPrice += price * number;
+            }
+        }
+        allPriceView.setText(String.valueOf(allPrice));
+    }
+
+    private double parsePrice(String price){
+        double p = 0d;
+        try{
+            p = Double.parseDouble(price);
+        }catch (Exception e){
+            DebugUtil.d("CartFragment parsePrice 解析价格出现异常：" + price);
+        }
+        return p;
+    }
 }
