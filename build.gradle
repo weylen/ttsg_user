@@ -45,4 +45,5 @@ ext {
     rxbindingDesign = '0.3.0'
     retrofitVersion = '2.0.2'
     reyVersion = '1.2.4';
+    glideVersion = "3.7.0";
 }

@@ -37,11 +37,14 @@ public class MyHorizontalRadioGroup extends RadioGroup{
     }
 
     private void putView(){
+        DebugUtil.d("MyHorizontalRadioGroup-putView");
+        clearCheck();
         removeAllViews();
         int size = data == null ? 0 : data.size();
         for (int i = 0; i < size; i++){
             RadioButton rb = createRadioButton(i);
             this.addView(rb);
+            addView(createDivider());
             if (i == 0){
                 rb.setChecked(true);
             }
@@ -78,7 +81,7 @@ public class MyHorizontalRadioGroup extends RadioGroup{
      * 设置某一个RadioButton被选中
      * @param position
      */
-    public void check(int position){
+    public void checkRadioButton(int position){
         if (!validatePosition(position)){
             DebugUtil.d("传入的下标有错误--> position:" + position);
             return;
@@ -87,6 +90,21 @@ public class MyHorizontalRadioGroup extends RadioGroup{
         if (view instanceof RadioButton){
             ((RadioButton)view).setChecked(true);
         }
+    }
+
+    /**
+     * 创建分割线
+     * @return
+     */
+    private View createDivider(){
+        return getInflater().inflate(R.layout.view_hor_divider, this, false);
+    }
+
+    private LayoutInflater getInflater(){
+        if (inflater == null){
+            inflater = LayoutInflater.from(getContext());
+        }
+        return inflater;
     }
 
     /**

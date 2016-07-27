@@ -14,7 +14,6 @@ import com.guaigou.cd.minutestohome.util.KeybordUtil;
 public class BaseActivity extends AppCompatActivity{
 
     private Toast mToast;
-    public static final boolean DEBUG = true;
 
     protected void showToast(String message){
         if (mToast == null){

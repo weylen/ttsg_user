@@ -44,6 +44,7 @@ dependencies {
     compile "com.squareup.retrofit2:retrofit:$rootProject.ext.retrofitVersion"
     compile "com.squareup.retrofit2:converter-gson:$rootProject.ext.retrofitVersion"
     compile "com.squareup.retrofit2:adapter-rxjava:$rootProject.ext.retrofitVersion"
+    compile "com.github.bumptech.glide:glide:$rootProject.ext.glideVersion"
     compile project(path: ':pickerview')
 }
 retrolambda {

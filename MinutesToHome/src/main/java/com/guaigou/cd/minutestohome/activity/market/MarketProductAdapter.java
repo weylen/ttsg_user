@@ -1,14 +1,17 @@
 package com.guaigou.cd.minutestohome.activity.market;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.guaigou.cd.minutestohome.R;
 import com.guaigou.cd.minutestohome.adapter.GenericBaseAdapter;
 import com.guaigou.cd.minutestohome.entity.ProductEntity;
+import com.guaigou.cd.minutestohome.http.Constants;
 
 import java.util.List;
 
@@ -17,8 +20,10 @@ import java.util.List;
  */
 public class MarketProductAdapter extends GenericBaseAdapter<ProductEntity> {
 
-    public MarketProductAdapter(Context context, List<ProductEntity> data) {
+    private Activity context;
+    public MarketProductAdapter(Activity context, List<ProductEntity> data) {
         super(context, data);
+        this.context = context;
     }
 
     @Override
@@ -77,6 +82,13 @@ public class MarketProductAdapter extends GenericBaseAdapter<ProductEntity> {
             // TODO 总价格和购物车的改变
         });
 
+        Glide.with(context)
+                .load(Constants.BASE_URL+entity.getImg())
+                .centerCrop()
+                .placeholder(R.mipmap.img_load_default)
+                .crossFade()
+                .error(R.mipmap.img_load_error)
+                .into(holder.imageView);
         return view;
     }
 

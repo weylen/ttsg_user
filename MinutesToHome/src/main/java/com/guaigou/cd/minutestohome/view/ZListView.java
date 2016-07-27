@@ -57,7 +57,7 @@ public class ZListView extends ListView implements AbsListView.OnScrollListener{
      * @param context 上下文对象
      */
     private void addFooter(Context context){
-        footerView = LayoutInflater.from(context).inflate(R.layout.layout_footerview, this, false);
+        footerView = LayoutInflater.from(context).inflate(R.layout.layout_footerview, null, false);
         if (context instanceof Activity){
             Point point = new Point();
             ((Activity)context).getWindowManager().getDefaultDisplay().getSize(point);
@@ -132,5 +132,12 @@ public class ZListView extends ListView implements AbsListView.OnScrollListener{
         if (loadCompleteView != null){
             loadCompleteView.setText(message);
         }
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        AbsListView.LayoutParams params = new AbsListView.LayoutParams(w, -2);
+        footerView.setLayoutParams(params);
     }
 }

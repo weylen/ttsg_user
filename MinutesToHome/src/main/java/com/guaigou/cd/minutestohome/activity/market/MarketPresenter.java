@@ -147,13 +147,15 @@ public class MarketPresenter implements BasePresenter{
         // 先取缓存的数据
         Data<?> data = DataCache.INSTANCE.getData(typeId);
         if (data == null){ // 判断缓存的数据对象
-            getRemoteProductData(typeId, 1);
+            marketView.onStartLoading();
+            getRemoteProductData(true, typeId, 1);
         }else {
             // 获取缓存的列表数据
             List<ProductEntity> listData = (List<ProductEntity>) data.getListData();
             // 列表数据不存在
             if (listData == null || listData.size() == 0){
-                getRemoteProductData(typeId, 1);
+                marketView.onStartLoading();
+                getRemoteProductData(true, typeId, 1);
             }else {
                 boolean isLoadComplete = data.isLoadComplete();
                 marketView.onLoadProductData(listData, isLoadComplete, false);
@@ -165,10 +167,10 @@ public class MarketPresenter implements BasePresenter{
      * 获取网络数据
      * @param typeId
      */
-    private void getRemoteProductData(String typeId, int pageNum){
+    private void getRemoteProductData(boolean isRefresh, String typeId, int pageNum){
         DebugUtil.d("getRemoteProductData：" + typeId +", pageNum -->" + pageNum);
         RetrofitFactory.getRetrofit().create(HttpService.class)
-                .getRegionProducts(entity.getId(), typeId, pageNum)
+                .getRegionProducts(entity.getId(), typeId, pageNum, "")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JsonObject>() {
@@ -177,7 +179,7 @@ public class MarketPresenter implements BasePresenter{
 
                     @Override
                     public void onError(Throwable e) {
-                        DebugUtil.d(e.getMessage());
+                        DebugUtil.d("onError--"+e.getMessage());
                         doError(pageNum);
                     }
 
@@ -186,7 +188,7 @@ public class MarketPresenter implements BasePresenter{
                         DebugUtil.d("getRemoteProductData onNext s:" + s);
                         int status = ResponseMgr.getStatus(s);
                         if (status == 1){
-                            parseProductData(entity.getId(), pageNum, s);
+                            parseProductData(isRefresh, typeId, pageNum, s);
                         }else {
                             doError(pageNum);
                         }
@@ -209,7 +211,7 @@ public class MarketPresenter implements BasePresenter{
     /**
      * 解析商品数据
      */
-    private void parseProductData(String id, int pageNum, JsonObject s){
+    private void parseProductData(boolean isRefresh, String id, int pageNum, JsonObject s){
         JsonObject root = s.get("data").getAsJsonObject();
         JsonArray dataArray = root.get("data").getAsJsonArray();
         Gson gson = new Gson();
@@ -220,23 +222,27 @@ public class MarketPresenter implements BasePresenter{
         int size = listData == null ? 0 : listData.size();
         for (int i = 0; i < size; i++){
             ProductEntity entity = listData.get(i);
-            entity.setImg(imgObject.get(entity.getId()).getAsString());
+//            String imgs = entity.getImg();
+            entity.setImg(imgObject.get(entity.getImg().split(",")[0]).getAsString());
         }
-        // 缓存数据 todo 少了一个页面数量的参数
-        cacheProductData(id, false, pageNum, listData);
-        marketView.onLoadProductData(listData, false, pageNum > 1);
+
+        int max = s.get("maxPage").getAsInt();
+        int current = s.get("pageNum").getAsInt();
+        // 缓存数据
+        cacheProductData(isRefresh, id, max, pageNum, listData);
+        marketView.onLoadProductData(listData, max == current, pageNum > 1);
     }
 
     /**
      * 缓存商品数据
      */
-    private void cacheProductData(String id, boolean isLoadComplete, int pageNum, List<ProductEntity> listData){
+    private void cacheProductData(boolean isRefresh, String id, int maxNum, int pageNum, List<ProductEntity> listData){
         MarketData.INSTANCE.currentProductId = id;
         Data<?> d = DataCache.INSTANCE.getData(id);
         List<ProductEntity> saveListData;
         if (d != null){
             saveListData = (List<ProductEntity>) d.getListData();
-            if (saveListData != null){
+            if (saveListData != null && !isRefresh){
                 saveListData.addAll(listData);
             }else {
                 saveListData = listData;
@@ -247,7 +253,7 @@ public class MarketPresenter implements BasePresenter{
 
         Data<ProductEntity> data = new Data<>();
         data.setTag(id);
-        data.setLoadComplete(isLoadComplete);
+        data.setLoadComplete(maxNum == pageNum);
         data.setPageNum(pageNum);
         data.setListData(saveListData);
         DataCache.INSTANCE.putData(id, data);
@@ -263,7 +269,7 @@ public class MarketPresenter implements BasePresenter{
         }else {
             DebugUtil.d("MarketPresenter refresh 获取当前小类产品");
             marketView.onStartLoading();
-            getRemoteProductData(MarketData.INSTANCE.currentProductId, 1);
+            getRemoteProductData(true, MarketData.INSTANCE.currentProductId, 1);
         }
     }
 
@@ -273,16 +279,22 @@ public class MarketPresenter implements BasePresenter{
     void onLoadmore(){
         Data<?> data = DataCache.INSTANCE.getData(MarketData.INSTANCE.currentProductId);
         if (data == null){ // 判断缓存的数据对象
-            getRemoteProductData(MarketData.INSTANCE.currentProductId, 1);
+            getRemoteProductData(true, MarketData.INSTANCE.currentProductId, 1);
         }else {
             // 获取缓存的列表数据
             List<ProductEntity> listData = (List<ProductEntity>) data.getListData();
             // 列表数据不存在
             if (listData == null || listData.size() == 0){
-                getRemoteProductData(MarketData.INSTANCE.currentProductId, 1);
+                getRemoteProductData(true, MarketData.INSTANCE.currentProductId, 1);
             }else {
-                int pageNum = data.getPageNum() + 1;
-                getRemoteProductData(MarketData.INSTANCE.currentProductId, pageNum);
+                boolean isLoadcomplete = data.isLoadComplete();
+                if (isLoadcomplete){
+                    // 已经加载完成所有的数据
+                    marketView.onLoadMoreComplete();
+                }else {
+                    int pageNum = data.getPageNum() + 1;
+                    getRemoteProductData(false, MarketData.INSTANCE.currentProductId, pageNum);
+                }
             }
         }
     }

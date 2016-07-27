@@ -82,7 +82,8 @@ public interface HttpService {
     Observable<JsonObject> getRegionProducts(
             @Field("areaId") String areaId,
             @Field("sort") String sortId,
-            @Field("pageNum") int pageNum);
+            @Field("pageNum") int pageNum,
+            @Field("uname") String keyword);
 
 
 }

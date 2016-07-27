@@ -65,7 +65,7 @@
         <item name="android:button">@null</item>
         <item name="android:gravity">center</item>
         <item name="android:textSize">@dimen/TextSize_12</item>
-        <item name="android:background">@drawable/tab_hor_radiobg</item>
+        <item name="android:background">@drawable/tab_vertical_radiobg</item>
     </style>
 
     <style name="TitleTextView">

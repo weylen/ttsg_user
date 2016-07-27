@@ -63,7 +63,7 @@ public class SearchPresenter implements BasePresenter {
      */
     private void requestRemoteData(String keyword, int pageNum){
         RetrofitFactory.getRetrofit().create(HttpService.class)
-                .getRegionProducts(regionId, keyword, pageNum)
+                .getRegionProducts(regionId, "", pageNum, keyword)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JsonObject>() {
@@ -72,7 +72,7 @@ public class SearchPresenter implements BasePresenter {
 
                     @Override
                     public void onError(Throwable e) {
-                        DebugUtil.d(e.getMessage());
+                        DebugUtil.d("" + e.getMessage());
                         doRequestError(pageNum);
                     }
 

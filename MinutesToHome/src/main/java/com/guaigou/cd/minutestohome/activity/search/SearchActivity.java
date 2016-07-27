@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.gesture.Prediction;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.GridView;
@@ -18,8 +19,10 @@ import com.guaigou.cd.minutestohome.activity.productdetails.ProductDetailsActivi
 import com.guaigou.cd.minutestohome.entity.ProductEntity;
 import com.guaigou.cd.minutestohome.entity.RegionEntity;
 import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
+import com.guaigou.cd.minutestohome.util.KeybordUtil;
 import com.guaigou.cd.minutestohome.view.ZListView;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,13 +69,25 @@ public class SearchActivity extends BaseActivity implements SearchView{
         startActivity(intent);
     }
 
+    @Override
+    public void onBackPressed() {
+        onCanclClick();
+    }
+
     @OnClick(R.id.text_cancel)
     public void onCanclClick(){
+        KeybordUtil.hide(this);
         finish();
+
     }
     @OnClick(R.id.img_search)
     public void onSearchClick(){
-        searchPresenter.onSearch(editText.getText().toString());
+        String keyword = editText.getText().toString();
+        if (TextUtils.isEmpty(keyword)){
+            showSnakeView(containerView, "输入搜索条件");
+            return;
+        }
+        searchPresenter.onSearch(URLEncoder.encode(keyword));
     }
 
     @Override

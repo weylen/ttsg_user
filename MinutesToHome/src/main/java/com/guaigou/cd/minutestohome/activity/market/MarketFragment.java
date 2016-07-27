@@ -126,7 +126,7 @@ public class MarketFragment extends BaseFragment implements MarketView{
         // 没有保存数据
         if (TextUtils.isEmpty(entity.getName()) || TextUtils.isEmpty(entity.getId())){
             locationView.setText("选择地址");
-//            showChooseRegionDialog();
+            showChooseRegionDialog();
         }else{
             // request data
             marketPresenter.start();
@@ -173,14 +173,6 @@ public class MarketFragment extends BaseFragment implements MarketView{
         startActivity(intent);
     }
 
-    /**
-     * 联系电话点击
-     */
-//    @OnClick(R.id.img_phone)
-//    void onPhoneClcik{
-//        showToast("联系电话点击");
-//    }
-
     @Override
     public boolean isActive() {
         return isAdded();
@@ -221,7 +213,8 @@ public class MarketFragment extends BaseFragment implements MarketView{
                 onDataEmpty();
                 return;
             }
-            marketPresenter.parseSmallTypeData(dataEntityList.get(0).getId());
+            lastLargeTypeId = dataEntityList.get(0).getId();
+            marketPresenter.parseSmallTypeData(lastLargeTypeId);
         }
     }
 
@@ -257,7 +250,18 @@ public class MarketFragment extends BaseFragment implements MarketView{
     }
 
     @Override
+    public void onLoadMoreComplete() {
+
+    }
+
+    @Override
     public void setPresenter(MarketPresenter presenter) {
+
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
 
     }
 
