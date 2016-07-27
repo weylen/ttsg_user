@@ -32,6 +32,8 @@
                 android:textColor="@color/themeColor"
                 android:hint="输入商品关键字"
                 android:paddingLeft="10dp"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
                 />
 
             <ImageView

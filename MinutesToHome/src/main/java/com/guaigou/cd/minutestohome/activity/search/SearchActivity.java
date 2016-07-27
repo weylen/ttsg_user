@@ -5,7 +5,9 @@ import android.gesture.Prediction;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ListView;
@@ -61,6 +63,14 @@ public class SearchActivity extends BaseActivity implements SearchView{
         RegionEntity entity = RegionPrefs.getRegionData(getApplicationContext());
         Preconditions.checkNotNull(entity);
         searchPresenter = new SearchPresenter(this, entity.getId());
+
+        editText.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH){
+                onSearchClick();
+                return true;
+            }
+            return false;
+        });
     }
 
     @OnItemClick(R.id.Generic_List)
@@ -71,23 +81,24 @@ public class SearchActivity extends BaseActivity implements SearchView{
 
     @Override
     public void onBackPressed() {
-        onCanclClick();
+        onCancelClick();
     }
 
     @OnClick(R.id.text_cancel)
-    public void onCanclClick(){
+    public void onCancelClick(){
         KeybordUtil.hide(this);
         finish();
 
     }
     @OnClick(R.id.img_search)
     public void onSearchClick(){
+        KeybordUtil.hide(this);
         String keyword = editText.getText().toString();
         if (TextUtils.isEmpty(keyword)){
             showSnakeView(containerView, "输入搜索条件");
             return;
         }
-        searchPresenter.onSearch(URLEncoder.encode(keyword));
+        searchPresenter.onSearch(keyword);
     }
 
     @Override
@@ -104,14 +115,14 @@ public class SearchActivity extends BaseActivity implements SearchView{
     @Override
     public void onSearchFailure() {
         dismissProgressDialog();
-        emptyView.setVisibility(View.VISIBLE);
+        adapter.setData(null);
+        adapter.notifyDataSetChanged();
     }
 
     @Override
     public void onSearchSuccess(List<ProductEntity> data, boolean isComplete) {
         dismissProgressDialog();
         adapter.setData(data);
-        emptyView.setVisibility(View.VISIBLE);
         zListView.setLoadComplete(isComplete);
     }
 

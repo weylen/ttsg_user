@@ -81,7 +81,7 @@ public class SearchPresenter implements BasePresenter {
                         DebugUtil.d("SearchPresenter-onNext s:" + s);
                         int status = ResponseMgr.getStatus(s);
                         if (status == 1){
-                            parseProductData(pageNum, s);
+                            parseProductData(s);
                         }else {
                             doRequestError(pageNum);
                         }
@@ -105,7 +105,7 @@ public class SearchPresenter implements BasePresenter {
     /**
      * 解析商品数据
      */
-    private void parseProductData(int pageNum, JsonObject s){
+    private void parseProductData(JsonObject s){
         JsonObject root = s.get("data").getAsJsonObject();
         JsonArray dataArray = root.get("data").getAsJsonArray();
         Gson gson = new Gson();
@@ -116,9 +116,16 @@ public class SearchPresenter implements BasePresenter {
         int size = listData == null ? 0 : listData.size();
         for (int i = 0; i < size; i++){
             ProductEntity entity = listData.get(i);
-            entity.setImg(imgObject.get(entity.getId()).getAsString());
+//            String imgs = entity.getImg();
+            entity.setImg(imgObject.get(entity.getImg().split(",")[0]).getAsString());
         }
-        if (pageNum > 1){ // 加载更多
+
+        int max = s.get("maxPage").getAsInt();
+        int current = s.get("pageNum").getAsInt();
+        // 缓存数据
+        searchView.onSearchSuccess(listData, max == current);
+        SearchData.INSTANCE.pageNum = current;
+        if (current > 1){ // 加载更多
             searchView.onLoadmoreSuccess(listData, listData.size() < Constants.DEFAULT_PAGE_SIZE);
         }else {
             searchView.onSearchSuccess(listData, listData.size() < Constants.DEFAULT_PAGE_SIZE);
