@@ -23,7 +23,7 @@ public class ProductDetailsActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_productdetails);
+        setContentView(R.layout.activity_productdetails);
         ButterKnife.bind(this);
 
         mTitleView.setText("商品详情");
@@ -42,6 +42,6 @@ public class ProductDetailsActivity extends BaseActivity {
 
     @OnClick(R.id.fab_add)
     void onFabAddClick(){
-        showSnakeView(containerView, "fab btn");
+
     }
 }

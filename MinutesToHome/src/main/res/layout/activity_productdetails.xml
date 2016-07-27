@@ -47,7 +47,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/TextSize_16"
-                android:textColor="@color/redText"
+                android:textColor="@color/themeColor"
                 android:text="￥ 8.5"
                 android:background="@color/white"
                 android:paddingLeft="20dp"
@@ -87,17 +87,34 @@
 
     </ScrollView>
 
+    <com.rey.material.widget.Button
+        android:id="@+id/button_intocart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/LightFlatColorButtonRippleStyle"
+        android:text="20件商品"
+        android:textColor="@color/white"
+        android:padding="5dp"
+        android:drawableRight="@mipmap/img_arrow_right_white"
+        android:drawablePadding="3dp"
+        android:gravity="center_vertical"
+        android:drawableLeft="@mipmap/icon_cart_white"
+        android:layout_alignParentBottom="true"
+        android:background="@color/themeColor"
+        />
+
+
     <com.rey.material.widget.FloatingActionButton
         android:id="@+id/fab_add"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        style="@style/LightFABColor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:fab_iconSrc="@mipmap/icon_white_add48"
         app:fab_backgroundColor="@color/themeColor"
+        android:layout_above="@id/button_intocart"
         android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="50dp"
-        />
+        android:layout_margin="16dp"
 
+        />
 </RelativeLayout>
