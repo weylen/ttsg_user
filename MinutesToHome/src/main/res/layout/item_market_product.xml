@@ -7,11 +7,11 @@
 
     <ImageView
         android:id="@+id/img_product"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="@dimen/img_width"
+        android:layout_height="@dimen/img_width"
         android:src="@mipmap/img_load_default"
         android:scaleType="centerInside"
-        android:layout_gravity="center_horizontal"
+        android:layout_centerVertical="true"
         />
 
     <RelativeLayout
