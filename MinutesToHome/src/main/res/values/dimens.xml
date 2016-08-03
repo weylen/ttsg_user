@@ -10,6 +10,7 @@
 
     <dimen name="order_item_padding_left">30dp</dimen>
 
+    <dimen name="TextSize_18">18sp</dimen>
     <dimen name="TextSize_16">16sp</dimen>
     <dimen name="TextSize_14">14sp</dimen>
     <dimen name="TextSize_12">12sp</dimen>

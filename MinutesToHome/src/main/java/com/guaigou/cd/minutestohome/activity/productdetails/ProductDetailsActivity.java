@@ -17,6 +17,7 @@ import com.guaigou.cd.minutestohome.R;
 import com.guaigou.cd.minutestohome.activity.shoppingcart.CartData;
 import com.guaigou.cd.minutestohome.entity.ProductEntity;
 import com.guaigou.cd.minutestohome.http.Constants;
+import com.guaigou.cd.minutestohome.util.LocaleUtil;
 import com.rey.material.widget.Button;
 
 import butterknife.Bind;
@@ -68,7 +69,7 @@ public class ProductDetailsActivity extends BaseActivity {
     private void setupProductsInfo(){
         String promotePrice = productEntity.getPromote();// 获取促销价格
 
-        if (TextUtils.isEmpty(promotePrice)){ // 促销价为空
+        if (!LocaleUtil.hasPromotion(promotePrice)){ // 促销价为空
             mTextPromotionView.setVisibility(View.GONE);
             mOldPriceView.setVisibility(View.GONE);
 

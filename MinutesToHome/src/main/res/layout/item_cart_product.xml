@@ -55,7 +55,6 @@
             android:textSize="@dimen/TextSize_10"
             android:layout_marginTop="4dp"
             android:layout_below="@id/text_format"
-            android:text="促销信息即日起5折"
             />
 
         <LinearLayout

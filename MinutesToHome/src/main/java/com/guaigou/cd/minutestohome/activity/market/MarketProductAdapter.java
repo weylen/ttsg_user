@@ -16,6 +16,7 @@ import com.guaigou.cd.minutestohome.activity.shoppingcart.CartData;
 import com.guaigou.cd.minutestohome.adapter.GenericBaseAdapter;
 import com.guaigou.cd.minutestohome.entity.ProductEntity;
 import com.guaigou.cd.minutestohome.http.Constants;
+import com.guaigou.cd.minutestohome.util.LocaleUtil;
 import com.guaigou.cd.minutestohome.util.ParseUtil;
 
 import java.util.List;
@@ -60,7 +61,7 @@ public class MarketProductAdapter extends GenericBaseAdapter<ProductEntity> {
         // 促销信息
         String promotionPrice = entity.getPromote();
         String promotionMessage = entity.getInfo();
-        if (!TextUtils.isEmpty(promotionPrice)){
+        if (LocaleUtil.hasPromotion(promotionPrice)){
             holder.oldPriceView.setVisibility(View.VISIBLE);
             holder.oldPriceView.getPaint().setFlags(Paint. STRIKE_THRU_TEXT_FLAG);
             holder.oldPriceView.setText("￥" + entity.getPrice());

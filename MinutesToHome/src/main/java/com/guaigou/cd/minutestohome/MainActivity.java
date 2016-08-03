@@ -11,6 +11,7 @@ import com.guaigou.cd.minutestohome.activity.market.MarketData;
 import com.guaigou.cd.minutestohome.activity.mine.MeFragment;
 import com.guaigou.cd.minutestohome.activity.shoppingcart.CartData;
 import com.guaigou.cd.minutestohome.activity.shoppingcart.CartFragment;
+import com.guaigou.cd.minutestohome.adapter.ContentPagerAdapter;
 import com.guaigou.cd.minutestohome.cache.DataCache;
 import com.guaigou.cd.minutestohome.entity.RegionEntity;
 import com.guaigou.cd.minutestohome.activity.market.MarketFragment;
@@ -18,6 +19,9 @@ import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
 
 import org.w3c.dom.Text;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -34,12 +38,12 @@ public class MainActivity extends BaseActivity{
     @Bind(R.id.Generic_Rb02) RadioButton rb02;
     @Bind(R.id.Generic_Rb03) RadioButton rb03;
     @Bind(R.id.text_cartnum) TextView cartNumView; // 购物车数量视图
-
     /**
      * 记录最后一次点击的id
      */
     private int lastChoiceId = R.id.Generic_Rb01;
     private RegionEntity entity;
+    private MarketFragment marketFragment;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -65,6 +69,8 @@ public class MainActivity extends BaseActivity{
 
         }
         initViews();
+
+        marketFragment = new MarketFragment();
     }
 
     /**
@@ -86,10 +92,7 @@ public class MainActivity extends BaseActivity{
         switch (id){
             case R.id.Generic_Rb01:
                 tag = MarketFragment.TAG;
-                fragment = getSupportFragmentManager().findFragmentByTag(tag);
-                if(fragment == null){
-                    fragment = new MarketFragment();
-                }
+                fragment = marketFragment;
                 break;
             case R.id.Generic_Rb02:
                 tag = CartFragment.TAG;
@@ -137,7 +140,7 @@ public class MainActivity extends BaseActivity{
             rb02.setChecked(true);
             replaceFragment(new CartFragment(), CartFragment.TAG);
         }else {
-            replaceFragment(new MarketFragment(), MarketFragment.TAG);
+            replaceFragment(marketFragment, MarketFragment.TAG);
         }
 
     }

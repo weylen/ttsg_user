@@ -4,11 +4,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -17,6 +23,9 @@ import com.guaigou.cd.minutestohome.activity.productdetails.ProductDetailsActivi
 import com.guaigou.cd.minutestohome.activity.search.SearchActivity;
 import com.guaigou.cd.minutestohome.MainActivity;
 import com.guaigou.cd.minutestohome.R;
+import com.guaigou.cd.minutestohome.adapter.ContentPagerAdapter;
+import com.guaigou.cd.minutestohome.adapter.LargeTypeAdapter;
+import com.guaigou.cd.minutestohome.adapter.SmallTypeAdapter;
 import com.guaigou.cd.minutestohome.entity.RegionEntity;
 import com.guaigou.cd.minutestohome.entity.MarketDataEntity;
 import com.guaigou.cd.minutestohome.entity.ProductEntity;
@@ -44,9 +53,8 @@ public class MarketFragment extends BaseFragment implements MarketView{
     public static final String TAG = MarketFragment.class.getName();
 
     @Bind(R.id.text_current_location) TextView locationView;
-    @Bind(R.id.scrollView) ScrollView scrollView;
-    @Bind(R.id.generic_group) MyRadioGroup radioGroup;
-    @Bind(R.id.horizontal_group) MyHorizontalRadioGroup horizontalGroup;
+    @Bind(R.id.largeTypeList) ListView largeTypeList;
+    @Bind(R.id.horizontal_recyclerView) RecyclerView horizontalRecyclerView;
     @Bind(R.id.Generic_List) ZListView zListView;
     @Bind(R.id.refreshLayout) ZRefreshingView zRefreshingView; // 刷新组件
     @Bind(R.id.parentFrameLayout) FrameLayout parentLayout;
@@ -56,9 +64,12 @@ public class MarketFragment extends BaseFragment implements MarketView{
     private MarketPresenter marketPresenter;
 
     private MarketProductAdapter adapter; // 商品列表适配器
+    private LargeTypeAdapter largeTypeAdapter;
+    private SmallTypeAdapter smallTypeAdapter;
 
     private String lastLargeTypeId;
     private String lastSmallTypeId;
+    private boolean hasData; // 判断是否有数据
 
     @Override
     public int layoutId() {
@@ -72,21 +83,27 @@ public class MarketFragment extends BaseFragment implements MarketView{
         RegionEntity regionEntity = RegionPrefs.getRegionData(getActivity());
         locationView.setText(regionEntity.getName());
 
-        // 大类点击切换
-        radioGroup.setOnCommandChangedListener(entity ->{
-            if (lastLargeTypeId == null || !entity.getId().equalsIgnoreCase(lastLargeTypeId)){
+        largeTypeAdapter = new LargeTypeAdapter(getActivity(), null);
+        largeTypeList.setAdapter(largeTypeAdapter);
+        largeTypeList.setOnItemClickListener((parent, view1, position, id) -> {
+            MarketDataEntity entity = largeTypeAdapter.getData().get(position);
+            if (lastLargeTypeId == null || ! entity.getId().equalsIgnoreCase(lastLargeTypeId)){
                 marketPresenter.parseSmallTypeData(entity.getId());
+                largeTypeAdapter.setCheckedPosition(position);
             }
             lastLargeTypeId = entity.getId();
         });
 
-        // 小类点击切换
-        horizontalGroup.setOnCommandChangedListener(entity -> {
+        smallTypeAdapter = new SmallTypeAdapter(getActivity(), null);
+        smallTypeAdapter.setOnItemClickListener((position, entity) -> {
             if (lastSmallTypeId == null || !entity.getId().equalsIgnoreCase(lastSmallTypeId)){
                 marketPresenter.getProductsList(entity.getId());
+                smallTypeAdapter.setCheckedPosition(position);
             }
             lastSmallTypeId = entity.getId();
         });
+        horizontalRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        horizontalRecyclerView.setAdapter(smallTypeAdapter);
 
         // 设置刷新事件
         zRefreshingView.setOnRefreshListener(() -> refresh());
@@ -103,6 +120,17 @@ public class MarketFragment extends BaseFragment implements MarketView{
 
         marketPresenter = new MarketPresenter(this, regionEntity);
         setPresenter(marketPresenter);
+
+        // 检查是否保存了上一次的区域
+        RegionEntity entity = RegionPrefs.getRegionData(getActivity());
+        // 没有保存数据
+        if (TextUtils.isEmpty(entity.getName()) || TextUtils.isEmpty(entity.getId())){
+            locationView.setText("选择地址");
+            showChooseRegionDialog();
+        }else{
+            // request data
+            marketPresenter.start();
+        }
     }
 
     @OnItemClick(R.id.Generic_List)
@@ -124,22 +152,12 @@ public class MarketFragment extends BaseFragment implements MarketView{
         DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
         float ratio = 0.25f; // 0.618
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) (displayMetrics.widthPixels * ratio), -1);
-        scrollView.setLayoutParams(params);
+        largeTypeList.setLayoutParams(params);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        // 检查是否保存了上一次的区域
-        RegionEntity entity = RegionPrefs.getRegionData(getActivity());
-        // 没有保存数据
-        if (TextUtils.isEmpty(entity.getName()) || TextUtils.isEmpty(entity.getId())){
-            locationView.setText("选择地址");
-            showChooseRegionDialog();
-        }else{
-            // request data
-            marketPresenter.start();
-        }
     }
 
     // 显示选择区域对话框 如果不选择 则退出程序
@@ -217,7 +235,7 @@ public class MarketFragment extends BaseFragment implements MarketView{
         if (isActive()){
             // 设置大类的宽度
             setupScrollViewWidth();
-            radioGroup.setDataAndNotify(dataEntityList);
+            largeTypeAdapter.setData(dataEntityList);
             if (dataEntityList.size() == 0){
                 onDataEmpty();
                 return;
@@ -231,7 +249,7 @@ public class MarketFragment extends BaseFragment implements MarketView{
     public void onLoadSmallTypeData(String parentId, List<MarketDataEntity> dataEntityList) {
         dismissProgressDialog();
         if (isActive()){
-            horizontalGroup.setDataAndNotify(dataEntityList);
+            smallTypeAdapter.setDataEntities(dataEntityList);
             lastSmallTypeId = dataEntityList.get(0).getId();
             marketPresenter.getProductsList(lastSmallTypeId);
         }
@@ -250,6 +268,7 @@ public class MarketFragment extends BaseFragment implements MarketView{
             zRefreshingView.setRefreshing(false);
             emptyViewHelper.setRefreshing(false);
             zListView.setLoadComplete(isLoadComplete);
+            hasData = true;
         }
     }
 
@@ -266,12 +285,6 @@ public class MarketFragment extends BaseFragment implements MarketView{
 
     @Override
     public void setPresenter(MarketPresenter presenter) {
-
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
 
     }
 

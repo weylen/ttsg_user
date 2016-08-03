@@ -32,11 +32,12 @@
             android:layout_height="match_parent"
             android:text="超市"
             android:textColor="@color/white"
-            android:textSize="@dimen/TextSize_16"
+            android:textSize="@dimen/TextSize_18"
             android:layout_weight="1.0"
             android:gravity="center"
             android:padding="10dp"
             android:layout_centerInParent="true"
+            android:textStyle="bold"
             />
 
         <ImageView
@@ -59,45 +60,32 @@
         android:baselineAligned="false"
         >
 
-        <ScrollView
-            android:id="@+id/scrollView"
+        <ListView
+            android:id="@+id/largeTypeList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/white"
             android:scrollbars="none"
-            >
-            <com.guaigou.cd.minutestohome.view.MyRadioGroup
-                android:id="@+id/generic_group"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                >
-            </com.guaigou.cd.minutestohome.view.MyRadioGroup>
-
-        </ScrollView>
+            android:background="@color/white"
+            android:cacheColorHint="@color/transparent"
+            android:divider="@color/divider"
+            android:dividerHeight="0.5dp"
+            />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical" android:layout_marginLeft="5dp">
 
-            <HorizontalScrollView
-                android:id="@+id/horizontal_scrollView"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/horizontal_recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
                 android:scrollbars="none"
+                android:padding="2dp"
                 >
 
-                <com.guaigou.cd.minutestohome.view.MyHorizontalRadioGroup
-                    android:id="@+id/horizontal_group"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="2dp"
-                    />
-
-            </HorizontalScrollView>
+            </android.support.v7.widget.RecyclerView>
 
             <View
                 android:layout_width="match_parent"

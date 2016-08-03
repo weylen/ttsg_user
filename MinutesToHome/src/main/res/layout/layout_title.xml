@@ -21,10 +21,11 @@
         android:layout_height="match_parent"
         android:text="商品列表"
         android:textColor="@color/white"
-        android:textSize="@dimen/TextSize_16"
+        android:textSize="@dimen/TextSize_18"
         android:layout_weight="1.0"
         android:gravity="center"
         android:padding="10dp"
+        android:textStyle="bold"
         />
 
     <ImageView
