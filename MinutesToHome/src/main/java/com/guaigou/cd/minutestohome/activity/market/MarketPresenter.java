@@ -191,7 +191,7 @@ public class MarketPresenter implements BasePresenter{
                         DebugUtil.d("getRemoteProductData onNext s:" + s);
                         int status = ResponseMgr.getStatus(s);
                         if (status == 1){
-                            parseProductData(isRefresh, typeId, pageNum, s);
+                            parseProductData(isRefresh, typeId, s);
                         }else {
                             doError(pageNum, typeId);
                         }
@@ -220,7 +220,7 @@ public class MarketPresenter implements BasePresenter{
     /**
      * 解析商品数据
      */
-    private void parseProductData(boolean isRefresh, String id, int pageNum, JsonObject s){
+    private void parseProductData(boolean isRefresh, String id, JsonObject s){
         JsonObject root = s.get("data").getAsJsonObject();
         JsonArray dataArray = root.get("data").getAsJsonArray();
         Gson gson = new Gson();

@@ -1,8 +1,10 @@
 package com.guaigou.cd.minutestohome.activity.region;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -153,13 +155,19 @@ public class RegionActivity extends BaseActivity implements RegionView{
      * @param entity
      */
     private void showChangeRegionDialog(RegionEntity entity){
-        SimpleDialog dialog = new SimpleDialog(this);
-        dialog.title("注意");
-        dialog.message("切换地区将清空购物车");
-        dialog.negativeAction("取消")
-                .negativeActionClickListener(v -> dialog.dismiss())
-                .positiveAction("确定")
-                .positiveActionClickListener(v->{
+        RegionEntity oldEntity = RegionPrefs.getRegionData(getApplicationContext());
+        if (entity.getId().equalsIgnoreCase(oldEntity.getId())){
+            forward(entity);
+            return;
+        }
+
+        new AlertDialog.Builder(this).setTitle("提示")
+                .setMessage("切换地区将会清空购物车")
+                .setNegativeButton("取消", (dialog, which) -> {
+                    dialog.dismiss();
+                })
+                .setPositiveButton("确定", (dialog, which) -> {
+                    // TODO 清空购物车
                     dialog.dismiss();
                     forward (entity);
                 }).show();
