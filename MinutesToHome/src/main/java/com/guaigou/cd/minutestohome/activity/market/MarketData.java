@@ -33,4 +33,8 @@ public enum MarketData {
     public String name; // 当前数据的地区名字
 
     public String currentProductId; // 当前的商品分类id
+
+    public int largeTypeIndex = 0;
+    public int smallTypeIndex = 0;
+    public int listSelectIndex = 0;
 }

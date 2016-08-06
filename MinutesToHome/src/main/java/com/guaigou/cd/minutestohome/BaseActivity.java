@@ -6,8 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
-import com.guaigou.cd.minutestohome.util.KeybordUtil;
-
 /**
  * Created by Administrator on 2016-06-17.
  */

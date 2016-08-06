@@ -143,6 +143,7 @@
         android:layout_height="wrap_content"
         app:fab_iconSrc="@mipmap/icon_white_add48"
         app:fab_backgroundColor="@color/themeColor"
+        app:fab_elevation="2dp"
         android:layout_gravity="bottom|right"
         android:layout_marginBottom="50dp"
         android:layout_marginRight="16dp"

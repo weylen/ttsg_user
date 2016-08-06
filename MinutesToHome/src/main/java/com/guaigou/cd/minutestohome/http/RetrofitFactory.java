@@ -1,5 +1,12 @@
 package com.guaigou.cd.minutestohome.http;
 
+import com.guaigou.cd.minutestohome.util.DebugUtil;
+import com.guaigou.cd.minutestohome.util.SessionUtil;
+
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -19,11 +26,32 @@ public class RetrofitFactory {
                             .baseUrl(Constants.BASE_URL)
                             .addConverterFactory(GsonConverterFactory.create())
                             .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                            .client(OkHttpMgr.defaultOkHttpClient())
+                            .client(genericClient())
                             .build();
                 }
             }
         }
         return retrofit;
+    }
+
+    private static OkHttpClient genericClient() {
+        OkHttpClient httpClient = new OkHttpClient.Builder()
+                .addInterceptor(chain -> {
+                    Request request = chain.request()
+                            .newBuilder()
+                            .addHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
+                            .addHeader("Accept-Encoding", "gzip, deflate")
+                            .addHeader("Connection", "keep-alive")
+                            .addHeader("Accept", "*/*")
+                            .addHeader("Cookie", SessionUtil.getSessionId())
+                            .build();
+                    DebugUtil.d("RetrofitFactory 请求的SessionId:" + SessionUtil.getSessionId());
+                    return chain.proceed(request);
+                })
+                .connectTimeout(5, TimeUnit.SECONDS)
+                .writeTimeout(5, TimeUnit.SECONDS)
+                .readTimeout(5, TimeUnit.SECONDS)
+                .build();
+        return httpClient;
     }
 }

@@ -9,23 +9,24 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/divider"
+        android:layout_height="0.1dp"
+        android:background="@color/dividerDark"
         android:layout_marginTop="20dp"
         />
-
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp">
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:minHeight="40dp"
+        android:gravity="center_vertical"
+        >
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@mipmap/user_login_name"
-
+            android:src="@mipmap/icon_user_phone"
+            android:paddingRight="10dp"
             />
 
         <EditText
@@ -36,13 +37,14 @@
             android:textSize="@dimen/TextSize_14"
             android:hint="请输入您的手机号"
             android:inputType="phone"
+            android:imeOptions="actionNext"
             />
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/divider"
+        android:layout_height="0.1dp"
+        android:background="@color/dividerDark"
         android:layout_marginRight="10dp"
         android:layout_marginLeft="10dp"
         />
@@ -50,14 +52,17 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp">
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:minHeight="40dp"
+        android:gravity="center_vertical"
+        >
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@mipmap/user_login_pwd"
-
+            android:src="@mipmap/icon_user_lock"
+            android:paddingRight="10dp"
             />
 
         <EditText
@@ -68,13 +73,16 @@
             android:textSize="@dimen/TextSize_14"
             android:hint="请输入您的密码"
             android:inputType="textPassword"
+            android:imeActionId="@+id/login"
+            android:imeActionLabel="@string/Login"
+            android:imeOptions="actionDone"
             />
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/divider"
+        android:layout_height="0.1dp"
+        android:background="@color/dividerDark"
         />
 
     <TextView
@@ -97,6 +105,7 @@
         android:layout_height="wrap_content"
         android:layout_marginRight="10dp"
         android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
         >
 
         <RelativeLayout
@@ -110,7 +119,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/abc_generic_pressed"
-                android:textSize="@dimen/TextSize_10"
+                android:textSize="@dimen/TextSize_14"
                 android:text="快速注册"
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
@@ -122,7 +131,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/abc_generic_pressed"
-            android:textSize="@dimen/TextSize_10"
+            android:textSize="@dimen/TextSize_14"
             android:textColor="@color/themeColor"
             android:text="找回密码"
             android:paddingTop="5dp"

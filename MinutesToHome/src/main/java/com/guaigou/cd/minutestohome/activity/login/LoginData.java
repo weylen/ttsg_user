@@ -14,8 +14,10 @@ public enum LoginData {
     INSTANCE;
 
     private AccountEntity accountEntity;
-
-    public AccountEntity getAccountEntity() {
+    public AccountEntity getAccountEntity(Context context) {
+        if (accountEntity == null){
+            accountEntity = LoginPrefs.getAccountInfo(context);
+        }
         return accountEntity;
     }
 
@@ -23,15 +25,15 @@ public enum LoginData {
         this.accountEntity = accountEntity;
     }
 
-    private boolean isLogin;
-
     public boolean isLogin(Context context){
-        if (accountEntity == null){
-            accountEntity = LoginPrefs.getAccountInfo(context);
-            if (accountEntity == null){
-                return false;
-            }
+        if (getAccountEntity(context) == null){
+            return false;
         }
         return true;
+    }
+
+    public void logout(Context context){
+        accountEntity = null;
+        LoginPrefs.setAccountInfo(context, null);
     }
 }

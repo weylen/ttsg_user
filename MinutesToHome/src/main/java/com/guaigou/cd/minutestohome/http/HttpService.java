@@ -85,5 +85,44 @@ public interface HttpService {
             @Field("pageNum") int pageNum,
             @Field("uname") String keyword);
 
+    /**
+     * 添加商品到购物车
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("csca-add")
+    Observable<JsonObject> addProductToCart(
+            @Field("key") String info
+    );
+
+    /**
+     * 获取购物车列表
+     * @return
+     */
+    @POST("csca-")
+    Observable<JsonObject> getCartList();
+
+
+    /**
+     * 注销
+     * @return
+     */
+    @POST("scca-logout")
+    Observable<JsonObject> logout();
+
+
+    /**
+     * 意见反馈
+     * @param key
+     * @param content
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("cia- suggest")
+    Observable<JsonObject> feedBack(
+            @Field("key") String key,
+            @Field("text") String content
+    );
+
 
 }

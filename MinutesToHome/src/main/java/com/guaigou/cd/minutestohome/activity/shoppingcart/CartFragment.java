@@ -14,8 +14,10 @@ import com.guaigou.cd.minutestohome.R;
 import com.guaigou.cd.minutestohome.activity.confirmorder.ConfirmOrderActivity;
 import com.guaigou.cd.minutestohome.activity.productdetails.ProductDetailsActivity;
 import com.guaigou.cd.minutestohome.adapter.CartAdapter;
+import com.guaigou.cd.minutestohome.entity.CartEntity;
 import com.guaigou.cd.minutestohome.entity.ProductEntity;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
+import com.guaigou.cd.minutestohome.util.LocaleUtil;
 import com.guaigou.cd.minutestohome.view.EmptyViewHelper;
 import com.guaigou.cd.minutestohome.view.ZListView;
 import com.guaigou.cd.minutestohome.view.ZRefreshingView;
@@ -34,7 +36,7 @@ import rx.Subscriber;
 /**
  * Created by Administrator on 2016-06-18.
  */
-public class CartFragment extends BaseFragment {
+public class CartFragment extends BaseFragment implements CartView{
 
     public static final String TAG = CartFragment.class.getName();
 
@@ -51,6 +53,8 @@ public class CartFragment extends BaseFragment {
 
     private CartAdapter adapter;
 
+    private CartPresenter presenter;
+
     @Override
     public int layoutId() {
         return R.layout.fragment_cart;
@@ -62,16 +66,19 @@ public class CartFragment extends BaseFragment {
         // 设置刷新事件
         zRefreshingView.setOnRefreshListener(() -> refresh());
         zListView.setShowFooterView(false);
-        // 设置列表的加载更多事件
-        zListView.setOnLoadmoreListener(()->{});
         // 添加空视图
         emptyViewHelper = new EmptyViewHelper(zListView, "没有挑选商品", parentFrameLayout);
         emptyViewHelper.setRefreshListener(() -> refresh());
         // 空视图点击事件
-        emptyViewHelper.setOnEmptyTouchListener(()->{});
-        adapter = new CartAdapter(getActivity(), CartData.INSTANCE.getData());
+        emptyViewHelper.setOnEmptyTouchListener(()-> {
+            zRefreshingView.setRefreshing(true);
+            refresh();
+        });
+        adapter = new CartAdapter(getActivity(), null);
         zListView.setAdapter(adapter);
         zListView.setLoadComplete(true);
+
+        presenter = new CartPresenter(this);
 
         // TODO 请求服务器数据
         if (adapter.getCount() == 0){
@@ -129,13 +136,12 @@ public class CartFragment extends BaseFragment {
      */
     @OnClick(R.id.text_delete)
     void onDeleteClick(){
-        List<ProductEntity> deleteData = adapter.getDeleteData();
+        List<CartEntity> deleteData = adapter.getDeleteData();
         if (0 == deleteData.size()){
             Snackbar.make(containerView, "您还没有选择商品哦！", Snackbar.LENGTH_SHORT).show();
             return;
         }
         // TODO... 服务器的删除？
-        showDeleteDialog(deleteData);
     }
 
     @OnClick(R.id.text_settlement)
@@ -223,18 +229,18 @@ public class CartFragment extends BaseFragment {
      * 计算总价格
      */
     private void calculateAllPrice(){
-        List<ProductEntity> data = adapter.getData();
+        List<CartEntity> data = adapter.getData();
         double allPrice = 0;
         if (data != null && data.size() != 0){
-            for (ProductEntity entity : data){
-                int number = entity.getNumber();
+            for (CartEntity entity : data){
+                int number = entity.getAmount();
                 double price;
                 // 促销价格
                 String promotionPrice = entity.getPromote();
-                if (!TextUtils.isEmpty(promotionPrice)){
+                if (LocaleUtil.hasPromotion(promotionPrice)){
                     price = parsePrice(promotionPrice);
                 }else {
-                    price = parsePrice(entity.getPrice());
+                    price = parsePrice(entity.getSalePrice());
                 }
                 allPrice += price * number;
             }
@@ -250,5 +256,45 @@ public class CartFragment extends BaseFragment {
             DebugUtil.d("CartFragment parsePrice 解析价格出现异常：" + price);
         }
         return p;
+    }
+
+    @Override
+    public void onStartLoading() {
+
+    }
+
+    @Override
+    public void onLoadFailure(String message) {
+
+    }
+
+    @Override
+    public void onLoadSuccess(List<CartEntity> cartEntities) {
+
+    }
+
+    @Override
+    public void onStartRefresh() {
+
+    }
+
+    @Override
+    public void onStartEdit() {
+
+    }
+
+    @Override
+    public void onEditFailure() {
+
+    }
+
+    @Override
+    public void onEditSuccess() {
+
+    }
+
+    @Override
+    public boolean isActive() {
+        return false;
     }
 }

@@ -124,7 +124,6 @@ public class MainActivity extends BaseActivity{
     public void replaceFragment(Fragment fragment, String tag){
         getSupportFragmentManager()
                 .beginTransaction()
-                .setCustomAnimations(R.anim.activity_open_enter, R.anim.activity_open_exit)
                 .replace(R.id.Container, fragment, tag)
                 .commit();
     }
@@ -132,8 +131,6 @@ public class MainActivity extends BaseActivity{
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
-        // 默认加载超市
-        // 是否选中超市
         boolean isChooseCart = getIntent().getBooleanExtra("ChooseCart", false);
         if (isChooseCart){
             lastChoiceId = R.id.Generic_Rb02;

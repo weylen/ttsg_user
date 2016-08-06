@@ -4,9 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.TextView;
 
+import com.google.gson.JsonObject;
 import com.guaigou.cd.minutestohome.BaseFragment;
 import com.guaigou.cd.minutestohome.R;
 import com.guaigou.cd.minutestohome.activity.addressmgr.AddressActivity;
@@ -14,10 +17,19 @@ import com.guaigou.cd.minutestohome.activity.feedback.FeedbackActivity;
 import com.guaigou.cd.minutestohome.activity.login.LoginActivity;
 import com.guaigou.cd.minutestohome.activity.login.LoginData;
 import com.guaigou.cd.minutestohome.activity.myorders.OrderActivity;
+import com.guaigou.cd.minutestohome.entity.AccountEntity;
+import com.guaigou.cd.minutestohome.http.HttpService;
+import com.guaigou.cd.minutestohome.http.RetrofitFactory;
+import com.guaigou.cd.minutestohome.util.DebugUtil;
+import com.jakewharton.rxbinding.view.RxView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.Scheduler;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Administrator on 2016-06-18.
@@ -27,6 +39,9 @@ public class MeFragment extends BaseFragment {
     public static final String TAG = MeFragment.class.getName();
 
     @Bind(R.id.Container) View containerView;
+    @Bind(R.id.text_title) TextView mTitleView;
+    @Bind(R.id.text_phone) TextView mPhoneView;
+    @Bind(R.id.text_logout) TextView mLogouView;
 
     @Override
     public int layoutId() {
@@ -100,7 +115,65 @@ public class MeFragment extends BaseFragment {
         if (!LoginData.INSTANCE.isLogin(getActivity())){
             Intent intent = new Intent(getActivity(), LoginActivity.class);
             getActivity().startActivity(intent);
+        }else{
+            Intent intent = new Intent(getActivity(), UserInfoActivity.class);
+            getActivity().startActivity(intent);
         }
+    }
+
+    @OnClick(R.id.text_logout)
+    public void onLogoutClick(){
+        showProgressDialog("请稍后");
+        RetrofitFactory.getRetrofit()
+                .create(HttpService.class)
+                .logout()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Subscriber<JsonObject>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        dismissProgressDialog();
+                        logout();
+                    }
+
+                    @Override
+                    public void onNext(JsonObject jsonObject) {
+                        DebugUtil.d("MeFragment 注销：" + jsonObject);
+                        dismissProgressDialog();
+                        logout();
+                    }
+                });
+    }
+
+    private void logout(){
+        LoginData.INSTANCE.logout(getContext());
+        checkLogin();
+    }
+
+    private void checkLogin(){
+        // 检查是否登录
+        boolean isLogin = LoginData.INSTANCE.isLogin(getContext());
+        if (isLogin){
+            AccountEntity accountEntity = LoginData.INSTANCE.getAccountEntity(getContext());
+            String nickName = accountEntity.getName();
+            mTitleView.setText(TextUtils.isEmpty(nickName) ? "点击设置昵称" : nickName);
+            mPhoneView.setText(accountEntity.getUname());
+            RxView.visibility(mLogouView).call(Boolean.TRUE);
+        }else {
+            mTitleView.setText("点击登录");
+            RxView.visibility(mLogouView).call(Boolean.FALSE);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        checkLogin();
     }
 
     @Override

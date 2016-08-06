@@ -33,6 +33,7 @@ public class MarketPresenter implements BasePresenter{
 
     private MarketView marketView;
     private RegionEntity entity;
+    private boolean isLoading;
     public MarketPresenter(MarketView marketView, RegionEntity entity){
         this.marketView = Preconditions.checkNotNull(marketView, "MarketView can't be null");
         this.entity = Preconditions.checkNotNull(entity, "RegionEntity can't be null");
@@ -179,18 +180,20 @@ public class MarketPresenter implements BasePresenter{
 
                     @Override
                     public void onError(Throwable e) {
+                        isLoading = false;
                         DebugUtil.d("onError--"+e.getMessage());
-                        doError(pageNum);
+                        doError(pageNum, typeId);
                     }
 
                     @Override
                     public void onNext(JsonObject s) {
+                        isLoading = false;
                         DebugUtil.d("getRemoteProductData onNext s:" + s);
                         int status = ResponseMgr.getStatus(s);
                         if (status == 1){
                             parseProductData(isRefresh, typeId, pageNum, s);
                         }else {
-                            doError(pageNum);
+                            doError(pageNum, typeId);
                         }
                     }
                 });
@@ -200,12 +203,18 @@ public class MarketPresenter implements BasePresenter{
      * 处理请求错误
      * @param pageNum
      */
-    private void doError(int pageNum){
+    private void doError(int pageNum, String typeId){
         if (pageNum > 1){
             marketView.onLoadMoreFailure();
         }else {
+            removeTypeIdData(typeId);
             marketView.onLoadProductData(null, false, false);
         }
+    }
+
+    private void removeTypeIdData(String id){
+        MarketData.INSTANCE.currentProductId = id;
+        DataCache.INSTANCE.remove(id);
     }
 
     /**
@@ -229,8 +238,8 @@ public class MarketPresenter implements BasePresenter{
         int max = s.get("maxPage").getAsInt();
         int current = s.get("pageNum").getAsInt();
         // 缓存数据
-        cacheProductData(isRefresh, id, max, pageNum, listData);
-        marketView.onLoadProductData(listData, max == current, pageNum > 1);
+        cacheProductData(isRefresh, id, max, current, listData);
+        marketView.onLoadProductData(listData, max == current, current > 1);
     }
 
     /**
@@ -242,13 +251,15 @@ public class MarketPresenter implements BasePresenter{
         List<ProductEntity> saveListData;
         if (d != null){
             saveListData = (List<ProductEntity>) d.getListData();
-            if (saveListData != null && !isRefresh){
-                saveListData.addAll(listData);
-            }else {
-                saveListData = listData;
+            if (saveListData == null){
+                saveListData = new ArrayList<>();
+            }else if (isRefresh){
+                saveListData.clear();
             }
+            saveListData.addAll(listData);
         }else {
-            saveListData = listData;
+            saveListData = new ArrayList<>();
+            saveListData.addAll(listData);
         }
 
         Data<ProductEntity> data = new Data<>();
@@ -276,7 +287,9 @@ public class MarketPresenter implements BasePresenter{
     /**
      * 加载更多
      */
-    void onLoadmore(){
+    synchronized void onLoadmore(){
+        if (isLoading){return;}
+        DebugUtil.d("MarketPresenter onLoadmore 加载更多：");
         Data<?> data = DataCache.INSTANCE.getData(MarketData.INSTANCE.currentProductId);
         if (data == null){ // 判断缓存的数据对象
             getRemoteProductData(true, MarketData.INSTANCE.currentProductId, 1);

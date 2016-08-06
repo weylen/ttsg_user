@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.guaigou.cd.minutestohome.R;
 import com.guaigou.cd.minutestohome.activity.shoppingcart.CartData;
+import com.guaigou.cd.minutestohome.entity.CartEntity;
 import com.guaigou.cd.minutestohome.entity.ProductEntity;
 import com.guaigou.cd.minutestohome.http.Constants;
 import com.guaigou.cd.minutestohome.util.LocaleUtil;
@@ -27,13 +28,13 @@ import java.util.List;
 /**
  * Created by Administrator on 2016-06-18.
  */
-public class CartAdapter extends GenericBaseAdapter<ProductEntity>{
+public class CartAdapter extends GenericBaseAdapter<CartEntity>{
 
     private boolean isEditable;
     private SparseBooleanArray statusArray;
     private Activity context;
 
-    public CartAdapter(Activity context, List<ProductEntity> data) {
+    public CartAdapter(Activity context, List<CartEntity> data) {
         super(context, data);
         this.context = context;
         statusArray = new SparseBooleanArray();
@@ -60,9 +61,9 @@ public class CartAdapter extends GenericBaseAdapter<ProductEntity>{
      * 获取需要删除的数据
      * @return
      */
-    public List<ProductEntity> getDeleteData(){
-        List<ProductEntity> deleteData = new ArrayList<>();
-        List<ProductEntity> data = getData();
+    public List<CartEntity> getDeleteData(){
+        List<CartEntity> deleteData = new ArrayList<>();
+        List<CartEntity> data = getData();
         int count = statusArray.size();
         for (int i = 0; i < count; i++){
             if (statusArray.valueAt(i)){ // 表示要删除此商品
@@ -95,10 +96,9 @@ public class CartAdapter extends GenericBaseAdapter<ProductEntity>{
             holder = (ViewHolder) view.getTag();
         }
 
-        final ProductEntity entity = getItem(position);
+        final CartEntity entity = getItem(position);
         holder.titleView.setText(entity.getName());
         holder.formatView.setText(entity.getStandard());
-        holder.priceView.setText(entity.getPrice());
 
         // 促销信息
         String promotionPrice = entity.getPromote();
@@ -106,11 +106,12 @@ public class CartAdapter extends GenericBaseAdapter<ProductEntity>{
         if (LocaleUtil.hasPromotion(promotionPrice)){
             holder.oldPriceView.setVisibility(View.VISIBLE);
             holder.oldPriceView.getPaint().setFlags(Paint. STRIKE_THRU_TEXT_FLAG);
-            holder.oldPriceView.setText("￥" + entity.getPrice());
+            holder.oldPriceView.setText("￥" + entity.getSalePrice());
             holder.priceView.setText(entity.getPromote());
             holder.promotionView.setText(entity.getBegin()+"到"+entity.getEnd()+promotionMessage);
         }else {
             holder.oldPriceView.setVisibility(View.GONE);
+            holder.priceView.setText(entity.getSalePrice());
         }
 
         // 设置CheckBox的显示状态
@@ -120,7 +121,7 @@ public class CartAdapter extends GenericBaseAdapter<ProductEntity>{
         // 设置CheckBox的选择状态
         holder.checkBox.setChecked(statusArray.get(position));
 
-        int n = entity.getNumber();
+        int n = entity.getAmount();
         if (n <= 0){
             n = 0;
             holder.lesLayout.setVisibility(View.GONE);
@@ -131,34 +132,14 @@ public class CartAdapter extends GenericBaseAdapter<ProductEntity>{
         holder.numView.setText(String.valueOf(n));
 
         holder.addNumView.setOnClickListener(v -> {
-            int num = ParseUtil.parseInt(entity.getReserve());
-            // 要么库存小于0 要么添加此类的商品已经达到库存的数量
-//            if (num <= 0 || CartData.INSTANCE.getNumber(entity.getId()) >= num){
-//                Toast.makeText(context, "库存不足，无法添加", Toast.LENGTH_SHORT).show();
-//                return;
-//            }
-
-            if (holder.lesLayout.getVisibility() != View.VISIBLE){
-                holder.lesLayout.setVisibility(View.VISIBLE);
-            }
-            num = CartData.INSTANCE.numberAdd(entity);
-            entity.setNumber(num);
-            holder.numView.setText(String.valueOf(num));
         });
 
         holder.lesNumView.setOnClickListener(v -> {
-            // 先检查数量
-            int num = CartData.INSTANCE.getNumber(entity.getId());
-            if (num == 1){
-                showDeleteDialog(entity);
-                return;
-            }
-            num = CartData.INSTANCE.numberLes(entity);
-            holder.numView.setText(String.valueOf(num));
         });
 
+        String imgPath = entity.getImgPath();
         Glide.with(context)
-                .load(Constants.BASE_URL+entity.getImg())
+                .load(Constants.BASE_URL + imgPath.split(",")[0])
                 .fitCenter()
                 .placeholder(R.mipmap.img_load_default)
                 .crossFade()

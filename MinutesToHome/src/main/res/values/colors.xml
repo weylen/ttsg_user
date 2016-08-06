@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#E91E63</color>
+    <color name="colorPrimaryDark">#C2185B</color>
+    <color name="colorAccent">#795548</color>
 
-    <color name="colorControlNormal">#999999</color>
-
-    <color name="colorPrimaryQuarter">#3303A9F4</color>
-    <color name="colorPrimaryHalf">#9003A9F4</color>
+    <color name="colorControlNormal">#795548</color>
+    <color name="colorPrimaryQuarter">#40E91E63</color>
+    <color name="colorPrimaryHalf">#80E91E63</color>
 
     <array name="progress_colors_light">
         <item>#FF03A9F4</item>
@@ -25,8 +24,13 @@
     <color name="transparent">#00000000</color>
     <color name="lighter_transparent">#20000000</color>
 
+    <color name="primary_text">#212121</color>
+    <color name="secondary_text">#757575</color>
+    <color name="icons">#FFFFFF</color>
+
+    <color name="teal">#00796B</color>
     <color name="lighterBlue">#FF03A9F4</color>
-    <color name="themeColor">#FE2C4D</color>
+    <color name="themeColor">@color/colorPrimary</color>
     <color name="tabGrayText">#999999</color>
     <color name="grayText">#5a5a5a</color>
     <color name="grayBg">#f2f2f2</color>
@@ -34,5 +38,6 @@
     <color name="white">#fff</color>
     <color name="redText">#F1302D</color>
     <color name="divider">#f2f2f2</color>
+    <color name="dividerDark">#d9d9d9</color>
 
 </resources>

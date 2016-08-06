@@ -6,7 +6,7 @@ import android.os.Parcelable;
 /**
  * Created by weylen on 2016-07-23.
  */
-public class ProductEntity implements Parcelable{
+public class ProductEntity implements Parcelable, Cloneable{
     private String id;
     private String name;
     /**
@@ -190,5 +190,10 @@ public class ProductEntity implements Parcelable{
         dest.writeString(end);
         dest.writeString(info);
         dest.writeInt(number);
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }

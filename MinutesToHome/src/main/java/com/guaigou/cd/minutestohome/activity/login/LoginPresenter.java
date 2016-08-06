@@ -10,6 +10,7 @@ import com.guaigou.cd.minutestohome.entity.AccountEntity;
 import com.guaigou.cd.minutestohome.http.HttpService;
 import com.guaigou.cd.minutestohome.http.ResponseMgr;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
+import com.guaigou.cd.minutestohome.prefs.LoginPrefs;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
 
 import rx.Observer;
@@ -51,7 +52,7 @@ public class LoginPresenter implements BasePresenter {
 
                     @Override
                     public void onError(Throwable e) {
-                        DebugUtil.d(e.getMessage());
+                        DebugUtil.d("登录异常：" + e.getMessage());
                         loginView.dismissWaitDialog();
                         loginView.loginFailed();
                     }

@@ -5,8 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-
-
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
 
     <application
@@ -17,9 +16,10 @@
         android:name=".BaseApplication"
         android:theme="@style/AppTheme.NoActionBar">
 
-        <activity android:name=".MainActivity" android:screenOrientation="portrait"
+        <activity android:name=".SplashActivity" android:screenOrientation="portrait"
             android:configChanges="screenSize|keyboard|orientation|uiMode|screenLayout"
             android:windowSoftInputMode="adjustPan|stateHidden"
+            android:theme="@style/Theme.Start"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,6 +27,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".MainActivity" android:screenOrientation="portrait"
+            android:configChanges="screenSize|keyboard|orientation|uiMode|screenLayout"
+            android:windowSoftInputMode="adjustPan|stateHidden"
+            />
 
         <activity android:name=".activity.addressmgr.AddressActivity" android:screenOrientation="portrait"
             android:configChanges="screenSize|keyboard|orientation|uiMode|screenLayout"
@@ -109,6 +114,11 @@
             />
 
         <activity android:name=".activity.productdetails.ProductDetailsActivity" android:screenOrientation="portrait"
+            android:configChanges="screenSize|keyboard|orientation|uiMode|screenLayout"
+            android:windowSoftInputMode="adjustPan|stateHidden"
+            />
+
+        <activity android:name=".activity.mine.UserInfoActivity" android:screenOrientation="portrait"
             android:configChanges="screenSize|keyboard|orientation|uiMode|screenLayout"
             android:windowSoftInputMode="adjustPan|stateHidden"
             />

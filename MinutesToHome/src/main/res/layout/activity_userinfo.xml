@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/layout_title"/>
+
+
+    <LinearLayout
+        android:id="@+id/layout_nickname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="昵称"
+            android:gravity="center_vertical"
+            android:padding="10dp"
+            android:background="@drawable/abc_item_pressed"
+            android:textSize="@dimen/TextSize_14"
+            android:layout_weight="1.0"
+            />
+
+        <TextView
+            android:id="@+id/text_nickname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableRight="@mipmap/icon_arrow_right"
+            android:hint="修改昵称"
+            android:gravity="center_vertical"
+            android:padding="10dp"
+            android:background="@drawable/abc_item_pressed"
+            android:textSize="@dimen/TextSize_14"
+            android:drawablePadding="10dp"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_sex"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0.1dp"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="性别"
+            android:gravity="center_vertical"
+            android:padding="10dp"
+            android:background="@drawable/abc_item_pressed"
+            android:textSize="@dimen/TextSize_14"
+            android:layout_weight="1.0"
+            />
+
+        <TextView
+            android:id="@+id/text_sex"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0.1dp"
+            android:drawableRight="@mipmap/icon_arrow_right"
+            android:hint="设置性别"
+            android:gravity="center_vertical"
+            android:padding="10dp"
+            android:background="@drawable/abc_item_pressed"
+            android:textSize="@dimen/TextSize_14"
+            android:drawablePadding="10dp"
+            />
+
+    </LinearLayout>
+
+
+</LinearLayout>
