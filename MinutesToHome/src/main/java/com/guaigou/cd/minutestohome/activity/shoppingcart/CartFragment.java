@@ -84,6 +84,7 @@ public class CartFragment extends BaseFragment implements CartView{
         if (adapter.getCount() == 0){
             editView.setVisibility(View.GONE);
             paymentLayout.setVisibility(View.GONE);
+            presenter.requestList();
         }else{
             // TODO 计算总价格
             calculateAllPrice();
@@ -260,7 +261,7 @@ public class CartFragment extends BaseFragment implements CartView{
 
     @Override
     public void onStartLoading() {
-
+        zRefreshingView.setRefreshing(true);
     }
 
     @Override

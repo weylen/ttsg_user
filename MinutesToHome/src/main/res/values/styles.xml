@@ -57,7 +57,7 @@
         <item name="android:button">@null</item>
         <item name="android:gravity">center</item>
         <item name="android:background">@drawable/tab_vertical_radiobg</item>
-        <item name="android:textSize">@dimen/TextSize_12</item>
+        <item name="android:textSize">@dimen/TextSize_14</item>
     </style>
 
     <!--商品小类选择效果-->
@@ -68,7 +68,7 @@
         <item name="android:textColor">@color/text_color_selector</item>
         <item name="android:button">@null</item>
         <item name="android:gravity">center</item>
-        <item name="android:textSize">@dimen/TextSize_12</item>
+        <item name="android:textSize">@dimen/TextSize_14</item>
         <item name="android:background">@drawable/tab_vertical_radiobg</item>
     </style>
 
