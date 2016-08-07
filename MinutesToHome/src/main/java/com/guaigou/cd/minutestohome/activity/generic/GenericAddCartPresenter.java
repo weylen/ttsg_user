@@ -12,6 +12,7 @@ import com.guaigou.cd.minutestohome.http.ResponseMgr;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
 import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
+import com.guaigou.cd.minutestohome.util.LocaleUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +52,7 @@ public class GenericAddCartPresenter {
      */
     public void request(List<ProductEntity> entities){
         // 检查区域id
-        if (regionEntity == null || TextUtils.isEmpty(regionEntity.getId())){
+        if (!LocaleUtil.hasChooseRegion(context)){
             requestFailure("区域id不存在");
             return;
         }

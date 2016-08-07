@@ -11,7 +11,6 @@ public class ParseUtil {
         if (!TextUtils.isEmpty(source) && source.matches("^//d+$")){
             return Integer.parseInt(source);
         }else {
-            DebugUtil.d("ParseUtil parseInt解析数字异常：" + source);
             return -10000;
         }
     }

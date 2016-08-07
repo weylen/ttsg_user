@@ -16,14 +16,15 @@
         <item name="android:windowBackground">@color/divider</item>
     </style>
 
-    <style name="Theme.Start" parent="AppTheme.NoActionBar">
+    <style name="Theme.Start" parent="AppTheme">
         <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
     </style>
 
     <style name="AppTheme.NoActionBar" parent="AppTheme">
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
-        <item name="android:windowAnimationStyle">@style/AnimationActivity</item>
     </style>
 
     <style name="Dialog_NoTitle" parent="@android:style/Theme.Dialog">

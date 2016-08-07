@@ -111,7 +111,7 @@ public class RegionPresenter implements BasePresenter{
     }
 
     /**
-     * 返回上一级数据\
+     * 返回上一级数据
      * classify字段 表示分类数据
      * chaos字段 表示所有的数据
      * @param pid

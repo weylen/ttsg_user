@@ -3,6 +3,8 @@ package com.guaigou.cd.minutestohome.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Paint;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
@@ -20,10 +22,14 @@ import com.guaigou.cd.minutestohome.entity.ProductEntity;
 import com.guaigou.cd.minutestohome.http.Constants;
 import com.guaigou.cd.minutestohome.util.LocaleUtil;
 import com.guaigou.cd.minutestohome.util.ParseUtil;
+import com.jakewharton.rxbinding.view.RxView;
 import com.rey.material.app.SimpleDialog;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by Administrator on 2016-06-18.
@@ -131,12 +137,37 @@ public class CartAdapter extends GenericBaseAdapter<CartEntity>{
 
         holder.numView.setText(String.valueOf(n));
 
-        holder.addNumView.setOnClickListener(v -> {
-        });
+        RxView.clicks(holder.addNumView)
+                .debounce(50, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(aVoid -> {
+                    String reserve = entity.getStock();
+                    int stock = ParseUtil.parseInt(reserve);
+                    // 要么库存小于0 要么添加此类的商品已经达到库存的数量
+                    if (stock <= 0 || CartData.INSTANCE.getNumber(entity.getId()) >= stock){
+                        showSnakeView("库存不足 无法添加");
+                        return;
+                    }
 
-        holder.lesNumView.setOnClickListener(v -> {
-        });
+                    int num = entity.getAmount() + 1;
+                    if (holder.lesLayout.getVisibility() != View.VISIBLE){
+                        holder.lesLayout.setVisibility(View.VISIBLE);
+                    }
+                    entity.setAmount(num);
+                    holder.numView.setText(String.valueOf(num));
+                });
 
+        RxView.clicks(holder.lesNumView)
+                .debounce(50, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(aVoid -> {
+                    int num = entity.getAmount() - 1;
+                    if (num == 0){
+                        showDeleteDialog(entity);
+                        return;
+                    }
+                    holder.numView.setText(String.valueOf(num));
+                });
         String imgPath = entity.getImgPath();
         Glide.with(context)
                 .load(Constants.BASE_URL + imgPath.split(",")[0])
@@ -150,19 +181,25 @@ public class CartAdapter extends GenericBaseAdapter<CartEntity>{
         return view;
     }
 
-    private void showDeleteDialog(ProductEntity entity){
-        SimpleDialog dialog = new SimpleDialog(context);
-        dialog.title("提示");
-        dialog.message("确定删除该商品")
-                .negativeAction("取消")
-                .negativeActionClickListener(v -> dialog.dismiss())
-                .positiveAction("确定")
-                .positiveActionClickListener(v1 -> {
+    private void showDeleteDialog(CartEntity entity){
+        new AlertDialog.Builder(context)
+                .setTitle("提示")
+                .setMessage("删除该商品?")
+                .setCancelable(false)
+                .setNegativeButton("取消", (dialog, which) -> {
                     dialog.dismiss();
-                    CartData.INSTANCE.numberLes(entity);
-                    notifyDataSetChanged();
                 })
-                .show();
+                .setPositiveButton("确定", (dialog, which) -> {
+                    dialog.dismiss();
+                    getData().remove(entity);
+                });
+    }
+
+    private void showSnakeView(String message){
+        View view = context.findViewById(R.id.Container);
+        if (view != null){
+            Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show();
+        }
     }
 
     private class ViewHolder{

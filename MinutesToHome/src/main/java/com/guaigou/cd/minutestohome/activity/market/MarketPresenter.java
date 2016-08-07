@@ -148,7 +148,7 @@ public class MarketPresenter implements BasePresenter{
         // 先取缓存的数据
         Data<?> data = DataCache.INSTANCE.getData(typeId);
         if (data == null){ // 判断缓存的数据对象
-            marketView.onStartLoading();
+            marketView.onStartLoadProductList();
             getRemoteProductData(true, typeId, 1);
         }else {
             // 获取缓存的列表数据
@@ -279,7 +279,6 @@ public class MarketPresenter implements BasePresenter{
             start();
         }else {
             DebugUtil.d("MarketPresenter refresh 获取当前小类产品");
-            marketView.onStartLoading();
             getRemoteProductData(true, MarketData.INSTANCE.currentProductId, 1);
         }
     }
@@ -287,7 +286,7 @@ public class MarketPresenter implements BasePresenter{
     /**
      * 加载更多
      */
-    synchronized void onLoadmore(){
+    void onLoadmore(){
         if (isLoading){return;}
         DebugUtil.d("MarketPresenter onLoadmore 加载更多：");
         Data<?> data = DataCache.INSTANCE.getData(MarketData.INSTANCE.currentProductId);

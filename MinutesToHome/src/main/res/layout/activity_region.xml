@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
+    android:layout_height="match_parent" android:id="@+id/Container">
 
     <include layout="@layout/layout_title"/>
 
@@ -27,7 +26,7 @@
             android:drawableTop="@mipmap/img_load_failure"
             android:drawablePadding="3dp"
             android:textSize="@dimen/TextSize_12"
-            android:layout_marginBottom="50dp"
+            android:layout_marginBottom="20dp"
             />
     </FrameLayout>
 

@@ -1,8 +1,10 @@
 package com.guaigou.cd.minutestohome.activity.shoppingcart;
 
 import com.google.common.base.Preconditions;
+import com.guaigou.cd.minutestohome.entity.CartEntity;
 import com.guaigou.cd.minutestohome.entity.ProductEntity;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
+import com.guaigou.cd.minutestohome.util.LocaleUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +19,7 @@ public enum CartData {
 
     INSTANCE;
 
-    private List<ProductEntity> data;
+    private List<CartEntity> data;
 
     private Observable<Integer> observable;
     private List<Subscriber> subscriberList;
@@ -40,8 +42,12 @@ public enum CartData {
         }
     }
 
-    public List<ProductEntity> getData() {
+    public List<CartEntity> getData() {
         return data;
+    }
+
+    public void setData(List<CartEntity> data) {
+        this.data = data;
     }
 
     /**
@@ -52,9 +58,9 @@ public enum CartData {
     public int getNumber(String id){
         int number = 0;
         if (data != null && data.size() > 0){
-            for (ProductEntity entity : data){
+            for (CartEntity entity : data){
                 if (entity.getId().equalsIgnoreCase(id)){
-                    number += entity.getNumber();
+                    number += entity.getAmount();
                 }
             }
         }
@@ -68,8 +74,8 @@ public enum CartData {
     public int getNumberAll(){
         ensureData();
         int number = 0;
-        for (ProductEntity entity : data){
-            number += entity.getNumber();
+        for (CartEntity entity : data){
+            number += entity.getAmount();
         }
         return number;
     }
@@ -80,14 +86,14 @@ public enum CartData {
      */
     public int numberLes(ProductEntity entity){
         int num = 0;
-        for (ProductEntity productEntity : data){
-            if (productEntity.getId().equalsIgnoreCase(entity.getId())){
-                num = productEntity.getNumber();
+        for (CartEntity cartEntity : data){
+            if (cartEntity.getId().equalsIgnoreCase(entity.getId())){
+                num = cartEntity.getAmount();
                 num--;
                 num = num <= 0 ? 0 : num;
-                productEntity.setNumber(num);
+                cartEntity.setAmount(num);
                 if (num == 0){
-                    data.remove(productEntity);
+                    data.remove(cartEntity);
                 }
                 break;
             }
@@ -105,21 +111,22 @@ public enum CartData {
         int num = 0;
         if (data.size() == 0){ // 如果没有列表数据
             entity.setNumber(1);
-            data.add(entity);
+            data.add(LocaleUtil.format2CartEntity(entity));
             num = 1;
         }else {
             boolean isSame = false; // 判断是否有相同的数据
-            for (ProductEntity productEntity : data){
-                if (productEntity.getId().equalsIgnoreCase(entity.getId())){
+            for (CartEntity cartEntity : data){
+                if (cartEntity.getId().equalsIgnoreCase(entity.getId())){
                     isSame = true;
-                    num = productEntity.getNumber() + 1;
-                    productEntity.setNumber(num);
+                    num = cartEntity.getAmount() + 1;
+                    cartEntity.setAmount(num);
+                    entity.setNumber(num);
                     break;
                 }
             }
             if (!isSame){
                 entity.setNumber(1);
-                data.add(entity);
+                data.add(LocaleUtil.format2CartEntity(entity));
                 num = 1;
             }
         }
@@ -127,15 +134,13 @@ public enum CartData {
         return num;
     }
 
-
-    public void removeAll(List<ProductEntity> deleteData){
+    public void removeAll(List<CartEntity> deleteData){
         ensureData();
         data.removeAll(deleteData);
         notifyDataChanged();
     }
 
     public void registerObserver(Subscriber subscriber){
-        DebugUtil.d("CartData registerObserver 注册观察者");
         Preconditions.checkNotNull(subscriber, "CartData registerObserver Subscriber can't be null");
         ensureSubscriberList();
         subscriberList.add(subscriber);
@@ -143,7 +148,6 @@ public enum CartData {
 
     public void unregisterObserver(Subscriber subscriber){
         Preconditions.checkNotNull(subscriber, "CartData unregisterObserver Subscriber can't be null");
-        DebugUtil.d("CartData unregisterObserver 解除观察者");
         subscriberList.remove(subscriber);
         subscriber.unsubscribe();
     }

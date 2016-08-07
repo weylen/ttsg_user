@@ -124,5 +124,15 @@ public interface HttpService {
             @Field("text") String content
     );
 
+    @FormUrlEncoded
+    @POST("csca-del")
+    Observable<JsonObject> deleteCart(
+            @Field("key") String key
+    );
 
+    @FormUrlEncoded
+    @POST("csca-store")
+    Observable<JsonObject> save2cart(
+            @Field("key") String key
+    );
 }

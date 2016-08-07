@@ -10,18 +10,33 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import com.guaigou.cd.minutestohome.BaseActivity;
 import com.guaigou.cd.minutestohome.R;
 import com.guaigou.cd.minutestohome.activity.findpwd.FindPwdActivity;
 import com.guaigou.cd.minutestohome.activity.register.RegisterActivity;
+import com.guaigou.cd.minutestohome.activity.shoppingcart.CartData;
 import com.guaigou.cd.minutestohome.entity.AccountEntity;
+import com.guaigou.cd.minutestohome.entity.CartEntity;
+import com.guaigou.cd.minutestohome.http.HttpService;
+import com.guaigou.cd.minutestohome.http.ResponseMgr;
+import com.guaigou.cd.minutestohome.http.RetrofitFactory;
 import com.guaigou.cd.minutestohome.prefs.LoginPrefs;
+import com.guaigou.cd.minutestohome.util.CartUtil;
+import com.guaigou.cd.minutestohome.util.DebugUtil;
 import com.guaigou.cd.minutestohome.util.KeybordUtil;
 import com.guaigou.cd.minutestohome.util.ValidateUtil;
+
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by weylen on 2016-07-23.
@@ -118,7 +133,8 @@ public class LoginActivity extends BaseActivity implements LoginView{
     @Override
     public void loginSuccess(AccountEntity accountEntity) {
         LoginPrefs.setAccountInfo(getApplicationContext(), accountEntity);
-        onBackClick();
+        showProgressDialog("登录成功，正在获取购物车信息");
+        remoteCart();
     }
 
     @Override
@@ -130,4 +146,12 @@ public class LoginActivity extends BaseActivity implements LoginView{
     public void setPresenter(LoginPresenter presenter) {
 
     }
+
+    private void remoteCart(){
+        CartUtil.INSTANCE.remoteCart(() -> {
+            dismissProgressDialog();
+            onBackClick();
+        });
+    }
+
 }

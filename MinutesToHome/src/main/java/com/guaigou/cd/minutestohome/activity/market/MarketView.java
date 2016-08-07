@@ -18,7 +18,7 @@ public interface MarketView extends BaseView<MarketPresenter> {
     void onLoadSuccess();
     void onLoadLargeTypeData(List<MarketDataEntity> dataEntityList);
     void onLoadSmallTypeData(String parentId, List<MarketDataEntity> dataEntityList);
-
+    void onStartLoadProductList();
     /**
      * 加载商品数据
      * @param dataEntityList 商品列表

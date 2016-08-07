@@ -3,6 +3,7 @@ package com.guaigou.cd.minutestohome;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -13,6 +14,7 @@ import com.guaigou.cd.minutestohome.activity.shoppingcart.CartData;
 import com.guaigou.cd.minutestohome.activity.shoppingcart.CartFragment;
 import com.guaigou.cd.minutestohome.adapter.ContentPagerAdapter;
 import com.guaigou.cd.minutestohome.cache.DataCache;
+import com.guaigou.cd.minutestohome.entity.CartEntity;
 import com.guaigou.cd.minutestohome.entity.RegionEntity;
 import com.guaigou.cd.minutestohome.activity.market.MarketFragment;
 import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
@@ -154,6 +156,33 @@ public class MainActivity extends BaseActivity{
         super.onDestroy();
         ButterKnife.unbind(this);
         CartData.INSTANCE.unregisterObserver(subscriber);
+    }
+
+    @Override
+    public void onBackPressed() {
+        showCartDialog();
+    }
+
+    private void showCartDialog(){
+        new AlertDialog.Builder(this)
+                .setTitle("提示")
+                .setMessage("是否保存商品，以便下次购买查看")
+                .setNegativeButton("取消", (dialog, which) -> {
+                    dialog.dismiss();
+                    super.onBackPressed();
+                })
+                .setPositiveButton("确定", (dialog, which) -> {
+                    dialog.dismiss();
+                    saveCart();
+                });
+    }
+
+    private void saveCart(){
+
+    }
+
+    private void map(){
+        List<CartEntity> data = CartData.INSTANCE.getData();
     }
 
     Subscriber<Integer> subscriber = new Subscriber<Integer>() {

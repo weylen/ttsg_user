@@ -1,9 +1,11 @@
 package com.guaigou.cd.minutestohome.activity.shoppingcart;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -18,6 +20,7 @@ import com.guaigou.cd.minutestohome.entity.CartEntity;
 import com.guaigou.cd.minutestohome.entity.ProductEntity;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
 import com.guaigou.cd.minutestohome.util.LocaleUtil;
+import com.guaigou.cd.minutestohome.util.MathUtil;
 import com.guaigou.cd.minutestohome.view.EmptyViewHelper;
 import com.guaigou.cd.minutestohome.view.ZListView;
 import com.guaigou.cd.minutestohome.view.ZRefreshingView;
@@ -74,7 +77,7 @@ public class CartFragment extends BaseFragment implements CartView{
             zRefreshingView.setRefreshing(true);
             refresh();
         });
-        adapter = new CartAdapter(getActivity(), null);
+        adapter = new CartAdapter(getActivity(), CartData.INSTANCE.getData());
         zListView.setAdapter(adapter);
         zListView.setLoadComplete(true);
 
@@ -84,7 +87,6 @@ public class CartFragment extends BaseFragment implements CartView{
         if (adapter.getCount() == 0){
             editView.setVisibility(View.GONE);
             paymentLayout.setVisibility(View.GONE);
-            presenter.requestList();
         }else{
             // TODO 计算总价格
             calculateAllPrice();
@@ -93,7 +95,7 @@ public class CartFragment extends BaseFragment implements CartView{
     }
 
     void refresh(){
-
+        zRefreshingView.setRefreshing(false);
     }
 
     /**
@@ -120,7 +122,8 @@ public class CartFragment extends BaseFragment implements CartView{
     @OnItemClick(R.id.Generic_List)
     void onItemClick(int position){
         Intent intent = new Intent(getActivity(), ProductDetailsActivity.class);
-        intent.putExtra("Entity", adapter.getData().get(position));
+        CartEntity entity = adapter.getData().get(position);
+        intent.putExtra("Entity", LocaleUtil.format2ProductEntity(entity));
         startActivity(intent);
     }
 
@@ -136,13 +139,13 @@ public class CartFragment extends BaseFragment implements CartView{
      * 删除事件
      */
     @OnClick(R.id.text_delete)
-    void onDeleteClick(){
+    void onDeleteClick(View view){
         List<CartEntity> deleteData = adapter.getDeleteData();
         if (0 == deleteData.size()){
-            Snackbar.make(containerView, "您还没有选择商品哦！", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(view, "您还没有选择商品哦！", Snackbar.LENGTH_SHORT).show();
             return;
         }
-        // TODO... 服务器的删除？
+        showDeleteDialog(deleteData);
     }
 
     @OnClick(R.id.text_settlement)
@@ -151,26 +154,21 @@ public class CartFragment extends BaseFragment implements CartView{
         startActivity(intent);
     }
 
-    private void showDeleteDialog(List<ProductEntity> deleteData){
-        SimpleDialog dialog = new SimpleDialog(getActivity());
-        dialog.message("删除?")
-                .negativeAction("取消")
-                .negativeActionClickListener(v -> {
+    private void showDeleteDialog(List<CartEntity> deleteData){
+        new AlertDialog.Builder(getActivity())
+                .setTitle("提示")
+                .setMessage("删除选定的商品?")
+                .setNegativeButton("取消", (dialog, which) -> {
                     dialog.dismiss();
                 })
-                .positiveAction("删除")
-                .positiveActionClickListener(v->{
+                .setPositiveButton("确定", (dialog, which) -> {
                     dialog.dismiss();
                     deleteLocaleData(deleteData);
-                })
-                .show();
+                });
     }
 
-    private void deleteLocaleData(List<ProductEntity> deleteData){
+    private void deleteLocaleData(List<CartEntity> deleteData){
         CartData.INSTANCE.removeAll(deleteData);
-
-//        List<ProductEntity> data = adapter.getData();
-//        data.removeAll(deleteData);
         adapter.resetStatusArray();
         adapter.notifyDataSetChanged();
     }
@@ -178,8 +176,6 @@ public class CartFragment extends BaseFragment implements CartView{
     @Override
     public void onResume() {
         super.onResume();
-        // TODO.. 拉取数据
-
         // 注册观察者
         CartData.INSTANCE.registerObserver(subscriber);
     }
@@ -230,33 +226,7 @@ public class CartFragment extends BaseFragment implements CartView{
      * 计算总价格
      */
     private void calculateAllPrice(){
-        List<CartEntity> data = adapter.getData();
-        double allPrice = 0;
-        if (data != null && data.size() != 0){
-            for (CartEntity entity : data){
-                int number = entity.getAmount();
-                double price;
-                // 促销价格
-                String promotionPrice = entity.getPromote();
-                if (LocaleUtil.hasPromotion(promotionPrice)){
-                    price = parsePrice(promotionPrice);
-                }else {
-                    price = parsePrice(entity.getSalePrice());
-                }
-                allPrice += price * number;
-            }
-        }
-        allPriceView.setText(String.valueOf(allPrice));
-    }
-
-    private double parsePrice(String price){
-        double p = 0d;
-        try{
-            p = Double.parseDouble(price);
-        }catch (Exception e){
-            DebugUtil.d("CartFragment parsePrice 解析价格出现异常：" + price);
-        }
-        return p;
+        allPriceView.setText(MathUtil.calculate());
     }
 
     @Override

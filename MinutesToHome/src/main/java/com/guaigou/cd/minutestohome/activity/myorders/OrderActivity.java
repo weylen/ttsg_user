@@ -42,7 +42,17 @@ public class OrderActivity extends BaseActivity implements OrderView{
         // 设置刷新事件
         zRefreshingView.setOnRefreshListener(() -> refresh());
         // 设置列表的加载更多事件
-        zListView.setOnLoadmoreListener(()->orderPresenter.onLoadmore());
+        zListView.setOnLoadmoreListener(new ZListView.OnLoadmoreListener() {
+            @Override
+            public void onLoadMore() {
+
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
         // 添加空视图
         FrameLayout parent = (FrameLayout) findViewById(R.id.parentFrameLayout);
         emptyViewHelper = new EmptyViewHelper(zListView, "没有订单", parent);

@@ -4,12 +4,12 @@
     android:layout_height="wrap_content" >
 
     <LinearLayout
-        android:id="@+id/footerLoading"
-        android:layout_width="wrap_content"
+        android:id="@+id/layout_loading"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:padding="8dp"
-        android:gravity="center_vertical"
+        android:gravity="center"
         >
 
         <ProgressBar
@@ -21,7 +21,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="加载中..."
+            android:text="加载中"
             android:paddingLeft="5dp"
             android:textSize="@dimen/TextSize_10"
             android:textColor="@color/grayText"
@@ -30,14 +30,44 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/footerMessage"
-        android:layout_width="wrap_content"
+        android:id="@+id/layout_complete"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="没有更多了"
         android:visibility="gone"
         android:layout_centerInParent="true"
         android:textSize="@dimen/TextSize_9"
-        android:padding="4dp"
+        android:padding="8dp"
+        android:gravity="center"
         />
+
+
+    <LinearLayout
+        android:id="@+id/layout_error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:visibility="gone"
+        android:padding="8dp"
+        >
+
+        <ImageView
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:src="@mipmap/icon_load_error"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="点击重新加载"
+            android:layout_centerInParent="true"
+            android:textSize="@dimen/TextSize_10"
+            android:padding="4dp"
+            />
+
+    </LinearLayout>
+
+
 
 </RelativeLayout>

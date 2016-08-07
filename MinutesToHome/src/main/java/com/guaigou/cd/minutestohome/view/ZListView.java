@@ -1,15 +1,11 @@
 package com.guaigou.cd.minutestohome.view;
 
-import android.app.Activity;
 import android.content.Context;
-import android.graphics.Point;
-import android.graphics.drawable.ColorDrawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.guaigou.cd.minutestohome.R;
 
@@ -24,8 +20,17 @@ public class ZListView extends ListView implements AbsListView.OnScrollListener{
 
     private View footerView; // 尾部视图
     private View loadingView; // 加载视图
-    private TextView loadCompleteView; // 加载完成视图
-    private boolean isShowFooterView = true; // 是否显示footerView
+    private View errorView; // 错误视图
+    private View completeView; // 加载完成视图
+    private boolean isShowFooterView;
+    private State state = State.STATE_NORMAL;
+
+    public enum State{
+        STATE_LOADING,
+        STATE_NORMAL,
+        STATE_COMPLETE,
+        STATE_ERROR;
+    }
 
     public ZListView(Context context) {
         super(context);
@@ -58,15 +63,14 @@ public class ZListView extends ListView implements AbsListView.OnScrollListener{
      */
     private void addFooter(Context context){
         footerView = LayoutInflater.from(context).inflate(R.layout.layout_footerview, null, false);
-        if (context instanceof Activity){
-            Point point = new Point();
-            ((Activity)context).getWindowManager().getDefaultDisplay().getSize(point);
-            LayoutParams layoutParams = new LayoutParams(point.x, -2);
-            footerView.setLayoutParams(layoutParams);
-        }
-        loadingView = footerView.findViewById(R.id.footerLoading);
-        loadCompleteView = (TextView) footerView.findViewById(R.id.footerMessage);
-
+        loadingView = footerView.findViewById(R.id.layout_loading);
+        errorView = footerView.findViewById(R.id.layout_error);
+        errorView.setOnClickListener(v->{
+            if (this.onLoadmoreListener != null){
+                onLoadmoreListener.onError();
+            }
+        });
+        completeView = footerView.findViewById(R.id.layout_complete);
         this.addFooterView(footerView);
     }
 
@@ -75,7 +79,7 @@ public class ZListView extends ListView implements AbsListView.OnScrollListener{
         if (scrollState == OnScrollListener.SCROLL_STATE_IDLE
                 && lastItemIndex == getCount() - 1) {
             if (this.onLoadmoreListener != null){
-                onLoadmoreListener.onRefresh();
+                onLoadmoreListener.onLoadMore();
             }
         }
     }
@@ -90,7 +94,34 @@ public class ZListView extends ListView implements AbsListView.OnScrollListener{
     }
 
     public interface OnLoadmoreListener {
-        void onRefresh();
+        void onLoadMore();
+        void onError();
+    }
+
+    public void setState(State state){
+        this.state = state;
+
+        loadingView.setVisibility(View.GONE);
+        completeView.setVisibility(View.GONE);
+        errorView.setVisibility(View.GONE);
+        switch (state){
+            case STATE_COMPLETE:
+                completeView.setVisibility(View.VISIBLE);
+                break;
+            case STATE_LOADING:
+                loadingView.setVisibility(View.VISIBLE);
+                break;
+            case STATE_ERROR:
+                errorView.setVisibility(View.VISIBLE);
+                break;
+            case STATE_NORMAL:
+                loadingView.setVisibility(View.VISIBLE);
+                break;
+        }
+    }
+
+    public State getState() {
+        return state;
     }
 
     /**
@@ -101,14 +132,7 @@ public class ZListView extends ListView implements AbsListView.OnScrollListener{
         if (!isFooterVisible() && isShowFooterView){
             footerView.setVisibility(View.VISIBLE);
         }
-
-        if (isLoadComplete){ // 加载完成
-            loadCompleteView.setVisibility(View.VISIBLE);
-            loadingView.setVisibility(View.GONE);
-        }else{
-            loadCompleteView.setVisibility(View.GONE);
-            loadingView.setVisibility(View.VISIBLE);
-        }
+        setState(isLoadComplete ? State.STATE_COMPLETE : State.STATE_NORMAL);
     }
 
     public void setFooterVisible(boolean isVisible){
@@ -124,15 +148,6 @@ public class ZListView extends ListView implements AbsListView.OnScrollListener{
         setFooterVisible(isShowFooterView);
     }
 
-    /**
-     * 设置加载完成的文本
-     * @param message
-     */
-    public void setLoadCompleteText(String message){
-        if (loadCompleteView != null){
-            loadCompleteView.setText(message);
-        }
-    }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {

@@ -1,6 +1,5 @@
 package com.guaigou.cd.minutestohome.activity.region;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,16 +9,20 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.common.base.Preconditions;
+import com.google.gson.JsonObject;
 import com.guaigou.cd.minutestohome.BaseActivity;
 import com.guaigou.cd.minutestohome.MainActivity;
 import com.guaigou.cd.minutestohome.R;
-import com.guaigou.cd.minutestohome.activity.market.MarketData;
+import com.guaigou.cd.minutestohome.activity.shoppingcart.CartData;
 import com.guaigou.cd.minutestohome.adapter.RegionAdapter;
-import com.guaigou.cd.minutestohome.cache.DataCache;
+import com.guaigou.cd.minutestohome.entity.CartEntity;
 import com.guaigou.cd.minutestohome.entity.RegionEntity;
+import com.guaigou.cd.minutestohome.http.HttpService;
+import com.guaigou.cd.minutestohome.http.ResponseMgr;
+import com.guaigou.cd.minutestohome.http.RetrofitFactory;
 import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
-import com.rey.material.app.SimpleDialog;
+import com.guaigou.cd.minutestohome.util.LocaleUtil;
 
 import java.util.List;
 
@@ -27,6 +30,12 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnItemClick;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by weylen on 2016-07-22.
@@ -34,10 +43,9 @@ import butterknife.OnItemClick;
  */
 public class RegionActivity extends BaseActivity implements RegionView{
 
-    @Bind(R.id.text_title)
-    TextView mTextTitleView;
-    @Bind(R.id.Generic_List)
-    ListView mListView;
+    @Bind(R.id.text_title) TextView mTextTitleView;
+    @Bind(R.id.Generic_List) ListView mListView;
+    @Bind(R.id.Container) View containerView;
 
     private RegionPresenter regionPresenter;
     private RegionAdapter adapter;
@@ -156,7 +164,7 @@ public class RegionActivity extends BaseActivity implements RegionView{
      */
     private void showChangeRegionDialog(RegionEntity entity){
         RegionEntity oldEntity = RegionPrefs.getRegionData(getApplicationContext());
-        if (entity.getId().equalsIgnoreCase(oldEntity.getId())){
+        if (!LocaleUtil.hasChooseRegion(this) || entity.getId().equalsIgnoreCase(oldEntity.getId())){
             forward(entity);
             return;
         }
@@ -167,9 +175,74 @@ public class RegionActivity extends BaseActivity implements RegionView{
                     dialog.dismiss();
                 })
                 .setPositiveButton("确定", (dialog, which) -> {
-                    // TODO 清空购物车
                     dialog.dismiss();
-                    forward (entity);
+                    clearCart(entity);
                 }).show();
+    }
+
+    /**
+     * 清空购物车
+     */
+    private void clearCart(RegionEntity entity){
+        showProgressDialog("处理中...");
+
+        List<CartEntity> data = CartData.INSTANCE.getData();
+        if (data == null || data.size() == 0){
+            dismissProgressDialog();
+            forward(entity);
+            return;
+        }
+        Observable.just(data)
+                .subscribeOn(Schedulers.io())
+                .map(cartEntities -> map(data))
+                .observeOn(Schedulers.io())
+                .subscribe(s -> {
+                    remoteClearCart(s, entity);
+                });
+    }
+
+    private String map(List<CartEntity> data){
+        RegionEntity oldEntity = RegionPrefs.getRegionData(getApplicationContext());
+        String param = "";
+        for (CartEntity entity : data){
+            param += oldEntity.getId() + "-" + entity.getId();
+        }
+        if (param.endsWith(",")){
+            param = param.substring(0, param.length() - 1);
+        }
+        return param;
+    }
+
+    private void remoteClearCart(String key, RegionEntity entity){
+        RetrofitFactory.getRetrofit().create(HttpService.class)
+                .deleteCart(key)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Subscriber<JsonObject>() {
+                    @Override
+                    public void onCompleted() {}
+
+                    @Override
+                    public void onError(Throwable e) {
+                        DebugUtil.d("RegionActivity 清空购物车失败：" + e.getMessage());
+                        doResult(false, entity);
+                    }
+
+                    @Override
+                    public void onNext(JsonObject jsonObject) {
+                        DebugUtil.d("RegionActivity 清空购物车：" + jsonObject);
+                        doResult(ResponseMgr.getStatus(jsonObject) == 1, entity);
+                    }
+                });
+    }
+
+    private void doResult(boolean status, RegionEntity entity){
+        dismissProgressDialog();
+        if (status){
+            CartData.INSTANCE.setData(null);
+            forward(entity);
+        }else {
+            showSnakeView(containerView, "清空购物车失败，请重新操作");
+        }
     }
 }
