@@ -14,9 +14,11 @@ import com.bumptech.glide.Glide;
 import com.guaigou.cd.minutestohome.BaseActivity;
 import com.guaigou.cd.minutestohome.MainActivity;
 import com.guaigou.cd.minutestohome.R;
+import com.guaigou.cd.minutestohome.activity.login.LoginData;
 import com.guaigou.cd.minutestohome.activity.shoppingcart.CartData;
 import com.guaigou.cd.minutestohome.entity.ProductEntity;
 import com.guaigou.cd.minutestohome.http.Constants;
+import com.guaigou.cd.minutestohome.util.DialogUtil;
 import com.guaigou.cd.minutestohome.util.LocaleUtil;
 import com.guaigou.cd.minutestohome.util.ParseUtil;
 import com.rey.material.widget.Button;
@@ -129,6 +131,11 @@ public class ProductDetailsActivity extends BaseActivity {
 
     @OnClick(R.id.fab_add)
     void onFabAddClick() {
+        // 检查是否登录
+        if (!LoginData.INSTANCE.isLogin(this)){
+            DialogUtil.showLoginDialog(this);
+            return;
+        }
         // 检查是否还有库存
         String reserve = productEntity.getReserve();
         int num = ParseUtil.parseInt(reserve);

@@ -10,10 +10,12 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.guaigou.cd.minutestohome.R;
+import com.guaigou.cd.minutestohome.activity.login.LoginData;
 import com.guaigou.cd.minutestohome.activity.shoppingcart.CartData;
 import com.guaigou.cd.minutestohome.adapter.GenericBaseAdapter;
 import com.guaigou.cd.minutestohome.entity.ProductEntity;
 import com.guaigou.cd.minutestohome.http.Constants;
+import com.guaigou.cd.minutestohome.util.DialogUtil;
 import com.guaigou.cd.minutestohome.util.LocaleUtil;
 import com.guaigou.cd.minutestohome.util.ParseUtil;
 import com.jakewharton.rxbinding.view.RxView;
@@ -87,6 +89,11 @@ public class MarketProductAdapter extends GenericBaseAdapter<ProductEntity>{
                 .debounce(50, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(aVoid -> {
+                    if (!LoginData.INSTANCE.isLogin(context)){
+                        DialogUtil.showLoginDialog(context);
+                        return;
+                    }
+
                     String reserve = entity.getReserve();
                     int stock = ParseUtil.parseInt(reserve);
                     // 要么库存小于0 要么添加此类的商品已经达到库存的数量
@@ -108,6 +115,10 @@ public class MarketProductAdapter extends GenericBaseAdapter<ProductEntity>{
                 .debounce(50, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(aVoid -> {
+                    if (!LoginData.INSTANCE.isLogin(context)){
+                        DialogUtil.showLoginDialog(context);
+                        return;
+                    }
                     int num = CartData.INSTANCE.numberLes(entity);
                     if (num == 0){
                         holder.lesLayout.setVisibility(View.GONE);

@@ -98,7 +98,7 @@ public class SplashActivity extends BaseActivity {
     }
 
     private void remoteCart() {
-        CartUtil.INSTANCE.remoteCart(() -> {
+        CartUtil.INSTANCE.remoteCart(this, () -> {
             end = System.currentTimeMillis();
             peekInHome();
         });

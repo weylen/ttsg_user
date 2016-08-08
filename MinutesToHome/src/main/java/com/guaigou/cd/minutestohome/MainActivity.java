@@ -3,33 +3,25 @@ package com.guaigou.cd.minutestohome;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import com.guaigou.cd.minutestohome.activity.login.LoginData;
 import com.guaigou.cd.minutestohome.activity.market.MarketData;
 import com.guaigou.cd.minutestohome.activity.mine.MeFragment;
 import com.guaigou.cd.minutestohome.activity.shoppingcart.CartData;
 import com.guaigou.cd.minutestohome.activity.shoppingcart.CartFragment;
-import com.guaigou.cd.minutestohome.adapter.ContentPagerAdapter;
 import com.guaigou.cd.minutestohome.cache.DataCache;
-import com.guaigou.cd.minutestohome.entity.CartEntity;
 import com.guaigou.cd.minutestohome.entity.RegionEntity;
 import com.guaigou.cd.minutestohome.activity.market.MarketFragment;
+import com.guaigou.cd.minutestohome.prefs.CartPrefs;
 import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
-import com.guaigou.cd.minutestohome.util.DebugUtil;
-
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.guaigou.cd.minutestohome.util.DialogUtil;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import rx.Subscriber;
-import rx.functions.Action1;
 
 /**
  * Created by Administrator on 2016-06-17.
@@ -97,6 +89,11 @@ public class MainActivity extends BaseActivity{
                 fragment = marketFragment;
                 break;
             case R.id.Generic_Rb02:
+                if (!LoginData.INSTANCE.isLogin(this)){
+                    DialogUtil.showLoginDialog(this);
+                    return;
+                }
+
                 tag = CartFragment.TAG;
                 fragment = getSupportFragmentManager().findFragmentByTag(tag);
                 if(fragment == null){
@@ -156,33 +153,17 @@ public class MainActivity extends BaseActivity{
         super.onDestroy();
         ButterKnife.unbind(this);
         CartData.INSTANCE.unregisterObserver(subscriber);
+        // 保存购物车的数据
+        saveCartData();
     }
 
-    @Override
-    public void onBackPressed() {
-        showCartDialog();
-    }
-
-    private void showCartDialog(){
-        new AlertDialog.Builder(this)
-                .setTitle("提示")
-                .setMessage("是否保存商品，以便下次购买查看")
-                .setNegativeButton("取消", (dialog, which) -> {
-                    dialog.dismiss();
-                    super.onBackPressed();
-                })
-                .setPositiveButton("确定", (dialog, which) -> {
-                    dialog.dismiss();
-                    saveCart();
-                });
-    }
-
-    private void saveCart(){
-
-    }
-
-    private void map(){
-        List<CartEntity> data = CartData.INSTANCE.getData();
+    /**
+     * 保存购物车数据
+     */
+    private void saveCartData(){
+        if (LoginData.INSTANCE.isLogin(this)){
+            CartPrefs.saveCartData(this, CartData.INSTANCE.getData());
+        }
     }
 
     Subscriber<Integer> subscriber = new Subscriber<Integer>() {

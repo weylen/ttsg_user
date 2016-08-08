@@ -133,7 +133,8 @@ public class LoginActivity extends BaseActivity implements LoginView{
     @Override
     public void loginSuccess(AccountEntity accountEntity) {
         LoginPrefs.setAccountInfo(getApplicationContext(), accountEntity);
-        showProgressDialog("登录成功，正在获取购物车信息");
+//        showProgressDialog("登录成功，正在获取购物车信息");
+        // 获取购物车信息
         remoteCart();
     }
 
@@ -148,8 +149,7 @@ public class LoginActivity extends BaseActivity implements LoginView{
     }
 
     private void remoteCart(){
-        CartUtil.INSTANCE.remoteCart(() -> {
-            dismissProgressDialog();
+        CartUtil.INSTANCE.remoteCart(this, () -> {
             onBackClick();
         });
     }
