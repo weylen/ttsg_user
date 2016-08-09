@@ -164,7 +164,8 @@ public class CartFragment extends BaseFragment implements CartView{
                 .setPositiveButton("确定", (dialog, which) -> {
                     dialog.dismiss();
                     deleteLocaleData(deleteData);
-                });
+                })
+                .show();
     }
 
     private void deleteLocaleData(List<CartEntity> deleteData){
@@ -227,45 +228,5 @@ public class CartFragment extends BaseFragment implements CartView{
      */
     private void calculateAllPrice(){
         allPriceView.setText(MathUtil.calculate());
-    }
-
-    @Override
-    public void onStartLoading() {
-        zRefreshingView.setRefreshing(true);
-    }
-
-    @Override
-    public void onLoadFailure(String message) {
-
-    }
-
-    @Override
-    public void onLoadSuccess(List<CartEntity> cartEntities) {
-
-    }
-
-    @Override
-    public void onStartRefresh() {
-
-    }
-
-    @Override
-    public void onStartEdit() {
-
-    }
-
-    @Override
-    public void onEditFailure() {
-
-    }
-
-    @Override
-    public void onEditSuccess() {
-
-    }
-
-    @Override
-    public boolean isActive() {
-        return false;
     }
 }

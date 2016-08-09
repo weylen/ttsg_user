@@ -15,6 +15,7 @@ import com.guaigou.cd.minutestohome.activity.shoppingcart.CartData;
 import com.guaigou.cd.minutestohome.adapter.GenericBaseAdapter;
 import com.guaigou.cd.minutestohome.entity.ProductEntity;
 import com.guaigou.cd.minutestohome.http.Constants;
+import com.guaigou.cd.minutestohome.util.DebugUtil;
 import com.guaigou.cd.minutestohome.util.DialogUtil;
 import com.guaigou.cd.minutestohome.util.LocaleUtil;
 import com.guaigou.cd.minutestohome.util.ParseUtil;
@@ -93,7 +94,6 @@ public class MarketProductAdapter extends GenericBaseAdapter<ProductEntity>{
                         DialogUtil.showLoginDialog(context);
                         return;
                     }
-
                     String reserve = entity.getReserve();
                     int stock = ParseUtil.parseInt(reserve);
                     // 要么库存小于0 要么添加此类的商品已经达到库存的数量
