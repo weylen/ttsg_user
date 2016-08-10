@@ -59,6 +59,8 @@ public class MarketProductAdapter extends GenericBaseAdapter<ProductEntity>{
         }
 
         final ProductEntity entity = getItem(position);
+        DebugUtil.d("MarketProductAdapter getView name::" + entity.getName());
+
         holder.titleView.setText(entity.getName());
         holder.formatView.setText(entity.getStandard() );
         holder.priceView.setText(entity.getPrice());
@@ -76,7 +78,7 @@ public class MarketProductAdapter extends GenericBaseAdapter<ProductEntity>{
             holder.oldPriceView.setVisibility(View.GONE);
         }
 
-        int n = CartData.INSTANCE.getNumber(entity.getId());
+        int n = entity.getNumber();
         if (n <= 0){
             n = 0;
             holder.lesLayout.setVisibility(View.GONE);

@@ -22,7 +22,9 @@ import com.guaigou.cd.minutestohome.activity.productdetails.ProductDetailsActivi
 import com.guaigou.cd.minutestohome.activity.shoppingcart.CartData;
 import com.guaigou.cd.minutestohome.entity.ProductEntity;
 import com.guaigou.cd.minutestohome.entity.RegionEntity;
+import com.guaigou.cd.minutestohome.http.Constants;
 import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
+import com.guaigou.cd.minutestohome.util.DebugUtil;
 import com.guaigou.cd.minutestohome.util.KeybordUtil;
 import com.guaigou.cd.minutestohome.view.ZListView;
 import com.rey.material.widget.Button;
@@ -43,7 +45,7 @@ import rx.Subscriber;
 public class SearchActivity extends BaseActivity implements SearchView{
 
     @Bind(R.id.Generic_List) ZListView zListView;
-    @Bind(R.id.Container) View containerView;
+    @Bind(R.id.titleLayout) View containerView;
     @Bind(R.id.edit_query) EditText editText;
     @Bind(R.id.text_empty) TextView emptyView;
     @Bind(R.id.button_intocart) TextView productNumView;
@@ -100,20 +102,15 @@ public class SearchActivity extends BaseActivity implements SearchView{
     }
     @OnClick(R.id.img_search)
     public void onSearchClick(){
-        KeybordUtil.hide(this);
         String keyword = editText.getText().toString();
         if (TextUtils.isEmpty(keyword)){
             showSnakeView(containerView, "输入搜索条件");
             return;
         }
+        KeybordUtil.hide(this);
         searchPresenter.onSearch(keyword);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        ButterKnife.unbind(this);
-    }
 
     @Override
     public void onStartSearch() {
@@ -132,20 +129,26 @@ public class SearchActivity extends BaseActivity implements SearchView{
     public void onSearchFailure() {
         dismissProgressDialog();
         adapter.setData(null);
-        adapter.notifyDataSetChanged();
     }
 
     @Override
     public void onSearchSuccess(List<ProductEntity> data, boolean isComplete) {
         dismissProgressDialog();
-        adapter.setData(data);
+        DebugUtil.d("SearchActivity onSearchSuccess 搜索结果");
+//        if (isComplete){
+//            int size = data == null ? 0 : data.size();
+//            if (size < Constants.DEFAULT_PAGE_SIZE){
+//
+//            }
+//        }
         zListView.setLoadComplete(isComplete);
+        adapter.setData(data);
     }
 
     @Override
     public void onLoadmoreSuccess(List<ProductEntity> data, boolean isComplete) {
-        adapter.addData(data);
         zListView.setLoadComplete(isComplete);
+        adapter.addData(data);
     }
 
     @Override
@@ -159,18 +162,11 @@ public class SearchActivity extends BaseActivity implements SearchView{
     }
 
     @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if (hasFocus){
-            KeybordUtil.show(this);
-        }
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         // 注册观察者
         CartData.INSTANCE.registerObserver(subscriber);
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -178,6 +174,20 @@ public class SearchActivity extends BaseActivity implements SearchView{
         super.onStop();
         // 解除注册观察者
         CartData.INSTANCE.unregisterObserver(subscriber);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ButterKnife.unbind(this);
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus){
+            KeybordUtil.show(this);
+        }
     }
 
     private Subscriber<Integer> subscriber = new Subscriber<Integer>() {

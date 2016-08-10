@@ -4,6 +4,9 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.widget.BaseAdapter;
 
+import com.guaigou.cd.minutestohome.util.DebugUtil;
+import com.guaigou.cd.minutestohome.util.LocaleUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,22 +16,22 @@ import java.util.List;
  */
 public abstract class GenericBaseAdapter<T> extends BaseAdapter{
 
-	private List<T> data;
+	private List<T> listData = new ArrayList<>();
 	private LayoutInflater mInflater;
 	
 	protected GenericBaseAdapter(Context context, List<T> data){
 		mInflater = LayoutInflater.from(context);
-		this.data = data;
+		addData(data);
 	}
 	
 	@Override
 	public int getCount() {
-		return data == null ? 0 : data.size();
+		return listData.size();
 	}
 	
 	@Override
 	public T getItem(int position) {
-		return data.get(position);
+		return listData.get(position);
 	}
 	
 	@Override
@@ -36,15 +39,16 @@ public abstract class GenericBaseAdapter<T> extends BaseAdapter{
 		return position;
 	}
 
+
 	/**
 	 * 更新一条数据
 	 */
 	public void updateData(int position,T t){
-		if(data == null || position < 0 || position >= data.size()){
+		if(listData == null || position < 0 || position >= listData.size()){
 			return;
 		}
-		data.set(position, t);
-		this.notifyDataSetChanged();
+		listData.set(position, t);
+		notifyDataSetChanged();
 	}
 	
 	/**
@@ -52,8 +56,13 @@ public abstract class GenericBaseAdapter<T> extends BaseAdapter{
 	 * @param newData
 	 */
 	public void setData(List<T> newData){
-		this.data = newData;
-		this.notifyDataSetChanged();
+		DebugUtil.d("GenericBaseAdapter size:" + listData.size());
+		listData.clear();
+		if (!LocaleUtil.isListEmpty(newData)){
+			listData.addAll(newData);
+		}
+		DebugUtil.d("GenericBaseAdapter size:" + listData.size());
+		notifyDataSetChanged();
 	}
 	
 	/**
@@ -61,11 +70,8 @@ public abstract class GenericBaseAdapter<T> extends BaseAdapter{
 	 * @param t
 	 */
 	public void addData(T t){
-		if(data == null){
-			data = new ArrayList<T>();
-		}
-		data.add(t);
-		this.notifyDataSetChanged();
+		listData.add(t);
+		notifyDataSetChanged();
 	}
 	
 	/**
@@ -73,31 +79,18 @@ public abstract class GenericBaseAdapter<T> extends BaseAdapter{
 	 * @param newData
 	 */
 	public void addData(List<T> newData){
-		if(data == null){
-			data = new ArrayList<T>();
+		if (!LocaleUtil.isListEmpty(newData)){
+			listData.addAll(newData);
+			notifyDataSetChanged();
 		}
-		data.addAll(newData);
-		this.notifyDataSetChanged();
 	}
 
-	/**
-	 * 添加一组数据
-	 * @param newData
-	 */
-	public void addData(List<T> newData, int index){
-		if(data == null){
-			data = new ArrayList<T>();
-		}
-		data.addAll(index, newData);
-		this.notifyDataSetChanged();
-	}
-	
 	/**
 	 * 获取数据
 	 * @return
 	 */
 	public List<T> getData(){
-		return data;
+		return listData;
 	}
 	
 	/**

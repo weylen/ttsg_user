@@ -3,10 +3,12 @@ package com.guaigou.cd.minutestohome.entity;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.io.Serializable;
+
 /**
  * Created by weylen on 2016-08-06.
  */
-public class CartEntity implements Parcelable{
+public class CartEntity implements Parcelable, Serializable{
     private String id;
     private String name;
     private String standard;

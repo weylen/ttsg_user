@@ -6,6 +6,7 @@
     >
 
     <LinearLayout
+        android:id="@+id/titleLayout"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:background="@color/themeColor"
@@ -28,7 +29,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1.0"
                 android:background="@color/transparent"
-                android:textSize="@dimen/TextSize_12"
+                android:textSize="@dimen/TextSize_14"
                 android:textColor="@color/themeColor"
                 android:hint="输入商品关键字"
                 android:paddingLeft="10dp"
@@ -85,7 +86,7 @@
             android:drawableTop="@mipmap/img_load_failure"
             android:drawablePadding="3dp"
             android:layout_gravity="center"
-            android:layout_marginBottom="40dp"
+            android:layout_marginBottom="20dp"
             />
     </FrameLayout>
 

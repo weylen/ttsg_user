@@ -9,6 +9,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.guaigou.cd.minutestohome.BasePresenter;
+import com.guaigou.cd.minutestohome.activity.shoppingcart.CartData;
 import com.guaigou.cd.minutestohome.entity.RegionEntity;
 import com.guaigou.cd.minutestohome.cache.Data;
 import com.guaigou.cd.minutestohome.cache.DataCache;
@@ -22,7 +23,9 @@ import com.guaigou.cd.minutestohome.util.DebugUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import rx.Observable;
 import rx.Observer;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -221,25 +224,45 @@ public class MarketPresenter implements BasePresenter{
      * 解析商品数据
      */
     private void parseProductData(boolean isRefresh, String id, JsonObject s){
-        JsonObject root = s.get("data").getAsJsonObject();
-        JsonArray dataArray = root.get("data").getAsJsonArray();
-        Gson gson = new Gson();
-        // 解析列表数据
-        List<ProductEntity> listData = gson.fromJson(dataArray, new TypeToken<List<ProductEntity>>(){}.getType());
-        // 解析图片数据数组
-        JsonObject imgObject = root.get("img").getAsJsonObject();
-        int size = listData == null ? 0 : listData.size();
-        for (int i = 0; i < size; i++){
-            ProductEntity entity = listData.get(i);
+        Observable.create((Observable.OnSubscribe<List<ProductEntity>>) subscriber -> {
+            JsonObject root = s.get("data").getAsJsonObject();
+            JsonArray dataArray = root.get("data").getAsJsonArray();
+            Gson gson = new Gson();
+            // 解析列表数据
+            List<ProductEntity> listData = gson.fromJson(dataArray, new TypeToken<List<ProductEntity>>(){}.getType());
+            // 解析图片数据数组
+            JsonObject imgObject = root.get("img").getAsJsonObject();
+            int size = listData == null ? 0 : listData.size();
+            for (int i = 0; i < size; i++){
+                ProductEntity entity = listData.get(i);
+                entity.setNumber(CartData.INSTANCE.getNumber(entity.getId()));
 //            String imgs = entity.getImg();
-            entity.setImg(imgObject.get(entity.getImg().split(",")[0]).getAsString());
-        }
+                entity.setImg(imgObject.get(entity.getImg().split(",")[0]).getAsString());
+            }
 
-        int max = s.get("maxPage").getAsInt();
-        int current = s.get("pageNum").getAsInt();
-        // 缓存数据
-        cacheProductData(isRefresh, id, max, current, listData);
-        marketView.onLoadProductData(listData, max == current, current > 1);
+            int max = s.get("maxPage").getAsInt();
+            int current = s.get("pageNum").getAsInt();
+            // 缓存数据
+            cacheProductData(isRefresh, id, max, current, listData);
+            subscriber.onNext(listData);
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Subscriber<List<ProductEntity>>() {
+                    @Override
+                    public void onCompleted() {}
+
+                    @Override
+                    public void onError(Throwable e) {
+                        marketView.onLoadFailure();
+                    }
+
+                    @Override
+                    public void onNext(List<ProductEntity> entities) {
+                        int max = s.get("maxPage").getAsInt();
+                        int current = s.get("pageNum").getAsInt();
+                        marketView.onLoadProductData(entities, max == current, current > 1);
+                    }
+                });
     }
 
     /**
@@ -315,37 +338,58 @@ public class MarketPresenter implements BasePresenter{
      * 解析大类数据
      */
     private void doParseData(){
-        marketView.onLoadSuccess();
-        JsonObject allKindData = MarketData.INSTANCE.getKindData();
-        JsonObject regionKindData = MarketData.INSTANCE.getRegionKindData();
-        // 获取所有数据中的data字段
-        JsonObject allKindDataObject = ResponseMgr.getData(allKindData);
-        // 获取最大父类数据
-        JsonArray largeTypeArray = allKindDataObject.get("0").getAsJsonArray();
-        Gson gson = new Gson();
-        // 解析所有大类的数据
-        List<MarketDataEntity> largeTypeArrayData = gson.fromJson(largeTypeArray,
-                new TypeToken<List<MarketDataEntity>>(){}.getType());
-        // 获取当前区域类需要显示的数据集合 包括大类和小类的数据
-        JsonArray regionKindDataArray = regionKindData.get("data").getAsJsonArray();
-        // 解析需要显示的大类的数据
-        List<MarketDataEntity> largeTypeData = new ArrayList<>();
-        int largeTypeLength = largeTypeArrayData.size();
-        int regionKindDataLength = regionKindDataArray.size();
-        // 循环所有的大类数据
-        for (int i = 0; i < largeTypeLength; i++){
-            MarketDataEntity entity = largeTypeArrayData.get(i);
-            // 循环所有的区域id
-            for (int k = 0; k < regionKindDataLength; k++){
-                // 判断2个id是否相等
-                if (entity.getId().equalsIgnoreCase(regionKindDataArray.get(k).getAsString())){
-                    // 相等则添加数据
-                    largeTypeData.add(entity);
-                    break;
+        Observable.create(new Observable.OnSubscribe<List<MarketDataEntity>>() {
+            @Override
+            public void call(Subscriber<? super List<MarketDataEntity>> subscriber) {
+                JsonObject allKindData = MarketData.INSTANCE.getKindData();
+                JsonObject regionKindData = MarketData.INSTANCE.getRegionKindData();
+                // 获取所有数据中的data字段
+                JsonObject allKindDataObject = ResponseMgr.getData(allKindData);
+                // 获取最大父类数据
+                JsonArray largeTypeArray = allKindDataObject.get("0").getAsJsonArray();
+                Gson gson = new Gson();
+                // 解析所有大类的数据
+                List<MarketDataEntity> largeTypeArrayData = gson.fromJson(largeTypeArray,
+                        new TypeToken<List<MarketDataEntity>>(){}.getType());
+                // 获取当前区域类需要显示的数据集合 包括大类和小类的数据
+                JsonArray regionKindDataArray = regionKindData.get("data").getAsJsonArray();
+                // 解析需要显示的大类的数据
+                List<MarketDataEntity> largeTypeData = new ArrayList<>();
+                int largeTypeLength = largeTypeArrayData.size();
+                int regionKindDataLength = regionKindDataArray.size();
+                // 循环所有的大类数据
+                for (int i = 0; i < largeTypeLength; i++){
+                    MarketDataEntity entity = largeTypeArrayData.get(i);
+                    // 循环所有的区域id
+                    for (int k = 0; k < regionKindDataLength; k++){
+                        // 判断2个id是否相等
+                        if (entity.getId().equalsIgnoreCase(regionKindDataArray.get(k).getAsString())){
+                            entity.setNumber(CartData.INSTANCE.getKindNumber(entity.getId()));
+                            // 相等则添加数据
+                            largeTypeData.add(entity);
+                            break;
+                        }
+                    }
                 }
+                subscriber.onNext(largeTypeArrayData);
             }
-        }
-        marketView.onLoadLargeTypeData(largeTypeData);
+        }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Subscriber<List<MarketDataEntity>>() {
+                    @Override
+                    public void onCompleted() {}
+
+                    @Override
+                    public void onError(Throwable e) {
+                        marketView.onLoadFailure();
+                    }
+
+                    @Override
+                    public void onNext(List<MarketDataEntity> dataEntities) {
+                        marketView.onLoadSuccess();
+                        marketView.onLoadLargeTypeData(dataEntities);
+                    }
+                });
     }
 
     /**

@@ -10,6 +10,7 @@ public class MarketDataEntity implements Parcelable{
     private String id;
     private String pid;
     private String name;
+    private int number;
 
     public MarketDataEntity() {
     }
@@ -24,6 +25,7 @@ public class MarketDataEntity implements Parcelable{
         id = in.readString();
         pid = in.readString();
         name = in.readString();
+        number = in.readInt();
     }
 
     public static final Creator<MarketDataEntity> CREATOR = new Creator<MarketDataEntity>() {
@@ -62,6 +64,14 @@ public class MarketDataEntity implements Parcelable{
         this.name = name;
     }
 
+    public void setNumber(int number) {
+        this.number = number;
+    }
+
+    public int getNumber() {
+        return number;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -72,5 +82,6 @@ public class MarketDataEntity implements Parcelable{
         dest.writeString(id);
         dest.writeString(pid);
         dest.writeString(name);
+        dest.writeInt(number);
     }
 }

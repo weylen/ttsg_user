@@ -17,6 +17,7 @@ import com.guaigou.cd.minutestohome.entity.RegionEntity;
 import com.guaigou.cd.minutestohome.activity.market.MarketFragment;
 import com.guaigou.cd.minutestohome.prefs.CartPrefs;
 import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
+import com.guaigou.cd.minutestohome.util.DebugUtil;
 import com.guaigou.cd.minutestohome.util.DialogUtil;
 
 import butterknife.Bind;
@@ -65,6 +66,12 @@ public class MainActivity extends BaseActivity{
         initViews();
 
         marketFragment = new MarketFragment();
+
+        int numberAll = CartData.INSTANCE.getNumberAll();
+        if (numberAll > 0) {
+            cartNumView.setVisibility(View.VISIBLE);
+            cartNumView.setText(String.valueOf(numberAll));
+        }
     }
 
     /**
@@ -149,12 +156,18 @@ public class MainActivity extends BaseActivity{
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        DebugUtil.d("MainActivity 执行onStop");
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         ButterKnife.unbind(this);
-        CartData.INSTANCE.unregisterObserver(subscriber);
         // 保存购物车的数据
         saveCartData();
+        CartData.INSTANCE.unregisterObserver(subscriber);
     }
 
     /**
@@ -162,6 +175,7 @@ public class MainActivity extends BaseActivity{
      */
     private void saveCartData(){
         if (LoginData.INSTANCE.isLogin(this)){
+            DebugUtil.d("MainActivity 保存数据 ：" + CartData.INSTANCE.getData());
             CartPrefs.saveCartData(this, CartData.INSTANCE.getData());
         }
     }

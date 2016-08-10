@@ -10,6 +10,8 @@ import com.guaigou.cd.minutestohome.entity.ProductEntity;
 import com.guaigou.cd.minutestohome.entity.RegionEntity;
 import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
 
+import java.util.List;
+
 /**
  * Created by weylen on 2016-08-03.
  */
@@ -32,6 +34,15 @@ public class LocaleUtil {
     public static boolean hasChooseRegion(Context context){
         RegionEntity regionEntity = RegionPrefs.getRegionData(context);
         return regionEntity != null && !TextUtils.isEmpty(regionEntity.getId());
+    }
+
+    /**
+     * 判断列表数据是否为空
+     * @param data
+     * @return
+     */
+    public static boolean isListEmpty(List<?> data){
+        return data == null || data.isEmpty();
     }
 
     /**

@@ -4,11 +4,13 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
+import android.widget.TextView;
 
 import com.guaigou.cd.minutestohome.R;
 import com.guaigou.cd.minutestohome.entity.MarketDataEntity;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
 
+import java.util.Enumeration;
 import java.util.List;
 
 /**
@@ -25,21 +27,24 @@ public class LargeTypeAdapter extends GenericBaseAdapter<MarketDataEntity>{
     public void setCheckedPosition(int checkedPosition) {
         this.checkedPosition = checkedPosition;
         notifyDataSetChanged();
-        DebugUtil.d("LargeTypeAdapter setCheckedPosition ，，，，position:" + checkedPosition);
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        final RadioButton radioButton;
         if (convertView == null){
-            radioButton = (RadioButton) getInflater().inflate(R.layout.view_product_bigtype, parent, false);
-        }else {
-            radioButton = (RadioButton) convertView;
+            convertView = getInflater().inflate(R.layout.view_product_bigtype, parent, false);
         }
+        MarketDataEntity entity = getItem(position);
 
+        final RadioButton radioButton = (RadioButton) convertView.findViewById(R.id.item_radio);
         radioButton.setChecked(position == checkedPosition);
-        radioButton.setText(getItem(position).getName());
+        radioButton.setText(entity.getName());
 
-        return radioButton;
+        final TextView numberView = (TextView) convertView.findViewById(R.id.item_num);
+        int num = entity.getNumber();
+        numberView.setText(String.valueOf(num));
+        numberView.setVisibility(num <= 0 ? View.GONE : View.VISIBLE);
+
+        return convertView;
     }
 }

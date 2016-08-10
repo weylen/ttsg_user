@@ -23,6 +23,7 @@ import com.guaigou.cd.minutestohome.entity.CartEntity;
 import com.guaigou.cd.minutestohome.http.HttpService;
 import com.guaigou.cd.minutestohome.http.ResponseMgr;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
+import com.guaigou.cd.minutestohome.prefs.CartPrefs;
 import com.guaigou.cd.minutestohome.prefs.LoginPrefs;
 import com.guaigou.cd.minutestohome.util.CartUtil;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
@@ -134,8 +135,13 @@ public class LoginActivity extends BaseActivity implements LoginView{
     public void loginSuccess(AccountEntity accountEntity) {
         LoginPrefs.setAccountInfo(getApplicationContext(), accountEntity);
 //        showProgressDialog("登录成功，正在获取购物车信息");
-        // 获取购物车信息
-        remoteCart();
+        String name = CartPrefs.getCartName(this);
+        if (!TextUtils.isEmpty(name) && name.equalsIgnoreCase(accountEntity.getUname())){
+            // 获取购物车信息
+            remoteCart();
+        }else {
+            CartPrefs.saveCartData(this, null);
+        }
     }
 
     @Override

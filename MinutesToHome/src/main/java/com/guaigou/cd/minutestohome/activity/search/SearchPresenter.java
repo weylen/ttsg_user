@@ -6,6 +6,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.guaigou.cd.minutestohome.BasePresenter;
+import com.guaigou.cd.minutestohome.activity.shoppingcart.CartData;
 import com.guaigou.cd.minutestohome.entity.ProductEntity;
 import com.guaigou.cd.minutestohome.http.Constants;
 import com.guaigou.cd.minutestohome.http.HttpService;
@@ -15,7 +16,9 @@ import com.guaigou.cd.minutestohome.util.DebugUtil;
 
 import java.util.List;
 
+import rx.Observable;
 import rx.Observer;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -106,29 +109,53 @@ public class SearchPresenter implements BasePresenter {
      * 解析商品数据
      */
     private void parseProductData(JsonObject s){
-        JsonObject root = s.get("data").getAsJsonObject();
-        JsonArray dataArray = root.get("data").getAsJsonArray();
-        Gson gson = new Gson();
-        // 解析列表数据
-        List<ProductEntity> listData = gson.fromJson(dataArray, new TypeToken<List<ProductEntity>>(){}.getType());
-        // 解析图片数据数组
-        JsonObject imgObject = root.get("img").getAsJsonObject();
-        int size = listData == null ? 0 : listData.size();
-        for (int i = 0; i < size; i++){
-            ProductEntity entity = listData.get(i);
-//            String imgs = entity.getImg();
-            entity.setImg(imgObject.get(entity.getImg().split(",")[0]).getAsString());
-        }
+        Observable.create(new Observable.OnSubscribe<List<ProductEntity>>() {
+            @Override
+            public void call(Subscriber<? super List<ProductEntity>> subscriber) {
+                JsonObject root = s.get("data").getAsJsonObject();
+                JsonArray dataArray = root.get("data").getAsJsonArray();
+                Gson gson = new Gson();
+                // 解析列表数据
+                List<ProductEntity> listData = gson.fromJson(dataArray, new TypeToken<List<ProductEntity>>(){}.getType());
+                // 解析图片数据数组
+                JsonObject imgObject = root.get("img").getAsJsonObject();
+                int size = listData == null ? 0 : listData.size();
+                for (int i = 0; i < size; i++){
+                    ProductEntity entity = listData.get(i);
+                    entity.setNumber(CartData.INSTANCE.getNumber(entity.getId()));
+                    entity.setImg(imgObject.get(entity.getImg().split(",")[0]).getAsString());
+                }
 
-        int max = s.get("maxPage").getAsInt();
-        int current = s.get("pageNum").getAsInt();
-        // 缓存数据
-        searchView.onSearchSuccess(listData, max == current);
-        SearchData.INSTANCE.pageNum = current;
-        if (current > 1){ // 加载更多
-            searchView.onLoadmoreSuccess(listData, listData.size() < Constants.DEFAULT_PAGE_SIZE);
-        }else {
-            searchView.onSearchSuccess(listData, listData.size() < Constants.DEFAULT_PAGE_SIZE);
-        }
+                int max = s.get("maxPage").getAsInt();
+                int current = s.get("pageNum").getAsInt();
+                // 缓存数据
+                searchView.onSearchSuccess(listData, max == current);
+                SearchData.INSTANCE.pageNum = current;
+                subscriber.onNext(listData);
+            }
+            }).observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Subscriber<List<ProductEntity>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(List<ProductEntity> entities) {
+                        int max = s.get("maxPage").getAsInt();
+                        int current = s.get("pageNum").getAsInt();
+                        if (current > 1){ // 加载更多
+                            searchView.onLoadmoreSuccess(entities, max == current);
+                        }else {
+                            searchView.onSearchSuccess(entities, max == current);
+                        }
+                    }
+                });
     }
 }

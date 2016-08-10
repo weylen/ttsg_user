@@ -110,7 +110,7 @@
 
         <activity android:name=".activity.search.SearchActivity" android:screenOrientation="portrait"
             android:configChanges="screenSize|keyboard|orientation|uiMode|screenLayout"
-            android:windowSoftInputMode="adjustPan|stateVisible"
+            android:windowSoftInputMode="adjustPan|stateHidden"
             />
 
         <activity android:name=".activity.productdetails.ProductDetailsActivity" android:screenOrientation="portrait"

@@ -1,10 +1,17 @@
 package com.guaigou.cd.minutestohome.activity.shoppingcart;
 
 import com.google.common.base.Preconditions;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.guaigou.cd.minutestohome.activity.market.MarketData;
 import com.guaigou.cd.minutestohome.entity.CartEntity;
 import com.guaigou.cd.minutestohome.entity.ProductEntity;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
 import com.guaigou.cd.minutestohome.util.LocaleUtil;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,13 +27,14 @@ public enum CartData {
     INSTANCE;
 
     private List<CartEntity> data;
+    private int numberAll;
 
     private Observable<Integer> observable;
     private List<Subscriber> subscriberList;
 
     CartData(){
         observable = Observable.create((Observable.OnSubscribe<Integer>) subscriber1 -> {
-            subscriber1.onNext(getNumberAll());
+            subscriber1.onNext(numberAll);
         });
     }
 
@@ -48,6 +56,8 @@ public enum CartData {
 
     public void setData(List<CartEntity> data) {
         this.data = data;
+        numberAll = getNumber(data);
+        notifyDataChanged();
     }
 
     /**
@@ -68,16 +78,39 @@ public enum CartData {
     }
 
     /**
+     * @param kindId 大类id
+     * @return
+     */
+    public int getKindNumber(String kindId){
+        JsonObject jsonObject = MarketData.INSTANCE.getKindData();
+        JsonArray array = jsonObject.get("data").getAsJsonObject().get(kindId).getAsJsonArray();
+        List<String> ids = new ArrayList<>();
+        int size = array.size();
+        for (int i = 0; i < size; i++){
+            ids.add(array.get(i).getAsJsonObject().get("id").getAsString());
+        }
+        int number = 0;
+        if (!LocaleUtil.isListEmpty(data)){
+            for (CartEntity entity : data){
+                if (ids.contains(entity.getKind())){
+                    number += entity.getAmount();
+                }
+            }
+        }
+        return number;
+    }
+
+    /**
      * 获取所有商品的数量
      * @return
      */
     public int getNumberAll(){
-        ensureData();
-        int number = 0;
-        for (CartEntity entity : data){
-            number += entity.getAmount();
-        }
-        return number;
+        return numberAll;
+    }
+
+    private void lesNumber(){
+        numberAll -= 1;
+        numberAll = numberAll <=0 ? 0 : numberAll;
     }
 
     /**
@@ -90,6 +123,7 @@ public enum CartData {
             if (cartEntity.getId().equalsIgnoreCase(entity.getId())){
                 num = cartEntity.getAmount();
                 num--;
+                lesNumber();
                 num = num <= 0 ? 0 : num;
                 cartEntity.setAmount(num);
                 if (num == 0){
@@ -109,7 +143,7 @@ public enum CartData {
     public int numberAdd(ProductEntity entity){
         ensureData();
         int num = 0;
-        if (data.size() == 0){ // 如果没有列表数据
+        if (LocaleUtil.isListEmpty(data)){ // 如果没有列表数据
             entity.setNumber(1);
             data.add(LocaleUtil.format2CartEntity(entity));
             num = 1;
@@ -130,13 +164,25 @@ public enum CartData {
                 num = 1;
             }
         }
+        numberAll++;
         notifyDataChanged();
+        return num;
+    }
+
+    private int getNumber(List<CartEntity> deleteData){
+        int num = 0;
+        if (!LocaleUtil.isListEmpty(deleteData)){
+            for (CartEntity entity : deleteData){
+                num += entity.getAmount();
+            }
+        }
         return num;
     }
 
     public void removeAll(List<CartEntity> deleteData){
         ensureData();
         data.removeAll(deleteData);
+        numberAll -= getNumber(deleteData);
         notifyDataChanged();
     }
 
