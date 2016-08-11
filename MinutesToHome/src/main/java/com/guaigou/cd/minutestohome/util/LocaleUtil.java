@@ -46,6 +46,15 @@ public class LocaleUtil {
     }
 
     /**
+     * 判断购物车的商品是否已经下架
+     * @param cartEntity
+     * @return
+     */
+    public static boolean isShelves(CartEntity cartEntity){
+        return "2".equalsIgnoreCase(cartEntity.getStauts());
+    }
+
+    /**
      * 判断网络是否可用
      * @param context
      * @return

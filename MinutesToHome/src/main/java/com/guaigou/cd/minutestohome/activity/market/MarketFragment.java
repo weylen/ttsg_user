@@ -95,7 +95,7 @@ public class MarketFragment extends BaseFragment implements MarketView, MarketPr
             MarketData.INSTANCE.smallTypeIndex = position;
             MarketData.INSTANCE.listSelectIndex = 0;
             if (lastSmallTypeId == null || !entity.getId().equalsIgnoreCase(lastSmallTypeId)){
-                marketPresenter.getProductsList(lastLargeTypeId, entity.getId(), adapter.getData());
+                marketPresenter.getProductsList(lastLargeTypeId, entity.getId());
                 smallTypeAdapter.setCheckedPosition(position);
             }
             lastSmallTypeId = entity.getId();
@@ -280,7 +280,7 @@ public class MarketFragment extends BaseFragment implements MarketView, MarketPr
             smallTypeAdapter.setCheckedPosition(index);
             lastSmallTypeId = dataEntityList.get(index).getId();
             zListView.setState(ZListView.State.STATE_NORMAL);
-            marketPresenter.getProductsList(parentId, lastSmallTypeId, adapter.getData());
+            marketPresenter.getProductsList(parentId, lastSmallTypeId);
         }
     }
 

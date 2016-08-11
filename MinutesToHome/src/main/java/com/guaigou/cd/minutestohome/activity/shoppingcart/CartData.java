@@ -101,7 +101,7 @@ public enum CartData {
         int number = 0;
         if (!LocaleUtil.isListEmpty(data)){
             for (CartEntity entity : data){
-                if (ids.contains(entity.getKind())){
+                if (ids.contains(entity.getKind()) && !LocaleUtil.isShelves(entity)){
                     number += entity.getAmount();
                 }
             }

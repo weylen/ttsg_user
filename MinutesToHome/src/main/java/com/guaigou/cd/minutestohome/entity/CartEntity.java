@@ -10,7 +10,7 @@ import java.io.Serializable;
  */
 public class CartEntity implements Parcelable, Serializable{
 
-    private String id, name, standard, kind, imgPath, buyPrice, salePrice, stock, info, promote, status, begin, end;
+    private String id, name, standard, kind, imgPath, buyPrice, salePrice, stock, info, promote, stauts, begin, end;
     private int amount;
 
     public CartEntity(){}
@@ -26,7 +26,7 @@ public class CartEntity implements Parcelable, Serializable{
         stock = in.readString();
         info = in.readString();
         promote = in.readString();
-        status = in.readString();
+        stauts = in.readString();
         begin = in.readString();
         end = in.readString();
         amount = in.readInt();
@@ -61,7 +61,7 @@ public class CartEntity implements Parcelable, Serializable{
         dest.writeString(stock);
         dest.writeString(info);
         dest.writeString(promote);
-        dest.writeString(status);
+        dest.writeString(stauts);
         dest.writeString(begin);
         dest.writeString(end);
         dest.writeInt(amount);
@@ -147,12 +147,12 @@ public class CartEntity implements Parcelable, Serializable{
         this.promote = promote;
     }
 
-    public String getStatus() {
-        return status;
+    public String getStauts() {
+        return stauts;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setStauts(String stauts) {
+        this.stauts = stauts;
     }
 
     public String getBegin() {

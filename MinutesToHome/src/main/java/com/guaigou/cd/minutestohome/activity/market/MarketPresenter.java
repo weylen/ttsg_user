@@ -149,8 +149,7 @@ public class MarketPresenter implements BasePresenter{
     /**
      * @param typeId 类别id 传大类id获取整个大类的数据 传小类id获取小类数据 不传获取全部数据
      */
-    public void getProductsList(String largeTypeId, String typeId, List<ProductEntity> oldListData){
-//        alertCacheData(oldListData);
+    public void getProductsList(String largeTypeId, String typeId){
         // 记录当前数据的父类id
         MarketData.INSTANCE.currentProductId = typeId;
         MarketData.INSTANCE.currentLargeId = largeTypeId;
@@ -182,21 +181,8 @@ public class MarketPresenter implements BasePresenter{
                         })
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(entities -> {
-                            DebugUtil.d("MarketPresenter 经过缓存");
                             marketView.onLoadProductData(entities, isLoadComplete, false);
                         });
-            }
-        }
-    }
-
-    public void alertCacheData(List<ProductEntity> oldListData){
-        // 在这里缓存之前的数据
-        if (!LocaleUtil.isListEmpty(oldListData)){
-            String smallId = MarketData.INSTANCE.currentProductId;
-            String primaryTag = getPrimaryTag(smallId);
-            Data<?> data = DataCache.INSTANCE.getData(primaryTag);
-            if (data != null){
-                cacheProductData(true, smallId, data.getMaxPageNum(), data.getPageNum(), oldListData);
             }
         }
     }
