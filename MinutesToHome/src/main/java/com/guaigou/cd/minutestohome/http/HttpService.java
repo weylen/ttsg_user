@@ -97,10 +97,15 @@ public interface HttpService {
 
     /**
      * 获取购物车列表
+     * @param info 商品id id,id
      * @return
      */
-    @POST("csca-")
-    Observable<JsonObject> getCartList();
+    @FormUrlEncoded
+    @POST("csca-detail")
+    Observable<JsonObject> getCartList(
+            @Field("Key") String info,
+            @Field("areaId") String areaId
+    );
 
 
     /**
@@ -124,15 +129,4 @@ public interface HttpService {
             @Field("text") String content
     );
 
-    @FormUrlEncoded
-    @POST("csca-del")
-    Observable<JsonObject> deleteCart(
-            @Field("key") String key
-    );
-
-    @FormUrlEncoded
-    @POST("csca-store")
-    Observable<JsonObject> save2cart(
-            @Field("key") String key
-    );
 }

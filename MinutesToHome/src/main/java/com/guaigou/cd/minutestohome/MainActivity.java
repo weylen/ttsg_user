@@ -72,6 +72,9 @@ public class MainActivity extends BaseActivity{
             cartNumView.setVisibility(View.VISIBLE);
             cartNumView.setText(String.valueOf(numberAll));
         }
+
+        // 注册观察者
+        CartData.INSTANCE.registerObserver(subscriber);
     }
 
     /**
@@ -151,14 +154,6 @@ public class MainActivity extends BaseActivity{
     @Override
     protected void onResume() {
         super.onResume();
-        // 注册观察者
-        CartData.INSTANCE.registerObserver(subscriber);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        DebugUtil.d("MainActivity 执行onStop");
     }
 
     @Override
@@ -175,7 +170,6 @@ public class MainActivity extends BaseActivity{
      */
     private void saveCartData(){
         if (LoginData.INSTANCE.isLogin(this)){
-            DebugUtil.d("MainActivity 保存数据 ：" + CartData.INSTANCE.getData());
             CartPrefs.saveCartData(this, CartData.INSTANCE.getData());
         }
     }

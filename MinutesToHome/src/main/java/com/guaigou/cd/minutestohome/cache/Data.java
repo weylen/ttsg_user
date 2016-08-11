@@ -8,6 +8,7 @@ import java.util.List;
 public class Data<T> {
 
     private int pageNum = 1;
+    private int maxPageNum = 1;
 
     private List<T> listData;
 
@@ -45,5 +46,13 @@ public class Data<T> {
 
     public void setTag(Object tag) {
         this.tag = tag;
+    }
+
+    public int getMaxPageNum() {
+        return maxPageNum;
+    }
+
+    public void setMaxPageNum(int maxPageNum) {
+        this.maxPageNum = maxPageNum;
     }
 }

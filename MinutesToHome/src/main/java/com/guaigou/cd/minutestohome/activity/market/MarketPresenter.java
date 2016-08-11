@@ -19,6 +19,7 @@ import com.guaigou.cd.minutestohome.http.HttpService;
 import com.guaigou.cd.minutestohome.http.ResponseMgr;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
+import com.guaigou.cd.minutestohome.util.LocaleUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,9 @@ import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.ActionN;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -145,11 +149,15 @@ public class MarketPresenter implements BasePresenter{
     /**
      * @param typeId 类别id 传大类id获取整个大类的数据 传小类id获取小类数据 不传获取全部数据
      */
-    public void getProductsList(String typeId){
+    public void getProductsList(String largeTypeId, String typeId, List<ProductEntity> oldListData){
+//        alertCacheData(oldListData);
         // 记录当前数据的父类id
         MarketData.INSTANCE.currentProductId = typeId;
+        MarketData.INSTANCE.currentLargeId = largeTypeId;
+
+        String primaryTag = getPrimaryTag(typeId);
         // 先取缓存的数据
-        Data<?> data = DataCache.INSTANCE.getData(typeId);
+        Data<?> data = DataCache.INSTANCE.getData(primaryTag);
         if (data == null){ // 判断缓存的数据对象
             marketView.onStartLoadProductList();
             getRemoteProductData(true, typeId, 1);
@@ -157,12 +165,38 @@ public class MarketPresenter implements BasePresenter{
             // 获取缓存的列表数据
             List<ProductEntity> listData = (List<ProductEntity>) data.getListData();
             // 列表数据不存在
-            if (listData == null || listData.size() == 0){
-                marketView.onStartLoading();
+            if (LocaleUtil.isListEmpty(listData)){
+                marketView.onStartLoadProductList();
                 getRemoteProductData(true, typeId, 1);
             }else {
+                marketView.onStartLoadProductList();
                 boolean isLoadComplete = data.isLoadComplete();
-                marketView.onLoadProductData(listData, isLoadComplete, false);
+                Observable.just(listData)
+                        .subscribeOn(Schedulers.io())
+                        .map((Func1<List<ProductEntity>, List<ProductEntity>>) entities -> {
+                            ArrayList<ProductEntity> cloneData = (ArrayList<ProductEntity>) ((ArrayList)entities).clone();
+                            for (ProductEntity entity : cloneData){
+                                entity.setNumber(CartData.INSTANCE.getNumber(entity.getId()));
+                            }
+                            return cloneData;
+                        })
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(entities -> {
+                            DebugUtil.d("MarketPresenter 经过缓存");
+                            marketView.onLoadProductData(entities, isLoadComplete, false);
+                        });
+            }
+        }
+    }
+
+    public void alertCacheData(List<ProductEntity> oldListData){
+        // 在这里缓存之前的数据
+        if (!LocaleUtil.isListEmpty(oldListData)){
+            String smallId = MarketData.INSTANCE.currentProductId;
+            String primaryTag = getPrimaryTag(smallId);
+            Data<?> data = DataCache.INSTANCE.getData(primaryTag);
+            if (data != null){
+                cacheProductData(true, smallId, data.getMaxPageNum(), data.getPageNum(), oldListData);
             }
         }
     }
@@ -184,7 +218,6 @@ public class MarketPresenter implements BasePresenter{
                     @Override
                     public void onError(Throwable e) {
                         isLoading = false;
-                        DebugUtil.d("onError--"+e.getMessage());
                         doError(pageNum, typeId);
                     }
 
@@ -223,7 +256,7 @@ public class MarketPresenter implements BasePresenter{
     /**
      * 解析商品数据
      */
-    private void parseProductData(boolean isRefresh, String id, JsonObject s){
+    private void parseProductData(boolean isRefresh, String typeId, JsonObject s){
         Observable.create((Observable.OnSubscribe<List<ProductEntity>>) subscriber -> {
             JsonObject root = s.get("data").getAsJsonObject();
             JsonArray dataArray = root.get("data").getAsJsonArray();
@@ -236,6 +269,7 @@ public class MarketPresenter implements BasePresenter{
             for (int i = 0; i < size; i++){
                 ProductEntity entity = listData.get(i);
                 entity.setNumber(CartData.INSTANCE.getNumber(entity.getId()));
+                entity.setLargeTypeId(MarketData.INSTANCE.currentLargeId);
 //            String imgs = entity.getImg();
                 entity.setImg(imgObject.get(entity.getImg().split(",")[0]).getAsString());
             }
@@ -243,7 +277,7 @@ public class MarketPresenter implements BasePresenter{
             int max = s.get("maxPage").getAsInt();
             int current = s.get("pageNum").getAsInt();
             // 缓存数据
-            cacheProductData(isRefresh, id, max, current, listData);
+            cacheProductData(isRefresh, typeId, max, current, listData);
             subscriber.onNext(listData);
         }).observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
@@ -268,9 +302,11 @@ public class MarketPresenter implements BasePresenter{
     /**
      * 缓存商品数据
      */
-    private void cacheProductData(boolean isRefresh, String id, int maxNum, int pageNum, List<ProductEntity> listData){
-        MarketData.INSTANCE.currentProductId = id;
-        Data<?> d = DataCache.INSTANCE.getData(id);
+    private void cacheProductData(boolean isRefresh, String typeId, int maxNum, int pageNum, List<ProductEntity> listData){
+        MarketData.INSTANCE.currentProductId = typeId;
+
+        String primaryTag = getPrimaryTag(typeId);
+        Data<?> d = DataCache.INSTANCE.getData(primaryTag);
         List<ProductEntity> saveListData;
         if (d != null){
             saveListData = (List<ProductEntity>) d.getListData();
@@ -286,11 +322,17 @@ public class MarketPresenter implements BasePresenter{
         }
 
         Data<ProductEntity> data = new Data<>();
-        data.setTag(id);
+        data.setTag(typeId);
         data.setLoadComplete(maxNum == pageNum);
         data.setPageNum(pageNum);
+        data.setMaxPageNum(maxNum);
         data.setListData(saveListData);
-        DataCache.INSTANCE.putData(id, data);
+        DataCache.INSTANCE.remove(primaryTag);
+        DataCache.INSTANCE.putData(primaryTag, data);
+    }
+
+    private String getPrimaryTag(String typeId){
+        return MarketData.INSTANCE.currentLargeId + "-" + typeId;
     }
 
     /**

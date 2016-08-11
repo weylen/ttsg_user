@@ -1,12 +1,10 @@
 package com.guaigou.cd.minutestohome.activity.shoppingcart;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -17,16 +15,12 @@ import com.guaigou.cd.minutestohome.activity.confirmorder.ConfirmOrderActivity;
 import com.guaigou.cd.minutestohome.activity.productdetails.ProductDetailsActivity;
 import com.guaigou.cd.minutestohome.adapter.CartAdapter;
 import com.guaigou.cd.minutestohome.entity.CartEntity;
-import com.guaigou.cd.minutestohome.entity.ProductEntity;
-import com.guaigou.cd.minutestohome.util.DebugUtil;
 import com.guaigou.cd.minutestohome.util.LocaleUtil;
 import com.guaigou.cd.minutestohome.util.MathUtil;
 import com.guaigou.cd.minutestohome.view.EmptyViewHelper;
 import com.guaigou.cd.minutestohome.view.ZListView;
 import com.guaigou.cd.minutestohome.view.ZRefreshingView;
-import com.rey.material.app.SimpleDialog;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -77,21 +71,19 @@ public class CartFragment extends BaseFragment implements CartView{
             zRefreshingView.setRefreshing(true);
             refresh();
         });
+
         adapter = new CartAdapter(getActivity(), CartData.INSTANCE.getData());
         zListView.setAdapter(adapter);
         zListView.setLoadComplete(true);
 
         presenter = new CartPresenter(this);
 
-        // TODO 请求服务器数据
         if (adapter.getCount() == 0){
             editView.setVisibility(View.GONE);
             paymentLayout.setVisibility(View.GONE);
         }else{
-            // TODO 计算总价格
             calculateAllPrice();
         }
-
     }
 
     void refresh(){

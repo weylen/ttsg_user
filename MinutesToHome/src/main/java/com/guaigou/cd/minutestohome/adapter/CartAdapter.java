@@ -20,6 +20,7 @@ import com.guaigou.cd.minutestohome.activity.shoppingcart.CartData;
 import com.guaigou.cd.minutestohome.entity.CartEntity;
 import com.guaigou.cd.minutestohome.entity.ProductEntity;
 import com.guaigou.cd.minutestohome.http.Constants;
+import com.guaigou.cd.minutestohome.util.DebugUtil;
 import com.guaigou.cd.minutestohome.util.LocaleUtil;
 import com.guaigou.cd.minutestohome.util.ParseUtil;
 import com.jakewharton.rxbinding.view.RxView;
@@ -138,7 +139,7 @@ public class CartAdapter extends GenericBaseAdapter<CartEntity>{
         holder.numView.setText(String.valueOf(n));
 
         RxView.clicks(holder.addNumView)
-                .debounce(50, TimeUnit.MILLISECONDS)
+                .debounce(20, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(aVoid -> {
                     String reserve = entity.getStock();
@@ -155,10 +156,12 @@ public class CartAdapter extends GenericBaseAdapter<CartEntity>{
                     }
                     entity.setAmount(num);
                     holder.numView.setText(String.valueOf(num));
+                    CartData.INSTANCE.addNumber();
+                    CartData.INSTANCE.notifyDataChanged();
                 });
 
         RxView.clicks(holder.lesNumView)
-                .debounce(50, TimeUnit.MILLISECONDS)
+                .debounce(20, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(aVoid -> {
                     int num = entity.getAmount() - 1;
@@ -167,6 +170,9 @@ public class CartAdapter extends GenericBaseAdapter<CartEntity>{
                         return;
                     }
                     holder.numView.setText(String.valueOf(num));
+                    entity.setAmount(num);
+                    CartData.INSTANCE.lesNumber();
+                    CartData.INSTANCE.notifyDataChanged();
                 });
         String imgPath = entity.getImgPath();
         Glide.with(context)
@@ -191,8 +197,14 @@ public class CartAdapter extends GenericBaseAdapter<CartEntity>{
                 })
                 .setPositiveButton("确定", (dialog, which) -> {
                     dialog.dismiss();
+                    entity.setAmount(0);
                     getData().remove(entity);
-                });
+                    CartData.INSTANCE.getData().remove(entity);
+                    CartData.INSTANCE.lesNumber();
+                    CartData.INSTANCE.notifyDataChanged();
+                    notifyDataSetChanged();
+
+                }).show();
     }
 
     private void showSnakeView(String message){

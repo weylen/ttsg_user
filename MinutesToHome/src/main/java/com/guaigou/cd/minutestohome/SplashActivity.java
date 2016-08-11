@@ -99,12 +99,67 @@ public class SplashActivity extends BaseActivity {
 
     private void remoteCart() {
         CartUtil.INSTANCE.remoteCart(this, () -> {
-            end = System.currentTimeMillis();
-            peekInHome();
+            getCartDetails();
         });
     }
 
+    private void getCartDetails(){
+        List<CartEntity> entities = CartData.INSTANCE.getData();
+        if (LocaleUtil.isListEmpty(entities)){
+            peekInHome();
+            return;
+        }
+        StringBuilder builder = new StringBuilder();
+        for (CartEntity entity : entities){
+            builder.append(entity.getId()+",");
+        }
+        builder.deleteCharAt(builder.length()-1);
+        RetrofitFactory.getRetrofit().create(HttpService.class)
+                .getCartList(builder.toString(), RegionPrefs.getRegionData(this).getId())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Observer<JsonObject>() {
+                    @Override
+                    public void onCompleted() {}
+
+                    @Override
+                    public void onError(Throwable e) {
+                        peekInHome();
+                    }
+
+                    @Override
+                    public void onNext(JsonObject s) {
+                        DebugUtil.d("SplashActivity 获取购物车的数据：" + s);
+                        int status = ResponseMgr.getStatus(s);
+                        if (status == 1){
+                            parseCartData(s);
+                        }
+                        peekInHome();
+                    }
+                });
+    }
+
+    private void parseCartData(JsonObject s){
+        Gson gson = new Gson();
+        List<CartEntity> cartEntities = gson.fromJson(s.get("data").getAsJsonArray(),
+                new TypeToken<List<CartEntity>>(){}.getType());
+
+        List<CartEntity> entities = CartData.INSTANCE.getData();
+        if (!LocaleUtil.isListEmpty(cartEntities)){
+            for (CartEntity entity : cartEntities){
+                for (CartEntity oldEntity : entities){
+                    if (entity.getId().equalsIgnoreCase(oldEntity.getId())){
+                        entity.setAmount(oldEntity.getAmount());
+                        break;
+                    }
+                }
+            }
+        }
+        CartData.INSTANCE.setData(cartEntities);
+    }
+
     private void peekInHome(){
+        end = System.currentTimeMillis();
         new Handler().postDelayed(() -> {
             Intent intent = new Intent(this, MainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -125,13 +180,11 @@ public class SplashActivity extends BaseActivity {
                     @Override
                     public void onError(Throwable e) {
                         end = System.currentTimeMillis();
-                        DebugUtil.d("remoteRegion 获取小区数据失败：" + e.getMessage());
                         peekInRegion();
                     }
 
                     @Override
                     public void onNext(JsonObject s) {
-                        DebugUtil.d("获取小区数据c成功：" + s);
                         end = System.currentTimeMillis();
                         int status = ResponseMgr.getStatus(s);
                         if (status == 1){

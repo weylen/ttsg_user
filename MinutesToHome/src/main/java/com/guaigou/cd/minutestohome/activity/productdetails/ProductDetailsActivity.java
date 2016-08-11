@@ -15,6 +15,7 @@ import com.guaigou.cd.minutestohome.BaseActivity;
 import com.guaigou.cd.minutestohome.MainActivity;
 import com.guaigou.cd.minutestohome.R;
 import com.guaigou.cd.minutestohome.activity.login.LoginData;
+import com.guaigou.cd.minutestohome.activity.market.MarketData;
 import com.guaigou.cd.minutestohome.activity.shoppingcart.CartData;
 import com.guaigou.cd.minutestohome.entity.ProductEntity;
 import com.guaigou.cd.minutestohome.http.Constants;
@@ -23,9 +24,12 @@ import com.guaigou.cd.minutestohome.util.LocaleUtil;
 import com.guaigou.cd.minutestohome.util.ParseUtil;
 import com.rey.material.widget.Button;
 
+import org.w3c.dom.Text;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import retrofit2.http.POST;
 
 /**
  * Created by Administrator on 2016-06-18.
@@ -44,6 +48,9 @@ public class ProductDetailsActivity extends BaseActivity {
     @Bind(R.id.button_intocart) TextView productNumView;
     private ProductEntity productEntity;
     private int cartProductNumber = 0;
+    private int position = -1;
+    private String largeTypeId;
+    private int count;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,6 +60,8 @@ public class ProductDetailsActivity extends BaseActivity {
 
         mTitleView.setText("商品详情");
         productEntity = getIntent().getParcelableExtra("Entity");
+        position = getIntent().getIntExtra("Position", -1);
+        largeTypeId = getIntent().getStringExtra("LargeTypeId");
         setupImageParams();
         setupProductsInfo();
     }
@@ -116,9 +125,18 @@ public class ProductDetailsActivity extends BaseActivity {
         ButterKnife.unbind(this);
     }
 
+    @Override
+    public void onBackPressed() {
+        onImgBack();
+    }
+
     @OnClick(R.id.img_back)
     public void onImgBack() {
-        finish();
+        if (position != -1 && !TextUtils.isEmpty(largeTypeId) && count > 0){
+            setResult();
+        }else {
+            finish();
+        }
     }
 
     @OnClick(R.id.button_intocart)
@@ -145,6 +163,16 @@ public class ProductDetailsActivity extends BaseActivity {
             return;
         }
         CartData.INSTANCE.numberAdd(productEntity);
+        count++;
         productNumView.setText("共" + (++cartProductNumber) + "件商品");
+    }
+
+    public void setResult(){
+        Intent intent = new Intent();
+        intent.putExtra("Position", position);
+        intent.putExtra("LargeTypeId", largeTypeId);
+        intent.putExtra("Count", count);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 }

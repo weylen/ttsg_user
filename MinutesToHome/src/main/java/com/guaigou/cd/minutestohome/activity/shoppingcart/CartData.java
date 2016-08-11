@@ -4,9 +4,12 @@ import com.google.common.base.Preconditions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.guaigou.cd.minutestohome.BaseApplication;
+import com.guaigou.cd.minutestohome.activity.login.LoginData;
 import com.guaigou.cd.minutestohome.activity.market.MarketData;
 import com.guaigou.cd.minutestohome.entity.CartEntity;
 import com.guaigou.cd.minutestohome.entity.ProductEntity;
+import com.guaigou.cd.minutestohome.prefs.CartPrefs;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
 import com.guaigou.cd.minutestohome.util.LocaleUtil;
 
@@ -55,9 +58,15 @@ public enum CartData {
     }
 
     public void setData(List<CartEntity> data) {
+        this.data = null;
         this.data = data;
         numberAll = getNumber(data);
         notifyDataChanged();
+    }
+
+    public void clear(){
+        ensureData();
+        data.clear();
     }
 
     /**
@@ -108,9 +117,13 @@ public enum CartData {
         return numberAll;
     }
 
-    private void lesNumber(){
+    public void lesNumber(){
         numberAll -= 1;
         numberAll = numberAll <=0 ? 0 : numberAll;
+    }
+
+    public void addNumber(){
+        numberAll++;
     }
 
     /**
@@ -215,7 +228,8 @@ public enum CartData {
         System.gc();
     }
 
-    private void notifyDataChanged(){
+    public void notifyDataChanged(){
+        saveCartData();
         ensureSubscriberList();
         ensureData();
         for (int i = 0; i < subscriberList.size(); i++){
@@ -223,6 +237,15 @@ public enum CartData {
             if (subscriber != null && !subscriber.isUnsubscribed()){
                 observable.subscribe(subscriber);
             }
+        }
+    }
+
+    /**
+     * 保存购物车数据
+     */
+    private void saveCartData(){
+        if (BaseApplication.INSTANCE != null){
+            CartPrefs.saveCartData(BaseApplication.INSTANCE, data);
         }
     }
 }

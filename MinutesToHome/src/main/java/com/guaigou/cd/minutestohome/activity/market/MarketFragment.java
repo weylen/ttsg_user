@@ -1,5 +1,6 @@
 package com.guaigou.cd.minutestohome.activity.market;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -25,6 +26,8 @@ import com.guaigou.cd.minutestohome.entity.ProductEntity;
 import com.guaigou.cd.minutestohome.entity.RegionEntity;
 import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
 import com.guaigou.cd.minutestohome.util.AnimatorUtil;
+import com.guaigou.cd.minutestohome.util.DebugUtil;
+import com.guaigou.cd.minutestohome.util.LocaleUtil;
 import com.guaigou.cd.minutestohome.view.EmptyViewHelper;
 import com.guaigou.cd.minutestohome.view.ZListView;
 import com.guaigou.cd.minutestohome.view.ZRefreshingView;
@@ -39,7 +42,7 @@ import butterknife.OnItemClick;
 /**
  * Created by Administrator on 2016-06-18.
  */
-public class MarketFragment extends BaseFragment implements MarketView{
+public class MarketFragment extends BaseFragment implements MarketView, MarketProductAdapter.OnNumberChangedListener{
 
     public static final String TAG = MarketFragment.class.getName();
 
@@ -81,19 +84,18 @@ public class MarketFragment extends BaseFragment implements MarketView{
             MarketData.INSTANCE.listSelectIndex = 0;
             MarketDataEntity entity = largeTypeAdapter.getData().get(position);
             if (lastLargeTypeId == null || ! entity.getId().equalsIgnoreCase(lastLargeTypeId)){
-                marketPresenter.parseSmallTypeData(entity.getId());
+                lastLargeTypeId = entity.getId();
+                marketPresenter.parseSmallTypeData(lastLargeTypeId);
                 largeTypeAdapter.setCheckedPosition(position);
             }
-            lastLargeTypeId = entity.getId();
         });
 
         smallTypeAdapter = new SmallTypeAdapter(getActivity(), null);
         smallTypeAdapter.setOnItemClickListener((position, entity) -> {
-            zListView.setState(ZListView.State.STATE_NORMAL);
             MarketData.INSTANCE.smallTypeIndex = position;
             MarketData.INSTANCE.listSelectIndex = 0;
             if (lastSmallTypeId == null || !entity.getId().equalsIgnoreCase(lastSmallTypeId)){
-                marketPresenter.getProductsList(entity.getId());
+                marketPresenter.getProductsList(lastLargeTypeId, entity.getId(), adapter.getData());
                 smallTypeAdapter.setCheckedPosition(position);
             }
             lastSmallTypeId = entity.getId();
@@ -123,6 +125,7 @@ public class MarketFragment extends BaseFragment implements MarketView{
         });
         // 创建商品列表适配器
         adapter = new MarketProductAdapter(getActivity(), null);
+        adapter.setOnNumberChangedListener(this);
         // 设置适配器
         zListView.setAdapter(adapter);
         // 添加空视图
@@ -156,7 +159,9 @@ public class MarketFragment extends BaseFragment implements MarketView{
         if (position < adapter.getData().size()){
             Intent intent = new Intent(getActivity(), ProductDetailsActivity.class);
             intent.putExtra("Entity", adapter.getData().get(position));
-            startActivity(intent);
+            intent.putExtra("LargeTypeId", lastLargeTypeId);
+            intent.putExtra("Position", position);
+            startActivityForResult(intent, DETAILS_CODE);
         }
     }
 
@@ -178,6 +183,11 @@ public class MarketFragment extends BaseFragment implements MarketView{
     @Override
     public void onResume() {
         super.onResume();
+        if (MarketData.INSTANCE.isChanged){
+            marketPresenter.start();
+            marketPresenter.refresh();
+        }
+        MarketData.INSTANCE.isChanged = false;
     }
 
     @Override
@@ -270,14 +280,14 @@ public class MarketFragment extends BaseFragment implements MarketView{
             smallTypeAdapter.setCheckedPosition(index);
             lastSmallTypeId = dataEntityList.get(index).getId();
             zListView.setState(ZListView.State.STATE_NORMAL);
-            marketPresenter.getProductsList(lastSmallTypeId);
+            marketPresenter.getProductsList(parentId, lastSmallTypeId, adapter.getData());
         }
     }
 
     @Override
     public void onLoadProductData(List<ProductEntity> dataEntityList, boolean isLoadComplete, boolean isLoadmore) {
+        dismissProgressDialog();
         if (isActive()){
-            dismissProgressDialog();
             if (!isLoadmore){
                 adapter.setData(dataEntityList);
                 zListView.setSelection(MarketData.INSTANCE.listSelectIndex);
@@ -318,4 +328,35 @@ public class MarketFragment extends BaseFragment implements MarketView{
         super.onDestroy();
         ButterKnife.unbind(this);
     }
+
+    @Override
+    public void onNumberChanged(String parentId, int count) {
+        List<MarketDataEntity> data = largeTypeAdapter.getData();
+        if (!LocaleUtil.isListEmpty(data)){
+            for (MarketDataEntity entity : data){
+                if (parentId.equalsIgnoreCase(entity.getId())){
+                    entity.setNumber(entity.getNumber() + count);
+                    largeTypeAdapter.notifyDataSetChanged();
+                    return;
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK && requestCode == DETAILS_CODE){
+            int position = data.getIntExtra("Position", -1);
+            int count = data.getIntExtra("Count", 0);
+            String largeTypeId = data.getStringExtra("LargeTypeId");
+            if (position != -1 && !TextUtils.isEmpty(largeTypeId) && count > 0){
+                ProductEntity entity = adapter.getData().get(position);
+                entity.setNumber(entity.getNumber() + count);
+                adapter.notifyDataSetChanged();
+                onNumberChanged(largeTypeId, count);
+            }
+        }
+    }
+
+    private static final int DETAILS_CODE = 100;
 }

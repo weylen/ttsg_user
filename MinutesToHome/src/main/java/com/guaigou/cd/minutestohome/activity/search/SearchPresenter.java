@@ -125,11 +125,8 @@ public class SearchPresenter implements BasePresenter {
                     entity.setNumber(CartData.INSTANCE.getNumber(entity.getId()));
                     entity.setImg(imgObject.get(entity.getImg().split(",")[0]).getAsString());
                 }
-
-                int max = s.get("maxPage").getAsInt();
                 int current = s.get("pageNum").getAsInt();
                 // 缓存数据
-                searchView.onSearchSuccess(listData, max == current);
                 SearchData.INSTANCE.pageNum = current;
                 subscriber.onNext(listData);
             }
@@ -137,14 +134,10 @@ public class SearchPresenter implements BasePresenter {
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Subscriber<List<ProductEntity>>() {
                     @Override
-                    public void onCompleted() {
-
-                    }
+                    public void onCompleted() {}
 
                     @Override
-                    public void onError(Throwable e) {
-
-                    }
+                    public void onError(Throwable e) {}
 
                     @Override
                     public void onNext(List<ProductEntity> entities) {

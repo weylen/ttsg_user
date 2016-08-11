@@ -9,26 +9,11 @@ import java.io.Serializable;
  * Created by weylen on 2016-08-06.
  */
 public class CartEntity implements Parcelable, Serializable{
-    private String id;
-    private String name;
-    private String standard;
-    private String kind;
-    private String imgPath;
-    private String buyPrice;
-    private String salePrice;
-    private String stock;
-    private String info;
-    private String promote;
-    private String stauts;
-    private String begin;
-    private String end;
-    private int amount;
-    private String time;
-    private String storeName;
-    private String shoperid;
 
-    public CartEntity() {
-    }
+    private String id, name, standard, kind, imgPath, buyPrice, salePrice, stock, info, promote, status, begin, end;
+    private int amount;
+
+    public CartEntity(){}
 
     protected CartEntity(Parcel in) {
         id = in.readString();
@@ -41,13 +26,10 @@ public class CartEntity implements Parcelable, Serializable{
         stock = in.readString();
         info = in.readString();
         promote = in.readString();
-        stauts = in.readString();
+        status = in.readString();
         begin = in.readString();
         end = in.readString();
         amount = in.readInt();
-        time = in.readString();
-        storeName = in.readString();
-        shoperid = in.readString();
     }
 
     public static final Creator<CartEntity> CREATOR = new Creator<CartEntity>() {
@@ -61,6 +43,29 @@ public class CartEntity implements Parcelable, Serializable{
             return new CartEntity[size];
         }
     };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(name);
+        dest.writeString(standard);
+        dest.writeString(kind);
+        dest.writeString(imgPath);
+        dest.writeString(buyPrice);
+        dest.writeString(salePrice);
+        dest.writeString(stock);
+        dest.writeString(info);
+        dest.writeString(promote);
+        dest.writeString(status);
+        dest.writeString(begin);
+        dest.writeString(end);
+        dest.writeInt(amount);
+    }
 
     public String getId() {
         return id;
@@ -142,12 +147,12 @@ public class CartEntity implements Parcelable, Serializable{
         this.promote = promote;
     }
 
-    public String getStauts() {
-        return stauts;
+    public String getStatus() {
+        return status;
     }
 
-    public void setStauts(String stauts) {
-        this.stauts = stauts;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getBegin() {
@@ -172,55 +177,5 @@ public class CartEntity implements Parcelable, Serializable{
 
     public void setAmount(int amount) {
         this.amount = amount;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
-    public String getStoreName() {
-        return storeName;
-    }
-
-    public void setStoreName(String storeName) {
-        this.storeName = storeName;
-    }
-
-    public String getShoperid() {
-        return shoperid;
-    }
-
-    public void setShoperid(String shoperid) {
-        this.shoperid = shoperid;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(id);
-        dest.writeString(name);
-        dest.writeString(standard);
-        dest.writeString(kind);
-        dest.writeString(imgPath);
-        dest.writeString(buyPrice);
-        dest.writeString(salePrice);
-        dest.writeString(stock);
-        dest.writeString(info);
-        dest.writeString(promote);
-        dest.writeString(stauts);
-        dest.writeString(begin);
-        dest.writeString(end);
-        dest.writeInt(amount);
-        dest.writeString(time);
-        dest.writeString(storeName);
-        dest.writeString(shoperid);
     }
 }

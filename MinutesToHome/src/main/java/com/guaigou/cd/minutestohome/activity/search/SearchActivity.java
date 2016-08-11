@@ -134,14 +134,12 @@ public class SearchActivity extends BaseActivity implements SearchView{
     @Override
     public void onSearchSuccess(List<ProductEntity> data, boolean isComplete) {
         dismissProgressDialog();
-        DebugUtil.d("SearchActivity onSearchSuccess 搜索结果");
-//        if (isComplete){
-//            int size = data == null ? 0 : data.size();
-//            if (size < Constants.DEFAULT_PAGE_SIZE){
-//
-//            }
-//        }
-        zListView.setLoadComplete(isComplete);
+        if (isComplete){
+            int size = data == null ? 0 : data.size();
+            if (size < Constants.DEFAULT_PAGE_SIZE){
+                zListView.setLoadComplete(isComplete);
+            }
+        }
         adapter.setData(data);
     }
 
@@ -166,7 +164,6 @@ public class SearchActivity extends BaseActivity implements SearchView{
         super.onResume();
         // 注册观察者
         CartData.INSTANCE.registerObserver(subscriber);
-        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -182,24 +179,12 @@ public class SearchActivity extends BaseActivity implements SearchView{
         ButterKnife.unbind(this);
     }
 
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if (hasFocus){
-            KeybordUtil.show(this);
-        }
-    }
-
     private Subscriber<Integer> subscriber = new Subscriber<Integer>() {
         @Override
-        public void onCompleted() {
-
-        }
+        public void onCompleted() {}
 
         @Override
-        public void onError(Throwable e) {
-
-        }
+        public void onError(Throwable e) {}
 
         @Override
         public void onNext(Integer count) {

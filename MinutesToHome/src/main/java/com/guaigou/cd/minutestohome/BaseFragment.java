@@ -30,6 +30,7 @@ public abstract class BaseFragment extends Fragment{
 
     private ProgressDialog progressDialog;
     protected void showProgressDialog(String message){
+        dismissProgressDialog();
         progressDialog = ProgressDialog.show(getActivity(), "", message);
     }
 
@@ -46,13 +47,7 @@ public abstract class BaseFragment extends Fragment{
      */
     protected void setupHeadInfo(View view, String title){
         // 返回键
-        view.findViewById(R.id.img_back).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getFragmentManager().popBackStack();
-            }
-        });
-
+        view.findViewById(R.id.img_back).setOnClickListener(v -> getFragmentManager().popBackStack());
         // 标题
         TextView titleView = (TextView) view.findViewById(R.id.text_title);
         titleView.setText(title);

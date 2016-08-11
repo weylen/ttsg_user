@@ -56,12 +56,10 @@ public abstract class GenericBaseAdapter<T> extends BaseAdapter{
 	 * @param newData
 	 */
 	public void setData(List<T> newData){
-		DebugUtil.d("GenericBaseAdapter size:" + listData.size());
 		listData.clear();
 		if (!LocaleUtil.isListEmpty(newData)){
-			listData.addAll(newData);
+			listData = newData;
 		}
-		DebugUtil.d("GenericBaseAdapter size:" + listData.size());
 		notifyDataSetChanged();
 	}
 	

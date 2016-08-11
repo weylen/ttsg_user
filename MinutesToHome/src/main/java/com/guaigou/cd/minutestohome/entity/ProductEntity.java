@@ -16,7 +16,8 @@ public class ProductEntity implements Parcelable, Cloneable{
     /**
      * 种类
      */
-    private String kind;
+    private String kind; // 小类id
+    private String largeTypeId; // 大类id
     private String img;
     private String price;
     /**
@@ -61,6 +62,7 @@ public class ProductEntity implements Parcelable, Cloneable{
         end = in.readString();
         info = in.readString();
         number = in.readInt();
+        largeTypeId = in.readString();
     }
 
     public static final Creator<ProductEntity> CREATOR = new Creator<ProductEntity>() {
@@ -171,6 +173,14 @@ public class ProductEntity implements Parcelable, Cloneable{
         this.number = number;
     }
 
+    public String getLargeTypeId() {
+        return largeTypeId;
+    }
+
+    public void setLargeTypeId(String largeTypeId) {
+        this.largeTypeId = largeTypeId;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -190,6 +200,7 @@ public class ProductEntity implements Parcelable, Cloneable{
         dest.writeString(end);
         dest.writeString(info);
         dest.writeInt(number);
+        dest.writeString(largeTypeId);
     }
 
     @Override

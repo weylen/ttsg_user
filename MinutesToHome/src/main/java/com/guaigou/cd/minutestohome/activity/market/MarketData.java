@@ -32,7 +32,10 @@ public enum MarketData {
     public String id; // 当前数据的地区id
     public String name; // 当前数据的地区名字
 
-    public String currentProductId; // 当前的商品分类id
+    public String currentProductId; // 当前的商品分类小类id
+    public String currentLargeId; // 当前商品分类的大类id
+
+    public boolean isChanged; // 标记 商品数量是否发生变化
 
     public int largeTypeIndex = 0;
     public int smallTypeIndex = 0;

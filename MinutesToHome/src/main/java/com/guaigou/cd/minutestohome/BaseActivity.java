@@ -23,6 +23,7 @@ public class BaseActivity extends AppCompatActivity{
 
     private ProgressDialog progressDialog;
     protected void showProgressDialog(String message){
+        dismissProgressDialog();
         progressDialog = ProgressDialog.show(this, "", message);
     }
 

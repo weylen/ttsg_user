@@ -3,6 +3,7 @@ package com.guaigou.cd.minutestohome.activity.market;
 import android.app.Activity;
 import android.graphics.Paint;
 import android.support.design.widget.Snackbar;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.guaigou.cd.minutestohome.R;
 import com.guaigou.cd.minutestohome.activity.login.LoginData;
+import com.guaigou.cd.minutestohome.activity.search.SearchActivity;
 import com.guaigou.cd.minutestohome.activity.shoppingcart.CartData;
 import com.guaigou.cd.minutestohome.adapter.GenericBaseAdapter;
 import com.guaigou.cd.minutestohome.entity.ProductEntity;
@@ -31,40 +33,33 @@ import rx.android.schedulers.AndroidSchedulers;
  */
 public class MarketProductAdapter extends GenericBaseAdapter<ProductEntity>{
 
+    private OnNumberChangedListener onNumberChangedListener;
     private Activity context;
     public MarketProductAdapter(Activity context, List<ProductEntity> data) {
         super(context, data);
         this.context = context;
     }
 
+    public void setOnNumberChangedListener(OnNumberChangedListener onNumberChangedListener) {
+        this.onNumberChangedListener = onNumberChangedListener;
+    }
+
     @Override
     public View getView(int position, View view, ViewGroup parent) {
         final ViewHolder holder;
-        if (view == null){
-            holder = new ViewHolder();
+        if (view == null || view.getTag() == null){
             view = getInflater().inflate(R.layout.item_market_product, parent, false);
-            holder.imageView = (ImageView) view.findViewById(R.id.img_product);
-            holder.titleView = (TextView) view.findViewById(R.id.text_title);
-            holder.formatView = (TextView) view.findViewById(R.id.text_format);
-            holder.priceView = (TextView) view.findViewById(R.id.text_price);
-            holder.numView = (TextView) view.findViewById(R.id.text_num);
-            holder.addNumView = (ImageView) view.findViewById(R.id.img_num_add);
-            holder.lesNumView = (ImageView) view.findViewById(R.id.img_num_les);
-            holder.promotionView = (TextView) view.findViewById(R.id.text_promotion);
-            holder.oldPriceView = (TextView) view.findViewById(R.id.text_old_price);
-            holder.lesLayout = view.findViewById(R.id.layout_les);
+            holder = new ViewHolder(view);
             view.setTag(holder);
         }else {
             holder = (ViewHolder) view.getTag();
         }
 
         final ProductEntity entity = getItem(position);
-        DebugUtil.d("MarketProductAdapter getView name::" + entity.getName());
 
         holder.titleView.setText(entity.getName());
         holder.formatView.setText(entity.getStandard() );
         holder.priceView.setText(entity.getPrice());
-
         // 促销信息
         String promotionPrice = entity.getPromote();
         String promotionMessage = entity.getInfo();
@@ -89,7 +84,7 @@ public class MarketProductAdapter extends GenericBaseAdapter<ProductEntity>{
         holder.numView.setText(String.valueOf(n));
 
         RxView.clicks(holder.addNumView)
-                .debounce(50, TimeUnit.MILLISECONDS)
+                .debounce(20, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(aVoid -> {
                     if (!LoginData.INSTANCE.isLogin(context)){
@@ -103,18 +98,22 @@ public class MarketProductAdapter extends GenericBaseAdapter<ProductEntity>{
                         showSnakeView("库存不足 无法添加");
                         return;
                     }
-
-                    int num = ParseUtil.parseInt(entity.getReserve());
                     if (holder.lesLayout.getVisibility() != View.VISIBLE){
                         holder.lesLayout.setVisibility(View.VISIBLE);
                     }
-                    num = CartData.INSTANCE.numberAdd(entity);
+                    int num = CartData.INSTANCE.numberAdd(entity);
                     entity.setNumber(num);
                     holder.numView.setText(String.valueOf(num));
+                    if (onNumberChangedListener != null && !TextUtils.isEmpty(entity.getLargeTypeId())){
+                        onNumberChangedListener.onNumberChanged(entity.getLargeTypeId(), 1);
+                    }
+                    if (context instanceof SearchActivity){
+                        MarketData.INSTANCE.isChanged = true;
+                    }
                 });
 
         RxView.clicks(holder.lesNumView)
-                .debounce(50, TimeUnit.MILLISECONDS)
+                .debounce(20, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(aVoid -> {
                     if (!LoginData.INSTANCE.isLogin(context)){
@@ -125,7 +124,14 @@ public class MarketProductAdapter extends GenericBaseAdapter<ProductEntity>{
                     if (num == 0){
                         holder.lesLayout.setVisibility(View.GONE);
                     }
+                    entity.setNumber(num);
                     holder.numView.setText(String.valueOf(num));
+                    if (onNumberChangedListener != null && !TextUtils.isEmpty(entity.getLargeTypeId())){
+                        onNumberChangedListener.onNumberChanged(entity.getLargeTypeId(), -1);
+                    }
+                    if (context instanceof SearchActivity){
+                        MarketData.INSTANCE.isChanged = true;
+                    }
                 });
 
         Glide.with(context)
@@ -146,9 +152,31 @@ public class MarketProductAdapter extends GenericBaseAdapter<ProductEntity>{
         }
     }
 
-    private class ViewHolder{
+    private static class ViewHolder{
         private ImageView imageView, addNumView, lesNumView;
         private TextView titleView, formatView, priceView, numView, promotionView, oldPriceView;
         private View lesLayout;
+
+        ViewHolder(View view){
+            imageView = (ImageView) view.findViewById(R.id.img_product);
+            titleView = (TextView) view.findViewById(R.id.item_title);
+            formatView = (TextView) view.findViewById(R.id.text_format);
+            priceView = (TextView) view.findViewById(R.id.text_price);
+            numView = (TextView) view.findViewById(R.id.text_num);
+            addNumView = (ImageView) view.findViewById(R.id.img_num_add);
+            lesNumView = (ImageView) view.findViewById(R.id.img_num_les);
+            promotionView = (TextView) view.findViewById(R.id.text_promotion);
+            oldPriceView = (TextView) view.findViewById(R.id.text_old_price);
+            lesLayout = view.findViewById(R.id.layout_les);
+        }
+    }
+
+    public interface OnNumberChangedListener{
+        /**
+         * 当商品数量发生变化时调用
+         * @param parentId 所属大类型的id
+         * @param status 1表示数量+1 -1表示数量减1
+         */
+        void onNumberChanged(String parentId, int status);
     }
 }

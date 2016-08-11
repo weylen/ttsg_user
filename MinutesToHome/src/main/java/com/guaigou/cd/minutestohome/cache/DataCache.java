@@ -15,7 +15,7 @@ public enum DataCache {
         lruCache = new LruCache<String, Data<?>>(MAX){
             @Override
             protected int sizeOf(String key, Data<?> value) {
-                return super.sizeOf(key, value);
+                return 10 * 1024;
             }
         };
     }

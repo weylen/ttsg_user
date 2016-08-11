@@ -25,7 +25,6 @@ public enum CartUtil {
         }).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(o -> {
-                    DebugUtil.d("CartUtil remoteCart o-->" + o);
                     CartData.INSTANCE.setData(o);
                     complete(onLoadCompleteListener);
                 });

@@ -20,7 +20,9 @@ import com.guaigou.cd.minutestohome.entity.RegionEntity;
 import com.guaigou.cd.minutestohome.http.HttpService;
 import com.guaigou.cd.minutestohome.http.ResponseMgr;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
+import com.guaigou.cd.minutestohome.prefs.CartPrefs;
 import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
+import com.guaigou.cd.minutestohome.util.CartUtil;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
 import com.guaigou.cd.minutestohome.util.LocaleUtil;
 
@@ -192,54 +194,14 @@ public class RegionActivity extends BaseActivity implements RegionView{
             forward(entity);
             return;
         }
-        Observable.just(data)
-                .subscribeOn(Schedulers.io())
-                .map(cartEntities -> map(data))
-                .observeOn(Schedulers.io())
-                .subscribe(s -> {
-                    remoteClearCart(s, entity);
-                });
+
+        CartPrefs.saveCartData(this, null);
+        CartData.INSTANCE.clear();
+        doResult(true, entity);
     }
-
-    private String map(List<CartEntity> data){
-        RegionEntity oldEntity = RegionPrefs.getRegionData(getApplicationContext());
-        String param = "";
-        for (CartEntity entity : data){
-            param += oldEntity.getId() + "-" + entity.getId();
-        }
-        if (param.endsWith(",")){
-            param = param.substring(0, param.length() - 1);
-        }
-        return param;
-    }
-
-    private void remoteClearCart(String key, RegionEntity entity){
-        RetrofitFactory.getRetrofit().create(HttpService.class)
-                .deleteCart(key)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Subscriber<JsonObject>() {
-                    @Override
-                    public void onCompleted() {}
-
-                    @Override
-                    public void onError(Throwable e) {
-                        DebugUtil.d("RegionActivity 清空购物车失败：" + e.getMessage());
-                        doResult(false, entity);
-                    }
-
-                    @Override
-                    public void onNext(JsonObject jsonObject) {
-                        DebugUtil.d("RegionActivity 清空购物车：" + jsonObject);
-                        doResult(ResponseMgr.getStatus(jsonObject) == 1, entity);
-                    }
-                });
-    }
-
     private void doResult(boolean status, RegionEntity entity){
         dismissProgressDialog();
         if (status){
-            CartData.INSTANCE.setData(null);
             forward(entity);
         }else {
             showSnakeView(containerView, "清空购物车失败，请重新操作");
