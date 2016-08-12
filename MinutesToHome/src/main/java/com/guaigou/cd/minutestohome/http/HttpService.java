@@ -107,6 +107,12 @@ public interface HttpService {
             @Field("areaId") String areaId
     );
 
+    @FormUrlEncoded
+    @POST("oda-save")
+    Observable<JsonObject> requestOrder(
+            @Field("Key") String ordrInfo
+    );
+
 
     /**
      * 注销

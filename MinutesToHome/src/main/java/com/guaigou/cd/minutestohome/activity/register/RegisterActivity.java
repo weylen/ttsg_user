@@ -90,6 +90,11 @@ public class RegisterActivity extends BaseActivity implements RegisterView{
 
     @OnClick(R.id.text_nextstep)
     void onNextStepClick(){
+        Intent intent = new Intent(this, SetPwdActivity.class);
+        intent.putExtra("PhoneNum", phoneNum);
+        startActivity(intent);
+        if (true){return;}
+
         String code = mValidateCodeView.getText().toString();
         if (TextUtils.isEmpty(code)){
             showSnakeView(containerView, "请输入验证码");
@@ -109,7 +114,7 @@ public class RegisterActivity extends BaseActivity implements RegisterView{
             return;
         }
 
-        Intent intent = new Intent(this, SetPwdActivity.class);
+        intent = new Intent(this, SetPwdActivity.class);
         intent.putExtra("PhoneNum", phoneNum);
         startActivity(intent);
     }

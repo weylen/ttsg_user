@@ -26,6 +26,7 @@ import com.guaigou.cd.minutestohome.util.CartUtil;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
 import com.guaigou.cd.minutestohome.util.LocaleUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observer;
@@ -142,11 +143,19 @@ public class SplashActivity extends BaseActivity {
     private void parseCartData(JsonObject s){
         Gson gson = new Gson();
         List<CartEntity> cartEntities = gson.fromJson(s.get("data").getAsJsonArray(),
-                new TypeToken<List<CartEntity>>(){}.getType());
+                new TypeToken<ArrayList<CartEntity>>(){}.getType());
 
         List<CartEntity> entities = CartData.INSTANCE.getData();
         if (!LocaleUtil.isListEmpty(cartEntities)){
+            List<CartEntity> cloneData = new ArrayList<>();
+            // 暂时先不要已经下架的商品
             for (CartEntity entity : cartEntities){
+                if (!LocaleUtil.isShelves(entity)){
+                    cloneData.add(entity);
+                }
+            }
+
+            for (CartEntity entity : cloneData){
                 for (CartEntity oldEntity : entities){
                     if (entity.getId().equalsIgnoreCase(oldEntity.getId())){
                         entity.setAmount(oldEntity.getAmount());
@@ -154,6 +163,7 @@ public class SplashActivity extends BaseActivity {
                     }
                 }
             }
+            cartEntities = cloneData;
         }
         CartData.INSTANCE.setData(cartEntities);
     }

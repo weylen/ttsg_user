@@ -266,7 +266,7 @@
                         android:id="@+id/text_product_price"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:textSize="@dimen/TextSize_12"
+                        android:textSize="@dimen/TextSize_14"
                         android:textColor="@color/redText"
                         android:layout_weight="1.0"
                         android:text="￥3.5"
@@ -294,7 +294,7 @@
                         android:id="@+id/text_freight_price"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:textSize="@dimen/TextSize_12"
+                        android:textSize="@dimen/TextSize_14"
                         android:textColor="@color/redText"
                         android:layout_weight="1.0"
                         android:text="￥0"
@@ -364,6 +364,7 @@
                 />
 
             <TextView
+                android:id="@+id/text_real_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/redText"

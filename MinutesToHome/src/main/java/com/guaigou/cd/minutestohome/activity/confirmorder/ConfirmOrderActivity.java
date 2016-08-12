@@ -3,6 +3,7 @@ package com.guaigou.cd.minutestohome.activity.confirmorder;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -15,7 +16,10 @@ import com.guaigou.cd.minutestohome.activity.addressmgr.AddressActivity;
 import com.guaigou.cd.minutestohome.activity.buyorder.BuyOrderActivity;
 import com.guaigou.cd.minutestohome.activity.note.NoteActivity;
 import com.guaigou.cd.minutestohome.entity.AddressEntity;
+import com.guaigou.cd.minutestohome.entity.RegionEntity;
+import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
 import com.guaigou.cd.minutestohome.util.AddressUtil;
+import com.guaigou.cd.minutestohome.util.MathUtil;
 import com.rey.material.app.SimpleDialog;
 
 import java.text.SimpleDateFormat;
@@ -31,7 +35,7 @@ import butterknife.OnClick;
 /**
  * Created by weylen on 2016-07-24.
  */
-public class ConfirmOrderActivity extends BaseActivity {
+public class ConfirmOrderActivity extends BaseActivity implements ConfirmOrderView{
 
     /**
      * 请求编辑收获地址
@@ -51,17 +55,14 @@ public class ConfirmOrderActivity extends BaseActivity {
     @Bind(R.id.text_product_price) TextView mTextProductPrice; // 商品价格
     @Bind(R.id.text_freight_price) TextView mTextFreightPrice; // 运费
     @Bind(R.id.text_score_price) TextView mTextScorePrice; // 积分减免
+    @Bind(R.id.text_real_price) TextView mTextRealPrice; // 实际支付
     @Bind(R.id.Container) ScrollView mContainer; // 容器
     @Bind(R.id.layout_address_text) LinearLayout mLayoutAddressTextView;
     @Bind(R.id.text_address_hint) TextView mTextAddressHint;
-    @Bind(R.id.layout_note) LinearLayout mLayoutNote;
-    @Bind(R.id.layout_delivery_time) LinearLayout mLayoutDeliveryTime;
-    @Bind(R.id.text_score_hint) TextView mTextScoreHint;
-    @Bind(R.id.text_score_les) TextView mTextScoreLes;
-    @Bind(R.id.text_score_add) TextView mTextScoreAdd;
-    @Bind(R.id.layout_score) LinearLayout mLayoutScore;
-    @Bind(R.id.text_confirmorder) TextView mTextConfirmorder;
-    @Bind(R.id.payment_layout) LinearLayout mPaymentLayout;
+
+    private AddressEntity addressEntity;
+
+    private ConfirmOrderPresenter presenter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,6 +75,12 @@ public class ConfirmOrderActivity extends BaseActivity {
         // 获取默认的收获地址
         AddressEntity entity = AddressUtil.getDefaultAddress(this);
         setupAddress(entity);
+        // 设置商品价格
+        String price = MathUtil.calculate();
+        mTextProductPrice.setText(price);
+        mTextRealPrice.setText(price);
+
+        presenter = new ConfirmOrderPresenter(this);
     }
 
     @Override
@@ -154,9 +161,20 @@ public class ConfirmOrderActivity extends BaseActivity {
      * 确认下单
      */
     @OnClick(R.id.text_confirmorder)
-    void onConfrimOrderClick() {
-        Intent intent = new Intent(this, BuyOrderActivity.class);
-        startActivity(intent);
+    void onConfrimOrderClick(View view) {
+        if (addressEntity == null){
+            showSnakeView(view, "请选择收货地址");
+            return;
+        }
+        RegionEntity entity = RegionPrefs.getRegionData(this);
+        if (entity == null || TextUtils.isEmpty(entity.getId())){
+            showSnakeView(view, "小区信息出现错误，请退出软件重试");
+            return;
+        }
+        presenter.onRequestOrder(entity.getId());
+//
+//        Intent intent = new Intent(this, BuyOrderActivity.class);
+//        startActivity(intent);
     }
 
     private void showScoreHintDialog() {
@@ -194,6 +212,7 @@ public class ConfirmOrderActivity extends BaseActivity {
      * @param entity
      */
     private void setupAddress(AddressEntity entity) {
+        this.addressEntity = entity;
         if (entity == null) {
             mLayoutAddressTextView.setVisibility(View.INVISIBLE);
             mTextAddressHint.setVisibility(View.VISIBLE);
@@ -253,4 +272,20 @@ public class ConfirmOrderActivity extends BaseActivity {
         });
         optionsPickerView.show();
     }
+
+    @Override
+    public void onStartRequestOrder() {
+        showProgressDialog("处理中...");
+    }
+
+    @Override
+    public void onRequestFailure() {
+        dismissProgressDialog();
+    }
+
+    @Override
+    public void onRequestSuccess() {
+        dismissProgressDialog();
+    }
+
 }

@@ -142,6 +142,10 @@ public class CartFragment extends BaseFragment implements CartView{
 
     @OnClick(R.id.text_settlement)
     void onSettlementClick(){
+        if (LocaleUtil.isListEmpty(CartData.INSTANCE.getData())){
+            showSnakeView(containerView, "购物车为空，请先挑选商品");
+            return;
+        }
         Intent intent = new Intent(getActivity(), ConfirmOrderActivity.class);
         startActivity(intent);
     }
