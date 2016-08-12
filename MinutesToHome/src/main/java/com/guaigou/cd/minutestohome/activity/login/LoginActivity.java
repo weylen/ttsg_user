@@ -141,6 +141,7 @@ public class LoginActivity extends BaseActivity implements LoginView{
             remoteCart();
         }else {
             CartPrefs.saveCartData(this, null);
+            finish();
         }
     }
 
@@ -150,9 +151,7 @@ public class LoginActivity extends BaseActivity implements LoginView{
     }
 
     @Override
-    public void setPresenter(LoginPresenter presenter) {
-
-    }
+    public void setPresenter(LoginPresenter presenter) {}
 
     private void remoteCart(){
         CartUtil.INSTANCE.remoteCart(this, () -> {

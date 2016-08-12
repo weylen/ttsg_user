@@ -171,7 +171,8 @@ public class ConfirmOrderActivity extends BaseActivity implements ConfirmOrderVi
             showSnakeView(view, "小区信息出现错误，请退出软件重试");
             return;
         }
-        presenter.onRequestOrder(entity.getId());
+        presenter.onRequestOrder(entity.getId(), mTextNote.getText().toString(),
+                mTextAddress.getText().toString(),  mTextDeliveryTime.getText().toString());
 //
 //        Intent intent = new Intent(this, BuyOrderActivity.class);
 //        startActivity(intent);

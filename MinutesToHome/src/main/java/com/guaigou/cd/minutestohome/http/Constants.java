@@ -13,5 +13,7 @@ public class Constants {
      * 每页默认获取的商品数量
      */
     public static final int DEFAULT_PAGE_SIZE = 20;
+
+    public static final String EMPTY_STRING = new String();
 }
 

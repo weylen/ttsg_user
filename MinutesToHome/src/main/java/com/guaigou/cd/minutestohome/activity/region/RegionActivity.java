@@ -171,6 +171,11 @@ public class RegionActivity extends BaseActivity implements RegionView{
             return;
         }
 
+        if (LocaleUtil.isListEmpty(CartData.INSTANCE.getData())){
+            forward(entity);
+            return;
+        }
+
         new AlertDialog.Builder(this).setTitle("提示")
                 .setMessage("切换地区将会清空购物车")
                 .setNegativeButton("取消", (dialog, which) -> {

@@ -107,12 +107,34 @@ public interface HttpService {
             @Field("areaId") String areaId
     );
 
+    /**
+     * 下订单
+     * @param orderInfo
+     * @return
+     */
     @FormUrlEncoded
     @POST("oda-save")
     Observable<JsonObject> requestOrder(
-            @Field("Key") String ordrInfo
+            @Field("Key") String orderInfo,
+            @Field("note") String note,
+            @Field("addr") String addr,
+            @Field("end") String time
     );
 
+    /**
+     * 获取订单列表
+     * @param begin  开始时间 选填
+     * @param end  结束时间 选填
+     * @param pageNum  页码 默认为1
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("oda-")
+    Observable<JsonObject> requestOrderList(
+            @Field("begin") String begin,
+            @Field("end") String end,
+            @Field("pageNum") int pageNum
+    );
 
     /**
      * 注销

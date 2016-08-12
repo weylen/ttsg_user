@@ -26,7 +26,6 @@ import com.guaigou.cd.minutestohome.entity.ProductEntity;
 import com.guaigou.cd.minutestohome.entity.RegionEntity;
 import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
 import com.guaigou.cd.minutestohome.util.AnimatorUtil;
-import com.guaigou.cd.minutestohome.util.DebugUtil;
 import com.guaigou.cd.minutestohome.util.LocaleUtil;
 import com.guaigou.cd.minutestohome.view.EmptyViewHelper;
 import com.guaigou.cd.minutestohome.view.ZListView;
@@ -210,7 +209,7 @@ public class MarketFragment extends BaseFragment implements MarketView, MarketPr
 //            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.setClass(getActivity(), RegionActivity.class);
         startActivity(intent);
-        getActivity().finish();
+//        getActivity().finish();
     }
 
     /**

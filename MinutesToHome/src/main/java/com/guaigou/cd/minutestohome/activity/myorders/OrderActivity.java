@@ -45,21 +45,31 @@ public class OrderActivity extends BaseActivity implements OrderView{
         zListView.setOnLoadmoreListener(new ZListView.OnLoadmoreListener() {
             @Override
             public void onLoadMore() {
-
+                ZListView.State state = zListView.getState();
+                if (state == ZListView.State.STATE_COMPLETE || state == ZListView.State.STATE_LOADING){
+                    return;
+                }
+                zListView.setState(ZListView.State.STATE_LOADING);
+                orderPresenter.onLoadmore();
             }
 
             @Override
             public void onError() {
-
+                zListView.setState(ZListView.State.STATE_LOADING);
+                orderPresenter.onLoadmore();
             }
         });
         // 添加空视图
         FrameLayout parent = (FrameLayout) findViewById(R.id.parentFrameLayout);
         emptyViewHelper = new EmptyViewHelper(zListView, "没有订单", parent);
         emptyViewHelper.setRefreshListener(() -> refresh());
+        emptyViewHelper.setOnEmptyTouchListener(() -> {
+            orderPresenter.requestOrder();
+        });
 
         // 创建业务处理类对象
         orderPresenter = new OrderPresenter(this);
+        orderPresenter.requestOrder();
     }
 
     /**
@@ -85,29 +95,43 @@ public class OrderActivity extends BaseActivity implements OrderView{
         ButterKnife.unbind(this);
     }
 
-    @Override
-    public void startLoading() {
-        showProgressDialog("加载中");
-    }
-
-    @Override
-    public void onLoadFailure() {
-        dismissProgressDialog();
-    }
-
-    @Override
-    public void onLoadSuccess() {
-        dismissProgressDialog();
-    }
-
-    @Override
-    public void onRefresh() {
+    private void resetRefresh(){
         zRefreshingView.setRefreshing(false);
         emptyViewHelper.setRefreshing(false);
     }
 
     @Override
-    public void setPresenter(OrderPresenter presenter) {
+    public void onStartRequest() {
+        zRefreshingView.setRefreshing(true);
+    }
 
+    @Override
+    public void onRequestFailure() {
+        resetRefresh();
+    }
+
+    @Override
+    public void onRequestSuccess() {
+        resetRefresh();
+    }
+
+    @Override
+    public void onLoadMoreSuccess() {
+
+    }
+
+    @Override
+    public void onLoadMoreFailure() {
+
+    }
+
+    @Override
+    public void onRefreshSuccess() {
+        resetRefresh();
+    }
+
+    @Override
+    public void onRefreshFailure() {
+        resetRefresh();
     }
 }

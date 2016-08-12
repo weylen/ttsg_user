@@ -11,8 +11,6 @@ public enum OrderData {
 
     int pageNum = 1;
 
-    public static final int PAGE_SIZE = 10; // 每次页面获取的最大数据条数
-
     void reset(){
         isLoadComplete = false;
         pageNum = 1;

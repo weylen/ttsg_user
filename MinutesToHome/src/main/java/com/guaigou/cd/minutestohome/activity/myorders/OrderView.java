@@ -1,17 +1,15 @@
 package com.guaigou.cd.minutestohome.activity.myorders;
 
-import com.guaigou.cd.minutestohome.BaseView;
-
 /**
  * Created by weylen on 2016-07-23.
  */
-public interface OrderView extends BaseView<OrderPresenter>{
+public interface OrderView{
 
-    void startLoading();
-
-    void onLoadFailure();
-
-    void onLoadSuccess();
-
-    void onRefresh();
+    void onStartRequest();
+    void onRequestFailure();
+    void onRequestSuccess();
+    void onLoadMoreSuccess();
+    void onLoadMoreFailure();
+    void onRefreshSuccess();
+    void onRefreshFailure();
 }

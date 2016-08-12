@@ -89,14 +89,13 @@ public class AddressActivity extends BaseActivity {
 
     private void loadData(){
         List<AddressEntity> data = AddressUtil.getAddressList(this);
-        DebugUtil.d("AddressActivity loadData data:" +data);
         addressAdapter.setData(data);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK){
-            AddressEntity entity = null;
+            AddressEntity entity;
             switch (requestCode){
                 case NEW_CODE:
                     entity = (AddressEntity)data.getSerializableExtra("Entity");
@@ -134,13 +133,9 @@ public class AddressActivity extends BaseActivity {
         super.onResume();
         // 注册数据变化监听
         subscription = RxAdapter.dataChanges(addressAdapter)
-                .subscribe(new Action1<AddressAdapter>() {
-                    @Override
-                    public void call(AddressAdapter addressAdapter) {
-                        DebugUtil.d("AddressActivity call 数据变化");
-                        // 保存数据
-                        AddressUtil.saveAddressList(getApplicationContext(), addressAdapter.getData());
-                    }
+                .subscribe(addressAdapter1 -> {
+                    // 保存数据
+                    AddressUtil.saveAddressList(getApplicationContext(), addressAdapter1.getData());
                 });
     }
 

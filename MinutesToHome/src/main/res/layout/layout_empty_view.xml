@@ -28,7 +28,7 @@
                     android:drawableTop="@mipmap/img_load_failure"
                     android:drawablePadding="3dp"
                     android:layout_gravity="center"
-                    android:layout_marginBottom="40dp"
+                    android:layout_marginBottom="20dp"
                     />
 
             </FrameLayout>

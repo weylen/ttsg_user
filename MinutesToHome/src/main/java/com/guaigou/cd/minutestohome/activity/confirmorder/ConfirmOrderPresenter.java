@@ -36,7 +36,7 @@ public class ConfirmOrderPresenter implements BasePresenter {
     /**
      * 请求订单
      */
-    public void onRequestOrder(String shopId){
+    public void onRequestOrder(String shopId, String note, String address, String time){
         confirmOrderView.onStartRequestOrder();
 
         StringBuilder builder = new StringBuilder();
@@ -50,10 +50,10 @@ public class ConfirmOrderPresenter implements BasePresenter {
         }
         builder.deleteCharAt(builder.length()-1);
         String orderInfo = builder.toString();
-        DebugUtil.d("ConfirmOrderPresenter 订单请求信息：" + orderInfo);
+        DebugUtil.d("ConfirmOrderPresenter 订单请求信息：Key:" + orderInfo+"  note:" + note+"  address:" + address +"  time:" + time);
         RetrofitFactory.getRetrofit()
                 .create(HttpService.class)
-                .requestOrder(orderInfo)
+                .requestOrder(orderInfo, note, address, time)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<JsonObject>() {
