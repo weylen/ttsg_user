@@ -1,14 +1,24 @@
 package com.guaigou.cd.minutestohome.activity.myorders;
 
 import com.google.common.base.Preconditions;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import com.guaigou.cd.minutestohome.BasePresenter;
+import com.guaigou.cd.minutestohome.entity.OrderEntity;
+import com.guaigou.cd.minutestohome.entity.OrderProductsEntity;
 import com.guaigou.cd.minutestohome.http.Constants;
 import com.guaigou.cd.minutestohome.http.HttpService;
 import com.guaigou.cd.minutestohome.http.ResponseMgr;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
+import com.guaigou.cd.minutestohome.util.CartUtil;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
+import com.guaigou.cd.minutestohome.util.LocaleUtil;
 import com.guaigou.cd.minutestohome.util.ParseUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -26,7 +36,8 @@ public class OrderPresenter{
 
     // 刷新事件
     void onRefresh(){
-        remote(1);
+        OrderData.INSTANCE.reset();
+        remote(OrderData.INSTANCE.pageNum);
     }
 
     // 加载更多
@@ -35,8 +46,9 @@ public class OrderPresenter{
     }
 
     void requestOrder(){
+        OrderData.INSTANCE.reset();
         orderView.onStartRequest();
-        remote(1);
+        remote(OrderData.INSTANCE.pageNum);
     }
 
     private void remote(int pageNum){
@@ -57,12 +69,56 @@ public class OrderPresenter{
                     @Override
                     public void onNext(JsonObject jsonObject) {
                         DebugUtil.d("OrderPresenter 订单列表结果：" + jsonObject);
+                        DebugUtil.d("OrderPresenter 状态值：" + ResponseMgr.getStatus(jsonObject));
                         if (ResponseMgr.getStatus(jsonObject) != 1){
                             orderView.onRequestFailure();
                         }else {
-                            //TODO 解析数据
+                            map(jsonObject);
                         }
                     }
                 });
+    }
+
+    private void map(JsonObject jsonObject){
+        JsonObject dataObject = jsonObject.get("data").getAsJsonObject();
+        int maxPage = jsonObject.get("maxPage").getAsInt();
+        int currentPage = jsonObject.get("pageNum").getAsInt();
+        Gson gson = new Gson();
+
+        List<OrderEntity> listOrders = new ArrayList<>();
+        JsonArray dataArray = dataObject.get("data").getAsJsonArray();
+        int size = dataArray.size();
+        for (int i = 0; i < size; i++){
+            JsonObject item = dataArray.get(i).getAsJsonObject();
+            String orderId = item.get("orderId").getAsString();
+            String total = item.get("total").getAsString();
+            List< OrderProductsEntity> products = gson.fromJson(item.get("products").getAsJsonArray(),
+                    new TypeToken<List< OrderProductsEntity>>(){}.getType());
+
+            OrderEntity orderEntity = new OrderEntity(orderId, total, products);
+            listOrders.add(orderEntity);
+        }
+
+        // 图片JsonObject
+        /**
+         * 暂时应该不需要图片 先不用解析
+        JsonObject imgObject = dataObject.get("img").getAsJsonObject();
+        for (OrderEntity entity : listOrders){
+            List<OrderEntity.ProductsEntity> productsEntities = entity.getProducts();
+            for (OrderEntity.ProductsEntity productsEntity : productsEntities){
+                productsEntity.setImg(imgObject.get(productsEntity.getImg()).getAsString());
+            }
+        }
+         **/
+
+        boolean isFinish = maxPage == currentPage;
+        // 记录当前的页码
+        OrderData.INSTANCE.pageNum = currentPage;
+        OrderData.INSTANCE.isLoadComplete = isFinish;
+        if (currentPage == 1){ // 刷新或者首次加载
+            orderView.onRequestSuccess(listOrders, isFinish);
+        }else{ // 加载更多
+            orderView.onLoadMoreSuccess(listOrders, isFinish);
+        }
     }
 }

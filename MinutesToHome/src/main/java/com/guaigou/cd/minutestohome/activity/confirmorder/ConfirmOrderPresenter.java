@@ -1,11 +1,14 @@
 package com.guaigou.cd.minutestohome.activity.confirmorder;
 
 import com.google.common.base.Preconditions;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.guaigou.cd.minutestohome.BasePresenter;
 import com.guaigou.cd.minutestohome.activity.shoppingcart.CartData;
 import com.guaigou.cd.minutestohome.entity.CartEntity;
+import com.guaigou.cd.minutestohome.entity.ConfirmOrderEntity;
 import com.guaigou.cd.minutestohome.http.HttpService;
+import com.guaigou.cd.minutestohome.http.ResponseMgr;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
 import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
@@ -36,7 +39,7 @@ public class ConfirmOrderPresenter implements BasePresenter {
     /**
      * 请求订单
      */
-    public void onRequestOrder(String shopId, String note, String address, String time){
+    public void onRequestOrder(String shopId, String note, String address, String time, String name, String phone){
         confirmOrderView.onStartRequestOrder();
 
         StringBuilder builder = new StringBuilder();
@@ -50,10 +53,11 @@ public class ConfirmOrderPresenter implements BasePresenter {
         }
         builder.deleteCharAt(builder.length()-1);
         String orderInfo = builder.toString();
-        DebugUtil.d("ConfirmOrderPresenter 订单请求信息：Key:" + orderInfo+"  note:" + note+"  address:" + address +"  time:" + time);
+        DebugUtil.d("ConfirmOrderPresenter 订单请求信息：Key:" + orderInfo+"  note:" + note+"  address:" + address +"  time:" + time
+            + " name:" + name + " phone:" + phone);
         RetrofitFactory.getRetrofit()
                 .create(HttpService.class)
-                .requestOrder(orderInfo, note, address, time)
+                .requestOrder(orderInfo, note, address, time, name, phone)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<JsonObject>() {
@@ -71,7 +75,11 @@ public class ConfirmOrderPresenter implements BasePresenter {
                     @Override
                     public void onNext(JsonObject jsonObject) {
                         DebugUtil.d("ConfirmOrderPresenter 订单获取成功：" + jsonObject);
-                        confirmOrderView.onRequestSuccess();
+                        if (ResponseMgr.getStatus(jsonObject) == 1){
+                            confirmOrderView.onRequestSuccess(new Gson().fromJson(jsonObject.get("data").getAsJsonObject(), ConfirmOrderEntity.class));
+                        }else {
+                            confirmOrderView.onRequestFailure();
+                        }
                     }
                 });
     }

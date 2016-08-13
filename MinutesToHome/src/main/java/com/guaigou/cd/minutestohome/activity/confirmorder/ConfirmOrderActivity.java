@@ -15,7 +15,9 @@ import com.guaigou.cd.minutestohome.R;
 import com.guaigou.cd.minutestohome.activity.addressmgr.AddressActivity;
 import com.guaigou.cd.minutestohome.activity.buyorder.BuyOrderActivity;
 import com.guaigou.cd.minutestohome.activity.note.NoteActivity;
+import com.guaigou.cd.minutestohome.activity.shoppingcart.CartData;
 import com.guaigou.cd.minutestohome.entity.AddressEntity;
+import com.guaigou.cd.minutestohome.entity.ConfirmOrderEntity;
 import com.guaigou.cd.minutestohome.entity.RegionEntity;
 import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
 import com.guaigou.cd.minutestohome.util.AddressUtil;
@@ -56,9 +58,9 @@ public class ConfirmOrderActivity extends BaseActivity implements ConfirmOrderVi
     @Bind(R.id.text_freight_price) TextView mTextFreightPrice; // 运费
     @Bind(R.id.text_score_price) TextView mTextScorePrice; // 积分减免
     @Bind(R.id.text_real_price) TextView mTextRealPrice; // 实际支付
-    @Bind(R.id.Container) ScrollView mContainer; // 容器
     @Bind(R.id.layout_address_text) LinearLayout mLayoutAddressTextView;
     @Bind(R.id.text_address_hint) TextView mTextAddressHint;
+    @Bind(R.id.Container) View containerView;
 
     private AddressEntity addressEntity;
 
@@ -153,7 +155,7 @@ public class ConfirmOrderActivity extends BaseActivity implements ConfirmOrderVi
      */
     @OnClick(R.id.text_score_add)
     void onScoreAddClick() {
-        showSnakeView(mContainer, "积分不足100，不能继续添加");
+        showSnakeView(containerView, "积分不足100，不能继续添加");
     }
 
 
@@ -166,13 +168,25 @@ public class ConfirmOrderActivity extends BaseActivity implements ConfirmOrderVi
             showSnakeView(view, "请选择收货地址");
             return;
         }
+
+        if(TextUtils.isEmpty(addressEntity.getContacts()) || TextUtils.isEmpty(addressEntity.getContacts())){
+            showSnakeView(view, "联系人和电话号码不能为空");
+            return;
+        }
+
         RegionEntity entity = RegionPrefs.getRegionData(this);
         if (entity == null || TextUtils.isEmpty(entity.getId())){
             showSnakeView(view, "小区信息出现错误，请退出软件重试");
             return;
         }
+        if (!entity.getName().equalsIgnoreCase(addressEntity.getCommunity())){
+            showSnakeView(view, "小区地址和收货地址不一样 不能下单");
+            return;
+        }
+
         presenter.onRequestOrder(entity.getId(), mTextNote.getText().toString(),
-                mTextAddress.getText().toString(),  mTextDeliveryTime.getText().toString());
+                mTextAddress.getText().toString(),  mTextDeliveryTime.getText().toString(),
+                addressEntity.getContacts(), addressEntity.getMobilePhone());
 //
 //        Intent intent = new Intent(this, BuyOrderActivity.class);
 //        startActivity(intent);
@@ -282,11 +296,21 @@ public class ConfirmOrderActivity extends BaseActivity implements ConfirmOrderVi
     @Override
     public void onRequestFailure() {
         dismissProgressDialog();
+        showSnakeView(containerView, "下单失败，请重新操作");
     }
 
     @Override
-    public void onRequestSuccess() {
+    public void onRequestSuccess(ConfirmOrderEntity entity) {
         dismissProgressDialog();
+        if (entity != null && !TextUtils.isEmpty(entity.getOrderNumber())){
+            CartData.INSTANCE.clear();
+            Intent intent = new Intent();
+            intent.putExtra(BuyOrderActivity.ORDER_KEY, entity.getOrderNumber());
+            startActivity(intent);
+            finish();
+        }else {
+            showSnakeView(containerView, "下单失败，请重新操作");
+        }
     }
 
 }

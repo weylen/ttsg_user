@@ -134,12 +134,7 @@ public class SearchActivity extends BaseActivity implements SearchView{
     @Override
     public void onSearchSuccess(List<ProductEntity> data, boolean isComplete) {
         dismissProgressDialog();
-        if (isComplete){
-            int size = data == null ? 0 : data.size();
-            if (size < Constants.DEFAULT_PAGE_SIZE){
-                zListView.setLoadComplete(isComplete);
-            }
-        }
+        zListView.setLoadComplete(isComplete);
         adapter.setData(data);
     }
 

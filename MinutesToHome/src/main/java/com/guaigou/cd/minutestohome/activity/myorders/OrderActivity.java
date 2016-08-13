@@ -7,9 +7,14 @@ import android.widget.TextView;
 
 import com.guaigou.cd.minutestohome.BaseActivity;
 import com.guaigou.cd.minutestohome.R;
+import com.guaigou.cd.minutestohome.adapter.OnItemViewClickListener;
+import com.guaigou.cd.minutestohome.adapter.OrderAdapter;
+import com.guaigou.cd.minutestohome.entity.OrderEntity;
 import com.guaigou.cd.minutestohome.view.EmptyViewHelper;
 import com.guaigou.cd.minutestohome.view.ZListView;
 import com.guaigou.cd.minutestohome.view.ZRefreshingView;
+
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -28,6 +33,7 @@ public class OrderActivity extends BaseActivity implements OrderView{
     @Bind(R.id.refreshLayout)
     ZRefreshingView zRefreshingView; // 刷新组件
 
+    private OrderAdapter orderAdapter;
     private EmptyViewHelper emptyViewHelper; // 空视图辅助类
 
     private OrderPresenter orderPresenter; // 业务处理类
@@ -66,11 +72,27 @@ public class OrderActivity extends BaseActivity implements OrderView{
         emptyViewHelper.setOnEmptyTouchListener(() -> {
             orderPresenter.requestOrder();
         });
+        // 设置适配器
+        orderAdapter = new OrderAdapter(this, null);
+        orderAdapter.setOnItemViewClickListener(itemViewClickListener);
+        zListView.setAdapter(orderAdapter);
 
         // 创建业务处理类对象
         orderPresenter = new OrderPresenter(this);
         orderPresenter.requestOrder();
     }
+
+    private OnItemViewClickListener itemViewClickListener = new OnItemViewClickListener() {
+        @Override // 取消操作
+        public void onClickView1(int position) {
+
+        }
+
+        @Override // 支付操作
+        public void onClickView2(int position) {
+
+        }
+    };
 
     /**
      * 刷新
@@ -111,23 +133,26 @@ public class OrderActivity extends BaseActivity implements OrderView{
     }
 
     @Override
-    public void onRequestSuccess() {
+    public void onRequestSuccess(List<OrderEntity> data, boolean isFinish) {
         resetRefresh();
+        if (isFinish){
+            zListView.setShowFooterView(false);
+        }else {
+            zListView.setShowFooterView(true);
+            zListView.setState(ZListView.State.STATE_NORMAL);
+        }
+        orderAdapter.setData(data);
     }
 
     @Override
-    public void onLoadMoreSuccess() {
-
+    public void onLoadMoreSuccess(List<OrderEntity> data, boolean isFinish) {
+        zListView.setState(isFinish ? ZListView.State.STATE_COMPLETE : ZListView.State.STATE_NORMAL);
+        orderAdapter.addData(data);
     }
 
     @Override
     public void onLoadMoreFailure() {
-
-    }
-
-    @Override
-    public void onRefreshSuccess() {
-        resetRefresh();
+        zListView.setState(ZListView.State.STATE_ERROR);
     }
 
     @Override

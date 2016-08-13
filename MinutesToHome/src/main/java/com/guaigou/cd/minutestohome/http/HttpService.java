@@ -118,7 +118,9 @@ public interface HttpService {
             @Field("Key") String orderInfo,
             @Field("note") String note,
             @Field("addr") String addr,
-            @Field("end") String time
+            @Field("end") String time,
+            @Field("name") String name,
+            @Field("tele") String phone
     );
 
     /**

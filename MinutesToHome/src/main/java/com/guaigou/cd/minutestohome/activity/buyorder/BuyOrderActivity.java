@@ -3,12 +3,14 @@ package com.guaigou.cd.minutestohome.activity.buyorder;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.guaigou.cd.minutestohome.BaseActivity;
 import com.guaigou.cd.minutestohome.R;
 import com.guaigou.cd.minutestohome.activity.pay.PayActivity;
+import com.guaigou.cd.minutestohome.util.DebugUtil;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -18,6 +20,8 @@ import butterknife.OnClick;
  * Created by weylen on 2016-07-24.
  */
 public class BuyOrderActivity extends BaseActivity {
+
+    public static final String ORDER_KEY = "order_key";
 
     @Bind(R.id.text_title) TextView mTextTitleView;
     @Bind(R.id.orderCodeView) TextView mOrderCodeView;
@@ -33,6 +37,8 @@ public class BuyOrderActivity extends BaseActivity {
     @Bind(R.id.orderContactsView) TextView mOrderContactsView;
     @Bind(R.id.orderAddressView) TextView mOrderAddressView;
 
+    private String orderNumber = null; // 订单号
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +46,12 @@ public class BuyOrderActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         mTextTitleView.setText(R.string.OrderDetails);
+
+        orderNumber = getIntent().getStringExtra(ORDER_KEY);
+        if (TextUtils.isEmpty(orderNumber)){
+            DebugUtil.e("BuyOrderActivity onCreate 订单号出现异常");
+            return;
+        }
     }
 
     @Override

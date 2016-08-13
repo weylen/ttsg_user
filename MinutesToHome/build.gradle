@@ -29,8 +29,8 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
-    compile "com.android.support:recyclerview-v7:$rootProject.supportLibraryVersion" // RecyclerView
-
+    compile "com.android.support:recyclerview-v7:$rootProject.supportLibraryVersion"
+    // RecyclerView
     compile "com.github.rey5137:material:$rootProject.ext.reyVersion"
     compile "com.google.guava:guava:$rootProject.ext.guavaVersion"
     // RecyclerView
@@ -40,12 +40,12 @@ dependencies {
     compile "com.jakewharton.rxbinding:rxbinding-design:$rootProject.ext.rxbindingDesign"
     compile "io.reactivex:rxandroid:$rootProject.ext.rxandroidVersion"
     compile "io.reactivex:rxjava:$rootProject.ext.rxJavaVersion"
-
     compile "com.squareup.retrofit2:retrofit:$rootProject.ext.retrofitVersion"
     compile "com.squareup.retrofit2:converter-gson:$rootProject.ext.retrofitVersion"
     compile "com.squareup.retrofit2:adapter-rxjava:$rootProject.ext.retrofitVersion"
     compile "com.github.bumptech.glide:glide:$rootProject.ext.glideVersion"
     compile project(path: ':pickerview')
+    compile files('libs/alipaySdk-20160809.jar')
 }
 retrolambda {
     javaVersion JavaVersion.VERSION_1_6

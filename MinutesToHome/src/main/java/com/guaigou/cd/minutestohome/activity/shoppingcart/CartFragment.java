@@ -166,6 +166,7 @@ public class CartFragment extends BaseFragment implements CartView{
 
     private void deleteLocaleData(List<CartEntity> deleteData){
         CartData.INSTANCE.removeAll(deleteData);
+        adapter.getData().remove(deleteData);
         adapter.resetStatusArray();
         adapter.notifyDataSetChanged();
     }
