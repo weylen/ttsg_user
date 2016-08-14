@@ -87,16 +87,21 @@ public class OrderActivity extends BaseActivity implements OrderView{
     private OnItemViewClickListener itemViewClickListener = new OnItemViewClickListener() {
         @Override // 取消操作
         public void onClickView1(int position) {
-            showDeleteOrderDialog(position, orderAdapter.getItem(position).getOrderId());
+            showCancelOrderDialog(position, orderAdapter.getItem(position).getOrderId());
         }
 
         @Override // 支付操作
         public void onClickView2(int position) {
             orderPresenter.validatePayment(position, orderAdapter.getItem(position).getOrderId());
         }
+
+        @Override // 删除订单操作
+        public void onClickView3(int position) {
+            showDeleteOrderDialog(position, orderAdapter.getItem(position).getOrderId());
+        }
     };
 
-    private void showDeleteOrderDialog(int position, String orderId){
+    private void showCancelOrderDialog(int position, String orderId){
         new AlertDialog.Builder(this)
                 .setTitle("提示")
                 .setMessage("确定要取消该订单？")
@@ -105,6 +110,19 @@ public class OrderActivity extends BaseActivity implements OrderView{
                 })
                 .setPositiveButton("确定", (dialog, which) -> {
                     orderPresenter.cancelOrder(position, orderId);
+                })
+                .show();
+    }
+
+    private void showDeleteOrderDialog(int position, String orderId){
+        new AlertDialog.Builder(this)
+                .setTitle("提示")
+                .setMessage("确定要删除该订单？")
+                .setNegativeButton("取消", (dialog, which) -> {
+                    dialog.dismiss();
+                })
+                .setPositiveButton("确定", (dialog, which) -> {
+                    orderPresenter.deleteOrder(position, orderId);
                 })
                 .show();
     }
@@ -224,5 +242,23 @@ public class OrderActivity extends BaseActivity implements OrderView{
         intent.putExtra(PayActivity.ORDER_PRICE_KEY, entity.getTotal());
         intent.putExtra(PayActivity.ORDER_PRODUCTS_DETAILS_KEY, entity.getProducts());
         startActivity(intent);
+    }
+
+    @Override
+    public void onStartDeleteOrder() {
+        showProgressDialog("删除中...");
+    }
+
+    @Override
+    public void onDeleteOrderSuccess(int position) {
+        dismissProgressDialog();
+        orderAdapter.getData().remove(position);
+        orderAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onDeleteOrderFailure() {
+        dismissProgressDialog();
+        showSnakeView(zListView, "删除订单失败，请重新操作");
     }
 }

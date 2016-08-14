@@ -185,4 +185,32 @@ public class OrderPresenter{
                     }
                 });
     }
+
+    void deleteOrder(int position, String orderId){
+        orderView.onStartDeleteOrder();
+        RetrofitFactory.getRetrofit().create(HttpService.class)
+                .deleteOrder(orderId)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Subscriber<JsonObject>() {
+                    @Override
+                    public void onCompleted() {}
+
+                    @Override
+                    public void onError(Throwable e) {
+                        DebugUtil.d("OrderPresenter 验证支付订单失败：" + e.getMessage());
+                        orderView.onDeleteOrderFailure();
+                    }
+
+                    @Override
+                    public void onNext(JsonObject jsonObject) {
+                        DebugUtil.d("OrderPresenter验证支付订单成功：" + jsonObject);
+                        if (ResponseMgr.getStatus(jsonObject) == 1){
+                            orderView.onDeleteOrderSuccess(position);
+                        }else {
+                            orderView.onDeleteOrderFailure();
+                        }
+                    }
+                });
+    }
 }

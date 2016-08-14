@@ -21,8 +21,20 @@
             android:textColor="@color/grayText"
             android:layout_toRightOf="@id/orderStatusView"
             android:paddingLeft="10dp"
+            android:layout_weight="1.0"
             />
 
+        <ImageView
+            android:id="@+id/action_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@mipmap/icon_laji"
+            android:layout_gravity="center"
+            android:paddingLeft="3dp"
+            android:paddingRight="3dp"
+            android:scaleType="center"
+            android:background="@drawable/abc_generic_pressed"
+            />
     </LinearLayout>
 
 

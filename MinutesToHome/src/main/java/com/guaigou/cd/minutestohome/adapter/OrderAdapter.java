@@ -63,6 +63,13 @@ public class OrderAdapter extends GenericBaseAdapter<OrderEntity> {
             holder.mActionLayout.setVisibility(View.VISIBLE);
             holder.mOrderStatusView.setTextColor(accentColor);
         }
+
+        // 设置删除图标的可见性 订单未支付或者已取消
+        if ("2".equalsIgnoreCase(status) || "5".equalsIgnoreCase(status)){
+            holder.mDeleteView.setVisibility(View.VISIBLE);
+        }else {
+            holder.mDeleteView.setVisibility(View.GONE);
+        }
         // 设置操作事件
         holder.mCancelView.setOnClickListener(v->{
             if (onItemViewClickListener != null){
@@ -72,6 +79,11 @@ public class OrderAdapter extends GenericBaseAdapter<OrderEntity> {
         holder.mPayView.setOnClickListener(v->{
             if (onItemViewClickListener != null){
                 onItemViewClickListener.onClickView2(position);
+            }
+        });
+        holder.mDeleteView.setOnClickListener(v->{
+            if (onItemViewClickListener != null){
+                onItemViewClickListener.onClickView3(position);
             }
         });
 
@@ -87,6 +99,7 @@ public class OrderAdapter extends GenericBaseAdapter<OrderEntity> {
         @Bind(R.id.action_layout) LinearLayout mActionLayout; // 订单动作布局
         @Bind(R.id.action_cancel) View mCancelView; // 取消订单
         @Bind(R.id.action_pay) View mPayView; // 支付按钮
+        @Bind(R.id.action_delete) View mDeleteView; // 删除按钮
 
         public ViewHolder(View itemView) {
             ButterKnife.bind(this, itemView);

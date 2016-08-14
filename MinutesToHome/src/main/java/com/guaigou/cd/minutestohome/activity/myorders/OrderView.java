@@ -21,4 +21,7 @@ public interface OrderView{
     void onStartValidateOrder();
     void onValidateOrderFailure(String message);
     void oNValidateOrderSuccess(int position);
+    void onStartDeleteOrder();
+    void onDeleteOrderSuccess(int position);
+    void onDeleteOrderFailure();
 }
