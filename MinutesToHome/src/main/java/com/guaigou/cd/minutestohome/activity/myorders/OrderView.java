@@ -15,4 +15,10 @@ public interface OrderView{
     void onLoadMoreSuccess(List<OrderEntity> data, boolean isFinish);
     void onLoadMoreFailure();
     void onRefreshFailure();
+    void onStartCancelOrder();
+    void onCancelOrderSuccess(int position);
+    void onCancelOrderFailure();
+    void onStartValidateOrder();
+    void onValidateOrderFailure(String message);
+    void oNValidateOrderSuccess(int position);
 }

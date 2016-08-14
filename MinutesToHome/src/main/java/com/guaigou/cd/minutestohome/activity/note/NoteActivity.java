@@ -31,6 +31,7 @@ public class NoteActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         mTextEdit.setText(getIntent().getStringExtra("note"));
+        mTextEdit.setSelection(mTextEdit.getText().length());
     }
 
     @Override

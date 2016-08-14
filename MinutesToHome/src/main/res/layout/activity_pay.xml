@@ -1,100 +1,174 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:background="@color/white"
+    android:layout_height="match_parent"
     android:id="@+id/Container"
     >
 
     <include layout="@layout/layout_title"/>
 
-    <LinearLayout
-        style="@style/GenericItem" android:orientation="horizontal"
-        >
-
-        <TextView
-            style="@style/TitleTextView"
-            android:text="订单金额"
-            android:textColor="@color/grayText"
-            android:layout_weight="1.0"
-            android:textSize="@dimen/TextSize_14"
-            />
-
-        <TextView
-            android:id="@+id/text_price"
-            style="@style/TitleTextView"
-            android:text="12.3元"
-            android:textColor="@color/redText"
-            android:textSize="@dimen/TextSize_14"
-            />
-
-    </LinearLayout>
-
-    <View
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/divider"
-        />
-
-    <LinearLayout
-        android:id="@+id/alipay_layout" android:gravity="center_vertical"
-        style="@style/GenericItem" android:orientation="horizontal"
-        android:background="@drawable/abc_generic_pressed"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        android:layout_weight="1.0"
         >
 
-        <ImageView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@mipmap/icon_alipay"
-            />
+            android:orientation="vertical"
+            >
+            <LinearLayout
+                style="@style/GenericItem" android:orientation="horizontal"
+                >
+                <TextView
+                    style="@style/TitleTextView"
+                    android:text="订单名称"
+                    android:textColor="@color/grayText"
+                    android:layout_weight="1.0"
+                    android:textSize="@dimen/TextSize_16"
+                    />
 
-        <TextView
-            android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:layout_weight="1.0"
-            android:textColor="@color/blackText"
-            android:text="支付宝"
-            android:paddingLeft="12dp"
-            />
+                <TextView
+                    android:id="@+id/text_orderName"
+                    style="@style/TitleTextView"
+                    android:textColor="@color/grayText"
+                    android:textSize="@dimen/TextSize_16"
+                    />
+            </LinearLayout>
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/abc_arrow_right"
-            />
-    </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.1dp"
+                android:background="@color/divider"
+                android:layout_marginLeft="@dimen/item_padding_horizontal"
+                android:layout_marginRight="@dimen/item_padding_horizontal"
+                />
 
-    <View
+
+            <LinearLayout
+                style="@style/GenericItem" android:orientation="horizontal"
+                >
+                <TextView
+                    style="@style/TitleTextView"
+                    android:text="支付金额"
+                    android:textColor="@color/grayText"
+                    android:layout_weight="1.0"
+                    android:textSize="@dimen/TextSize_16"
+                    />
+
+                <TextView
+                    android:id="@+id/text_price"
+                    style="@style/TitleTextView"
+                    android:text="12.3元"
+                    android:textColor="@color/redText"
+                    android:textSize="@dimen/TextSize_16"
+                    />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp"
+                android:background="@color/white"
+                >
+                <TextView
+                    style="@style/TitleTextView"
+                    android:text="支付方式"
+                    android:textColor="@color/grayText"
+                    android:textSize="@dimen/TextSize_14"
+                    android:layout_marginLeft="@dimen/item_padding_horizontal"
+                    android:layout_marginTop="10dp"
+                    />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="@color/divider"
+                    android:layout_marginLeft="@dimen/item_padding_horizontal"
+                    android:layout_marginRight="@dimen/item_padding_horizontal"
+                    />
+
+                <LinearLayout
+                    android:id="@+id/alipay_layout" android:gravity="center_vertical"
+                    style="@style/GenericItem" android:orientation="horizontal"
+                    android:background="@drawable/abc_generic_pressed"
+                    >
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@mipmap/icon_alipay"
+                        />
+
+                    <TextView
+                        android:layout_width="0dip"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.0"
+                        android:textColor="@color/blackText"
+                        android:text="支付宝"
+                        android:paddingLeft="12dp"
+                        />
+
+                    <RadioButton
+                        android:id="@+id/radio_pay_ali"
+                        style="@style/MyCheckBoxStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="@color/divider"
+                    android:layout_marginLeft="@dimen/item_padding_horizontal"
+                    android:layout_marginRight="@dimen/item_padding_horizontal"
+                    />
+
+                <LinearLayout
+                    android:id="@+id/weixin_layout" android:gravity="center_vertical"
+                    style="@style/GenericItem" android:orientation="horizontal"
+                    android:background="@drawable/abc_generic_pressed"
+                    >
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@mipmap/icon_appwx_logo"
+                        />
+                    <TextView
+                        android:layout_width="0dip"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.0"
+                        android:textColor="@color/blackText"
+                        android:text="微信支付"
+                        android:paddingLeft="12dp"
+                        />
+                    <RadioButton
+                        android:id="@+id/radio_pay_weixin"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/MyCheckBoxStyle"
+                        />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <TextView
+        android:id="@+id/action_pay"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/divider"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:textSize="@dimen/TextSize_14"
+        android:textColor="@color/white"
+        android:background="@drawable/abc_generic_theme_btn"
+        android:text="确认支付"
+        android:gravity="center"
         />
-
-    <LinearLayout
-        android:id="@+id/weixin_layout" android:gravity="center_vertical"
-        style="@style/GenericItem" android:orientation="horizontal"
-        android:background="@drawable/abc_generic_pressed"
-        >
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/icon_appwx_logo"
-            />
-
-        <TextView
-            android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:layout_weight="1.0"
-            android:textColor="@color/blackText"
-            android:text="微信支付"
-            android:paddingLeft="12dp"
-            />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/abc_arrow_right"
-            />
-    </LinearLayout>
 
 </LinearLayout>

@@ -95,7 +95,7 @@
             android:windowSoftInputMode="adjustPan|stateHidden"
             />
 
-        <activity android:name=".activity.buyorder.BuyOrderActivity" android:screenOrientation="portrait"
+        <activity android:name=".activity.orderdetails.OrderDetailsActivity" android:screenOrientation="portrait"
             android:configChanges="screenSize|keyboard|orientation|uiMode|screenLayout"
             android:windowSoftInputMode="adjustPan|stateHidden"
             />

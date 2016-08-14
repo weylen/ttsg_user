@@ -15,6 +15,7 @@ import com.guaigou.cd.minutestohome.activity.confirmorder.ConfirmOrderActivity;
 import com.guaigou.cd.minutestohome.activity.productdetails.ProductDetailsActivity;
 import com.guaigou.cd.minutestohome.adapter.CartAdapter;
 import com.guaigou.cd.minutestohome.entity.CartEntity;
+import com.guaigou.cd.minutestohome.util.DebugUtil;
 import com.guaigou.cd.minutestohome.util.LocaleUtil;
 import com.guaigou.cd.minutestohome.util.MathUtil;
 import com.guaigou.cd.minutestohome.view.EmptyViewHelper;
@@ -82,6 +83,8 @@ public class CartFragment extends BaseFragment implements CartView{
             editView.setVisibility(View.GONE);
             paymentLayout.setVisibility(View.GONE);
         }else{
+            editView.setVisibility(View.VISIBLE);
+            paymentLayout.setVisibility(View.VISIBLE);
             calculateAllPrice();
         }
     }
@@ -166,7 +169,7 @@ public class CartFragment extends BaseFragment implements CartView{
 
     private void deleteLocaleData(List<CartEntity> deleteData){
         CartData.INSTANCE.removeAll(deleteData);
-        adapter.getData().remove(deleteData);
+        adapter.getData().removeAll(deleteData);
         adapter.resetStatusArray();
         adapter.notifyDataSetChanged();
     }
@@ -204,6 +207,7 @@ public class CartFragment extends BaseFragment implements CartView{
                 editView.setVisibility(View.GONE);
                 paymentLayout.setVisibility(View.GONE);
                 actionLayout.setVisibility(View.GONE);
+                adapter.setData(null);
             }else {
                 editView.setVisibility(View.VISIBLE);
                 if ("编辑".equalsIgnoreCase(text)){

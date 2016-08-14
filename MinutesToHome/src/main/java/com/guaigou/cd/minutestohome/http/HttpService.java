@@ -139,6 +139,52 @@ public interface HttpService {
     );
 
     /**
+     * 删除订单
+     * @param orderId 订单id
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("oda-del")
+    Observable<JsonObject> deleteOrder(
+            @Field("Key") String orderId
+    );
+
+    /**
+     * 修改订单状态
+     * @param orderId 订单号
+     * @param status "1"："订单完成" "2"："订单未支付" "3"："订单已支付未发货" "4"："客户退货" "5"："客户取消订单" "6"："支付结果确认中"
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("oda-modify")
+    Observable<JsonObject> alertOrderStatus(
+            @Field("key") String orderId,
+            @Field("end") String status
+    );
+
+    /**
+     * 验证支付请求
+     * @param orderId
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("oda-saveOld")
+    Observable<JsonObject> validateOrder(
+            @Field("Key") String orderId
+    );
+
+    /**
+     * 获取订单详情
+     * @param orderId
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("oda-orderDetail")
+    Observable<JsonObject> getOrderDetails(
+            @Field("key") String orderId
+    );
+
+    /**
      * 注销
      * @return
      */
@@ -158,5 +204,6 @@ public interface HttpService {
             @Field("key") String key,
             @Field("text") String content
     );
+
 
 }

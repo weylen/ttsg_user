@@ -19,6 +19,7 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.Bind;
 import rx.Observable;
 import rx.Subscriber;
 
@@ -67,6 +68,8 @@ public enum CartData {
     public void clear(){
         ensureData();
         data.clear();
+        numberAll = 0;
+        notifyDataChanged();
     }
 
     /**

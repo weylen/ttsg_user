@@ -11,6 +11,7 @@ import com.guaigou.cd.minutestohome.R;
 import com.guaigou.cd.minutestohome.entity.OrderEntity;
 import com.guaigou.cd.minutestohome.entity.OrderProductsEntity;
 import com.guaigou.cd.minutestohome.http.Constants;
+import com.guaigou.cd.minutestohome.view.OrderProductsDetailsView;
 
 import java.util.List;
 
@@ -22,9 +23,12 @@ import butterknife.ButterKnife;
  */
 public class OrderAdapter extends GenericBaseAdapter<OrderEntity> {
 
+    private int blackColor, accentColor;
     private OnItemViewClickListener onItemViewClickListener;
     public OrderAdapter(Context context, List<OrderEntity> data) {
         super(context, data);
+        blackColor = context.getResources().getColor(R.color.blackText);
+        accentColor = context.getResources().getColor(R.color.colorAccent);
     }
 
     public void setOnItemViewClickListener(OnItemViewClickListener onItemViewClickListener) {
@@ -49,21 +53,15 @@ public class OrderAdapter extends GenericBaseAdapter<OrderEntity> {
         holder.mOrderStatusView.setText(Constants.ORDER_PARAM.get(status));
         holder.mOrderTimeView.setText(productsEntity.getDate());
         holder.mOrderPriceView.setText("￥" + entity.getTotal());
-        StringBuilder builder = new StringBuilder();
-        for (OrderProductsEntity productsEntity1 : productsEntities){
-            builder.append(productsEntity1.getName());
-            builder.append("&nbsp;&nbsp;x");
-            builder.append(productsEntity1.getAmount());
-            builder.append("<br>");
-        }
-        builder.deleteCharAt(builder.length()-1);
-        holder.mOrderContentView.setText(Html.fromHtml(builder.toString()));
+        holder.mOrderContentView.setDataAndNotify1(productsEntities);
 
         // 检查订单状态
         if (!"2".equalsIgnoreCase(status)){
             holder.mActionLayout.setVisibility(View.GONE);
+            holder.mOrderStatusView.setTextColor(blackColor);
         }else {
             holder.mActionLayout.setVisibility(View.VISIBLE);
+            holder.mOrderStatusView.setTextColor(accentColor);
         }
         // 设置操作事件
         holder.mCancelView.setOnClickListener(v->{
@@ -84,7 +82,7 @@ public class OrderAdapter extends GenericBaseAdapter<OrderEntity> {
 
         @Bind(R.id.orderStatusView) TextView mOrderStatusView; // 订单状态
         @Bind(R.id.orderTimeView) TextView mOrderTimeView; // 订单时间
-        @Bind(R.id.orderContentView) TextView mOrderContentView; // 订单内容
+        @Bind(R.id.orderContentView) OrderProductsDetailsView mOrderContentView; // 订单内容
         @Bind(R.id.orderPriceView) TextView mOrderPriceView; // 订单价格
         @Bind(R.id.action_layout) LinearLayout mActionLayout; // 订单动作布局
         @Bind(R.id.action_cancel) View mCancelView; // 取消订单

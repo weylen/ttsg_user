@@ -6,15 +6,15 @@ import java.util.ArrayList;
 /**
  * Created by weylen on 2016-08-14.
  */
-public class OrderEntity implements Serializable{
+public class OrderDetailsEntity implements Serializable{
 
     private String orderId;
     private String total;
-    private ArrayList<OrderProductsEntity> products;
+    private ArrayList<OrderDetailsProductsEntity> products;
 
-    public OrderEntity(){}
+    public OrderDetailsEntity(){}
 
-    public OrderEntity(String orderId, String total, ArrayList<OrderProductsEntity> products) {
+    public OrderDetailsEntity(String orderId, String total, ArrayList<OrderDetailsProductsEntity> products) {
         this.orderId = orderId;
         this.total = total;
         this.products = products;
@@ -36,11 +36,11 @@ public class OrderEntity implements Serializable{
         this.total = total;
     }
 
-    public ArrayList<OrderProductsEntity> getProducts() {
+    public ArrayList<OrderDetailsProductsEntity> getProducts() {
         return products;
     }
 
-    public void setProducts(ArrayList<OrderProductsEntity> products) {
+    public void setProducts(ArrayList<OrderDetailsProductsEntity> products) {
         this.products = products;
     }
 

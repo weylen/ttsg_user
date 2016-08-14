@@ -64,19 +64,27 @@ public class OrderPresenter{
                     public void onError(Throwable e) {
                         DebugUtil.d("OrderPresenter 订单列表获取失败：" + e.getMessage());
                         orderView.onRequestFailure();
+                        error(pageNum);
                     }
 
                     @Override
                     public void onNext(JsonObject jsonObject) {
                         DebugUtil.d("OrderPresenter 订单列表结果：" + jsonObject);
-                        DebugUtil.d("OrderPresenter 状态值：" + ResponseMgr.getStatus(jsonObject));
                         if (ResponseMgr.getStatus(jsonObject) != 1){
-                            orderView.onRequestFailure();
+                            error(pageNum);
                         }else {
                             map(jsonObject);
                         }
                     }
                 });
+    }
+
+    private void error(int pageNum){
+        if (pageNum > 1){
+            orderView.onLoadMoreFailure();
+        }else {
+            orderView.onRequestFailure();
+        }
     }
 
     private void map(JsonObject jsonObject){
@@ -92,8 +100,8 @@ public class OrderPresenter{
             JsonObject item = dataArray.get(i).getAsJsonObject();
             String orderId = item.get("orderId").getAsString();
             String total = item.get("total").getAsString();
-            List< OrderProductsEntity> products = gson.fromJson(item.get("products").getAsJsonArray(),
-                    new TypeToken<List< OrderProductsEntity>>(){}.getType());
+            ArrayList< OrderProductsEntity> products = gson.fromJson(item.get("products").getAsJsonArray(),
+                    new TypeToken<ArrayList< OrderProductsEntity>>(){}.getType());
 
             OrderEntity orderEntity = new OrderEntity(orderId, total, products);
             listOrders.add(orderEntity);
@@ -120,5 +128,61 @@ public class OrderPresenter{
         }else{ // 加载更多
             orderView.onLoadMoreSuccess(listOrders, isFinish);
         }
+    }
+
+    void cancelOrder(int position, String orderId){
+        orderView.onStartCancelOrder();
+        RetrofitFactory.getRetrofit().create(HttpService.class)
+                .alertOrderStatus(orderId, "5")
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Subscriber<JsonObject>() {
+                    @Override
+                    public void onCompleted() {}
+
+                    @Override
+                    public void onError(Throwable e) {
+                        DebugUtil.d("OrderPresenter 修改订单失败：" + e.getMessage());
+                        orderView.onCancelOrderFailure();
+                    }
+
+                    @Override
+                    public void onNext(JsonObject jsonObject) {
+                        DebugUtil.d("OrderPresenter 修改订单成功：" + jsonObject);
+                        if (ResponseMgr.getStatus(jsonObject) == 1){
+                            orderView.onCancelOrderSuccess(position);
+                        }else {
+                            orderView.onCancelOrderFailure();
+                        }
+                    }
+                });
+    }
+
+    void validatePayment(int position, String orderId){
+        orderView.onStartValidateOrder();
+        RetrofitFactory.getRetrofit().create(HttpService.class)
+                .validateOrder(orderId)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Subscriber<JsonObject>() {
+                    @Override
+                    public void onCompleted() {}
+
+                    @Override
+                    public void onError(Throwable e) {
+                        DebugUtil.d("OrderPresenter 验证支付订单失败：" + e.getMessage());
+                        orderView.onValidateOrderFailure("");
+                    }
+
+                    @Override
+                    public void onNext(JsonObject jsonObject) {
+                        DebugUtil.d("OrderPresenter验证支付订单成功：" + jsonObject);
+                        if (ResponseMgr.getStatus(jsonObject) == 1){
+                            orderView.oNValidateOrderSuccess(position);
+                        }else {
+                            orderView.onValidateOrderFailure(jsonObject.get("data").getAsString());
+                        }
+                    }
+                });
     }
 }

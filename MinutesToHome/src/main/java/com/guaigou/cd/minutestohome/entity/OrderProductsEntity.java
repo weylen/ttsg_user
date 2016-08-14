@@ -1,9 +1,11 @@
 package com.guaigou.cd.minutestohome.entity;
 
+import java.io.Serializable;
+
 /**
  * Created by weylen on 2016-08-14.
  */
-public class OrderProductsEntity {
+public class OrderProductsEntity implements Serializable{
     private String total;
     private String amount;
     private String price;

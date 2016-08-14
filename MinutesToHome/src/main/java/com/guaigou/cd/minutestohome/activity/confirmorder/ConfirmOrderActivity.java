@@ -6,15 +6,15 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bigkoo.pickerview.OptionsPickerView;
 import com.guaigou.cd.minutestohome.BaseActivity;
 import com.guaigou.cd.minutestohome.R;
 import com.guaigou.cd.minutestohome.activity.addressmgr.AddressActivity;
-import com.guaigou.cd.minutestohome.activity.buyorder.BuyOrderActivity;
+import com.guaigou.cd.minutestohome.activity.orderdetails.OrderDetailsActivity;
 import com.guaigou.cd.minutestohome.activity.note.NoteActivity;
+import com.guaigou.cd.minutestohome.activity.pay.PayActivity;
 import com.guaigou.cd.minutestohome.activity.shoppingcart.CartData;
 import com.guaigou.cd.minutestohome.entity.AddressEntity;
 import com.guaigou.cd.minutestohome.entity.ConfirmOrderEntity;
@@ -22,6 +22,7 @@ import com.guaigou.cd.minutestohome.entity.RegionEntity;
 import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
 import com.guaigou.cd.minutestohome.util.AddressUtil;
 import com.guaigou.cd.minutestohome.util.MathUtil;
+import com.guaigou.cd.minutestohome.view.OrderProductsDetailsView;
 import com.rey.material.app.SimpleDialog;
 
 import java.text.SimpleDateFormat;
@@ -60,6 +61,7 @@ public class ConfirmOrderActivity extends BaseActivity implements ConfirmOrderVi
     @Bind(R.id.text_real_price) TextView mTextRealPrice; // 实际支付
     @Bind(R.id.layout_address_text) LinearLayout mLayoutAddressTextView;
     @Bind(R.id.text_address_hint) TextView mTextAddressHint;
+    @Bind(R.id.layout_products) OrderProductsDetailsView orderProductsDetailsView;
     @Bind(R.id.Container) View containerView;
 
     private AddressEntity addressEntity;
@@ -79,8 +81,10 @@ public class ConfirmOrderActivity extends BaseActivity implements ConfirmOrderVi
         setupAddress(entity);
         // 设置商品价格
         String price = MathUtil.calculate();
-        mTextProductPrice.setText(price);
+        mTextProductPrice.setText("￥" + price);
         mTextRealPrice.setText(price);
+
+        orderProductsDetailsView.setDataAndNotify3(CartData.INSTANCE.getData());
 
         presenter = new ConfirmOrderPresenter(this);
     }
@@ -187,9 +191,6 @@ public class ConfirmOrderActivity extends BaseActivity implements ConfirmOrderVi
         presenter.onRequestOrder(entity.getId(), mTextNote.getText().toString(),
                 mTextAddress.getText().toString(),  mTextDeliveryTime.getText().toString(),
                 addressEntity.getContacts(), addressEntity.getMobilePhone());
-//
-//        Intent intent = new Intent(this, BuyOrderActivity.class);
-//        startActivity(intent);
     }
 
     private void showScoreHintDialog() {
@@ -233,7 +234,7 @@ public class ConfirmOrderActivity extends BaseActivity implements ConfirmOrderVi
             mTextAddressHint.setVisibility(View.VISIBLE);
         } else {
             mTextName.setText(entity.getContacts() + "   " + entity.getMobilePhone());
-            mTextAddress.setText(entity.getCommunity() + "\n" + entity.getDetailsAddress());
+            mTextAddress.setText(entity.getCommunity() + "   " + entity.getDetailsAddress());
             mLayoutAddressTextView.setVisibility(View.VISIBLE);
             mTextAddressHint.setVisibility(View.GONE);
         }
@@ -304,8 +305,9 @@ public class ConfirmOrderActivity extends BaseActivity implements ConfirmOrderVi
         dismissProgressDialog();
         if (entity != null && !TextUtils.isEmpty(entity.getOrderNumber())){
             CartData.INSTANCE.clear();
-            Intent intent = new Intent();
-            intent.putExtra(BuyOrderActivity.ORDER_KEY, entity.getOrderNumber());
+            Intent intent = new Intent(this, PayActivity.class);
+            intent.putExtra(PayActivity.ORDER_ID_KEY, entity.getOrderNumber());
+            intent.putExtra(PayActivity.ORDER_PRICE_KEY, entity.getT_price());
             startActivity(intent);
             finish();
         }else {

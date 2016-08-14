@@ -24,10 +24,6 @@
                 android:dividerHeight="5dp"
                 android:listSelector="@color/transparent"
                 />
-
         </com.guaigou.cd.minutestohome.view.ZRefreshingView>
-
     </FrameLayout>
-
-
 </LinearLayout>
