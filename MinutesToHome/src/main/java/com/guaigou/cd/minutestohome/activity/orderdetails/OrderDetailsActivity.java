@@ -1,18 +1,14 @@
 package com.guaigou.cd.minutestohome.activity.orderdetails;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.guaigou.cd.minutestohome.BaseActivity;
@@ -20,11 +16,9 @@ import com.guaigou.cd.minutestohome.R;
 import com.guaigou.cd.minutestohome.activity.pay.PayActivity;
 import com.guaigou.cd.minutestohome.entity.OrderDetailsEntity;
 import com.guaigou.cd.minutestohome.entity.OrderDetailsProductsEntity;
-import com.guaigou.cd.minutestohome.entity.OrderEntity;
 import com.guaigou.cd.minutestohome.http.Constants;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
 import com.guaigou.cd.minutestohome.util.DimensUtil;
-import com.guaigou.cd.minutestohome.util.LocaleUtil;
 import com.guaigou.cd.minutestohome.view.OrderProductsDetailsView;
 import com.guaigou.cd.minutestohome.view.ZRefreshingView;
 
