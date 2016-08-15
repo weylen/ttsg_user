@@ -38,6 +38,8 @@ public class Constants {
     // 服务端异步通知网址
     public static final String ALI_NOTIFA_URL = "m.alipay.com";
 
+    public static final String APP_ID = "wx0f894d6426a78405";
+
     static {
         ORDER_PARAM = new HashMap<>();
         ORDER_PARAM.put("1", "订单已完成");

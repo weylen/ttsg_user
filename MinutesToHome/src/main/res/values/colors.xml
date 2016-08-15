@@ -39,5 +39,6 @@
     <color name="redText">#F1302D</color>
     <color name="divider">#f2f2f2</color>
     <color name="dividerDark">#d9d9d9</color>
+    <color name="navpage">#FFE1E8EB</color>
 
 </resources>

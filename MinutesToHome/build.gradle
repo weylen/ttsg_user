@@ -46,6 +46,11 @@ dependencies {
     compile "com.github.bumptech.glide:glide:$rootProject.ext.glideVersion"
     compile project(path: ':pickerview')
     compile files('libs/alipaySdk-20160809.jar')
+    compile files('libs/libammsdk.jar')
+
+    android {
+        useLibrary 'org.apache.http.legacy'
+    }
 }
 retrolambda {
     javaVersion JavaVersion.VERSION_1_6

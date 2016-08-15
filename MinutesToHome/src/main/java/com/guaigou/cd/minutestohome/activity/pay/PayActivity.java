@@ -1,7 +1,6 @@
 package com.guaigou.cd.minutestohome.activity.pay;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,25 +11,28 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alipay.sdk.app.PayTask;
 import com.guaigou.cd.minutestohome.BaseActivity;
 import com.guaigou.cd.minutestohome.R;
-import com.guaigou.cd.minutestohome.activity.myorders.OrderView;
 import com.guaigou.cd.minutestohome.activity.orderdetails.OrderDetailsActivity;
 import com.guaigou.cd.minutestohome.entity.OrderProductsEntity;
 import com.guaigou.cd.minutestohome.http.Constants;
 import com.guaigou.cd.minutestohome.pay.PayResult;
 import com.guaigou.cd.minutestohome.pay.SignUtils;
+import com.guaigou.cd.minutestohome.pay.Util;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
+import com.tencent.mm.sdk.constants.Build;
+import com.tencent.mm.sdk.modelpay.PayReq;
+import com.tencent.mm.sdk.openapi.IWXAPI;
+import com.tencent.mm.sdk.openapi.WXAPIFactory;
+
+import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.Random;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -117,6 +119,8 @@ public class PayActivity extends BaseActivity implements PayView{
     void onPayClick(){
         if (payWay == PayWay.Ali){
             payByAli(orderName, orderDetails, orderPrice, orderId);
+        }else {
+            checkPayEnvironment();
         }
     }
 
@@ -318,5 +322,53 @@ public class PayActivity extends BaseActivity implements PayView{
     public void onAlertOrderStatusFailure() {
         dismissProgressDialog();
         peekInOrderDetailsActivity();
+    }
+
+    /*-------------------------------------------微信支付方式---------------------------------------------------------*/
+
+    private IWXAPI api;
+    private void checkPayEnvironment(){
+        api = WXAPIFactory.createWXAPI(this, Constants.APP_ID);
+        boolean isPaySupported = api.getWXAppSupportAPI() >= Build.PAY_SUPPORTED_SDK_INT;
+        if (!isPaySupported){
+            showSnakeView(containerView, "当前版本不支持微信支付");
+            return;
+        }
+        wxPay();
+    }
+
+    private void wxPay(){
+        String url = "http://wxpay.weixin.qq.com/pub_v2/app/app_pay.php?plat=android";
+        showProgressDialog("获取订单中...");
+        try{
+            byte[] buf = Util.httpGet(url);
+            if (buf != null && buf.length > 0) {
+                String content = new String(buf);
+                DebugUtil.e("PayActivity content:" + content);
+                JSONObject json = new JSONObject(content);
+                if(null != json && !json.has("retcode") ){
+                    PayReq req = new PayReq();
+                    req.appId			= json.getString("appid");
+                    req.partnerId		= json.getString("partnerid");
+                    req.prepayId		= json.getString("prepayid");
+                    req.nonceStr		= json.getString("noncestr");
+                    req.timeStamp		= json.getString("timestamp");
+                    req.packageValue	= json.getString("package");
+                    req.sign			= json.getString("sign");
+                    req.extData			= "app data"; // optional
+                    // 在支付之前，如果应用没有注册到微信，应该先调用IWXMsg.registerApp将应用注册到微信
+                    boolean isSend = api.sendReq(req);
+                    if (!isSend){
+                        showSnakeView(containerView, "请先安装微信");
+                    }
+                }else{
+                    showSnakeView(containerView, "返回错误"+json.getString("retmsg"));
+                }
+            }else{
+                showSnakeView(containerView, "服务器请求错误");
+            }
+        }catch(Exception e){
+            showSnakeView(containerView, "异常："+e.getMessage());
+        }
     }
 }
