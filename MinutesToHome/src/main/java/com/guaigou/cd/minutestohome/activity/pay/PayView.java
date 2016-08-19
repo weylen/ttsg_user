@@ -8,4 +8,10 @@ public interface PayView {
     void onStartAlertOrderStatus();
     void onAlertOrderStatusSuccess();
     void onAlertOrderStatusFailure();
+    void onStartRequestRsaPrivate();
+    void onRequestRsaPrivateSuccess(String rsaPrivate);
+    void onRequestRasPrivateFailure();
+    void onStartWxPay();
+    void onWxPaySuccess();
+    void onWxPayFailure();
 }

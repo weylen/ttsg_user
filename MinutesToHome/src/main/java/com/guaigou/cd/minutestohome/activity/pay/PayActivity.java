@@ -23,6 +23,7 @@ import com.guaigou.cd.minutestohome.pay.PayResult;
 import com.guaigou.cd.minutestohome.pay.SignUtils;
 import com.guaigou.cd.minutestohome.pay.Util;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
+import com.guaigou.cd.minutestohome.util.LocaleUtil;
 import com.tencent.mm.sdk.constants.Build;
 import com.tencent.mm.sdk.modelpay.PayReq;
 import com.tencent.mm.sdk.openapi.IWXAPI;
@@ -31,7 +32,9 @@ import com.tencent.mm.sdk.openapi.WXAPIFactory;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
 import java.net.URLEncoder;
+import java.net.UnknownHostException;
 import java.util.List;
 
 import butterknife.Bind;
@@ -118,7 +121,7 @@ public class PayActivity extends BaseActivity implements PayView{
     @OnClick(R.id.action_pay)
     void onPayClick(){
         if (payWay == PayWay.Ali){
-            payByAli(orderName, orderDetails, orderPrice, orderId);
+            payPresenter.requestRsaPrivate();
         }else {
             checkPayEnvironment();
         }
@@ -139,6 +142,57 @@ public class PayActivity extends BaseActivity implements PayView{
     @OnClick(R.id.img_back)
     void onImgBack(){
         finish();
+    }
+
+    @Override
+    public void onStartAlertOrderStatus() {
+        showProgressDialog("处理中...");
+    }
+
+    @Override
+    public void onAlertOrderStatusSuccess() {
+        dismissProgressDialog();
+        peekInOrderDetailsActivity();
+    }
+
+    @Override
+    public void onAlertOrderStatusFailure() {
+        dismissProgressDialog();
+        peekInOrderDetailsActivity();
+    }
+
+    @Override
+    public void onStartRequestRsaPrivate() {
+        showProgressDialog("处理中...");
+    }
+
+    @Override
+    public void onRequestRsaPrivateSuccess(String rsaPrivate) {
+        dismissProgressDialog();
+        payByAli(orderName, orderDetails, orderPrice, orderId, rsaPrivate);
+    }
+
+    @Override
+    public void onRequestRasPrivateFailure() {
+        dismissProgressDialog();
+        showSnakeView(containerView, "连接服务器失败，请重试");
+    }
+
+    @Override
+    public void onStartWxPay() {
+        showProgressDialog("处理中...");
+    }
+
+    @Override
+    public void onWxPaySuccess() {
+        dismissProgressDialog();
+        wxPay();
+    }
+
+    @Override
+    public void onWxPayFailure() {
+        dismissProgressDialog();
+        showSnakeView(containerView, "连接服务器失败，请重试");
     }
 
     /*
@@ -205,9 +259,9 @@ public class PayActivity extends BaseActivity implements PayView{
      * @param price
      *            商品价格 for:"0.01"
      */
-    private void payByAli(String goodsName, String description, String price, String orderId) {
+    private void payByAli(String goodsName, String description, String price, String orderId, String rsaPrivate) {
         if (TextUtils.isEmpty(Constants.PARTNER)
-                || TextUtils.isEmpty(Constants.RSA_PRIVATE)
+                || TextUtils.isEmpty(rsaPrivate)
                 || TextUtils.isEmpty(Constants.SELLER)) {
             new AlertDialog.Builder(this)
                     .setTitle("警告")
@@ -221,7 +275,7 @@ public class PayActivity extends BaseActivity implements PayView{
         String orderInfo = getOrderInfo(goodsName, description, price, orderId);
 
         // 对订单做RSA 签名
-        String sign = sign(orderInfo);
+        String sign = sign(orderInfo, rsaPrivate);
         try {
             // 仅需对sign 做URL编码
             sign = URLEncoder.encode(sign, "UTF-8");
@@ -269,7 +323,7 @@ public class PayActivity extends BaseActivity implements PayView{
         // 商品金额
         orderInfo += "&total_fee=" + "\"" + price + "\"";
         // 服务器异步通知页面路径
-        orderInfo += "&notify_url=" + "\"" + Constants.ALI_NOTIFA_URL + "\"";
+        orderInfo += "&notify_url=" + "\"" + Constants.ALI_NOTIFY_URL + "\"";
         // 服务接口名称， 固定值
         orderInfo += "&service=\"mobile.securitypay.pay\"";
         // 支付类型， 固定值
@@ -295,8 +349,8 @@ public class PayActivity extends BaseActivity implements PayView{
      * sign the order info. 对订单信息进行签名
      * @param content 待签名订单信息
      */
-    private String sign(String content) {
-        return SignUtils.sign(content, Constants.RSA_PRIVATE);
+    private String sign(String content, String rsaPrivate) {
+        return SignUtils.sign(content, rsaPrivate);
     }
 
     /**
@@ -307,23 +361,6 @@ public class PayActivity extends BaseActivity implements PayView{
         return "sign_type=\"RSA\"";
     }
 
-    @Override
-    public void onStartAlertOrderStatus() {
-        showProgressDialog("处理中...");
-    }
-
-    @Override
-    public void onAlertOrderStatusSuccess() {
-        dismissProgressDialog();
-        peekInOrderDetailsActivity();
-    }
-
-    @Override
-    public void onAlertOrderStatusFailure() {
-        dismissProgressDialog();
-        peekInOrderDetailsActivity();
-    }
-
     /*-------------------------------------------微信支付方式---------------------------------------------------------*/
 
     private IWXAPI api;
@@ -331,10 +368,13 @@ public class PayActivity extends BaseActivity implements PayView{
         api = WXAPIFactory.createWXAPI(this, Constants.APP_ID);
         boolean isPaySupported = api.getWXAppSupportAPI() >= Build.PAY_SUPPORTED_SDK_INT;
         if (!isPaySupported){
-            showSnakeView(containerView, "当前版本不支持微信支付");
+            showSnakeView(containerView, "微信未安装或版本较低，无法进行支付");
             return;
         }
-        wxPay();
+        String describe = "天天闪购-商品货款";
+        String address = LocaleUtil.getIp(this);
+        DebugUtil.d("PayActivity ip地址：" + address);
+        payPresenter.wxPay(describe, orderId, orderPrice, address);
     }
 
     private void wxPay(){
@@ -357,10 +397,7 @@ public class PayActivity extends BaseActivity implements PayView{
                     req.sign			= json.getString("sign");
                     req.extData			= "app data"; // optional
                     // 在支付之前，如果应用没有注册到微信，应该先调用IWXMsg.registerApp将应用注册到微信
-                    boolean isSend = api.sendReq(req);
-                    if (!isSend){
-                        showSnakeView(containerView, "请先安装微信");
-                    }
+                    api.sendReq(req);
                 }else{
                     showSnakeView(containerView, "返回错误"+json.getString("retmsg"));
                 }

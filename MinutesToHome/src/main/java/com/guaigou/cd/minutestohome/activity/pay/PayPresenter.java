@@ -54,4 +54,54 @@ public class PayPresenter {
                     }
                 });
     }
+
+    void requestRsaPrivate(){
+        payView.onStartRequestRsaPrivate();
+        RetrofitFactory.getRetrofit().create(HttpService.class)
+                .getRsaPrivate()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Subscriber<JsonObject>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        DebugUtil.d("PayPresenter 获取支付宝私匙失败：" + e.getMessage());
+                        payView.onRequestRasPrivateFailure();
+                    }
+
+                    @Override
+                    public void onNext(JsonObject jsonObject) {
+                        DebugUtil.d("PayPresenter 获取支付宝私匙成功：" + jsonObject);
+                    }
+                });
+    }
+
+    void wxPay(String describe, String orderNum, String money, String clientIp){
+        payView.onStartWxPay();
+        RetrofitFactory.getRetrofit().create(HttpService.class)
+                .wxPay(describe, orderNum, money, clientIp)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Subscriber<JsonObject>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        DebugUtil.d("PayPresenter 微信下单失败：" + e.getMessage());
+                        payView.onWxPayFailure();
+                    }
+
+                    @Override
+                    public void onNext(JsonObject jsonObject) {
+                        DebugUtil.d("PayPresenter 微信下单成功：" + jsonObject);
+                    }
+                });
+    }
 }

@@ -174,6 +174,25 @@ public interface HttpService {
     );
 
     /**
+     * 获取支付宝支付的私匙
+     * @return
+     */
+    @POST("payat-alipay")
+    Observable<JsonObject> getRsaPrivate();
+
+    /**
+     * 微信同一下单
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("payat-wx")
+    Observable<JsonObject> wxPay(
+            @Field("describe") String describe,
+            @Field("orderNum") String orderNum,
+            @Field("money") String money,
+            @Field("clientIp") String ip
+    );
+    /**
      * 获取订单详情
      * @param orderId
      * @return
