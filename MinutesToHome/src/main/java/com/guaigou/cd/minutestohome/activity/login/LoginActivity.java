@@ -68,7 +68,7 @@ public class LoginActivity extends BaseActivity implements LoginView{
         });
 
         mUserLoginName.setText("18108037736");
-        mUserLoginPass.setText("123456");
+        mUserLoginPass.setText("z654321");
     }
 
     @OnClick(R.id.img_back)

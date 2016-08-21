@@ -1,6 +1,8 @@
 package com.guaigou.cd.minutestohome.activity.pay;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.guaigou.cd.minutestohome.entity.WxPayEntity;
 import com.guaigou.cd.minutestohome.http.HttpService;
 import com.guaigou.cd.minutestohome.http.ResponseMgr;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
@@ -69,21 +71,24 @@ public class PayPresenter {
 
                     @Override
                     public void onError(Throwable e) {
-                        DebugUtil.d("PayPresenter 获取支付宝私匙失败：" + e.getMessage());
                         payView.onRequestRasPrivateFailure();
                     }
 
                     @Override
                     public void onNext(JsonObject jsonObject) {
-                        DebugUtil.d("PayPresenter 获取支付宝私匙成功：" + jsonObject);
+                        if (ResponseMgr.getStatus(jsonObject) == 1){
+                            payView.onRequestRsaPrivateSuccess(jsonObject.get("data").getAsString());
+                        }else {
+                            payView.onRequestRasPrivateFailure();
+                        }
                     }
                 });
     }
 
-    void wxPay(String describe, String orderNum, String money, String clientIp){
+    void wxPay(String describe, String orderNum, String money){
         payView.onStartWxPay();
         RetrofitFactory.getRetrofit().create(HttpService.class)
-                .wxPay(describe, orderNum, money, clientIp)
+                .wxPay(describe, orderNum, money)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Subscriber<JsonObject>() {
@@ -101,7 +106,26 @@ public class PayPresenter {
                     @Override
                     public void onNext(JsonObject jsonObject) {
                         DebugUtil.d("PayPresenter 微信下单成功：" + jsonObject);
+                        payView.onWxPaySuccess(parseWxResult(jsonObject));
                     }
                 });
+    }
+
+    /**
+     * 解析微信下单结果
+     * @param jsonObject
+     * @return
+     */
+    private WxPayEntity parseWxResult(JsonObject jsonObject){
+        String result = jsonObject.get("xml").getAsJsonObject().get("return_code").getAsString();
+        WxPayEntity wxPayEntity;
+        if ("SUCCESS".equalsIgnoreCase(result)){
+            Gson gson = new Gson();
+            wxPayEntity = gson.fromJson(jsonObject.get("xml").getAsJsonObject(), WxPayEntity.class);
+        }else {
+            wxPayEntity = new WxPayEntity();
+            wxPayEntity.setReturn_code("FAIL");
+        }
+        return wxPayEntity;
     }
 }

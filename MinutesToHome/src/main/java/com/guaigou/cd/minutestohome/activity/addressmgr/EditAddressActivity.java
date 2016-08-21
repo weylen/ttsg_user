@@ -1,8 +1,10 @@
 package com.guaigou.cd.minutestohome.activity.addressmgr;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
@@ -85,28 +87,20 @@ public class EditAddressActivity extends BaseActivity {
      * 显示删除对话框
      */
     private void showDeleteDialog(){
-        SimpleDialog simpleDialog = new SimpleDialog(this);
-        simpleDialog.title("提示");
-        simpleDialog.message("删除该地址？")
-                .negativeAction("取消")
-                .negativeActionClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        simpleDialog.dismiss();
-                    }
+        new AlertDialog.Builder(this)
+                .setTitle("提示")
+                .setMessage("删除该地址？")
+                .setNegativeButton("取消", (dialog, which) -> {
+                    dialog.dismiss();
                 })
-                .positiveAction("确定")
-                .positiveActionClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        simpleDialog.dismiss();
-                        Intent intent = new Intent();
-                        intent.putExtra("IsDelete", true);
-                        intent.putExtra("Position", position);
-                        setResult(RESULT_OK, intent);
-                        finish();
-                    }
-                }).showDivider(true)
+                .setPositiveButton("确定", (dialog, which) -> {
+                    dialog.dismiss();
+                    Intent intent = new Intent();
+                    intent.putExtra("IsDelete", true);
+                    intent.putExtra("Position", position);
+                    setResult(RESULT_OK, intent);
+                    finish();
+                })
                 .show();
     }
 

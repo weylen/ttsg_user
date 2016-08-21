@@ -110,7 +110,7 @@
             android:configChanges="screenSize|keyboard|orientation|uiMode|screenLayout"
             android:windowSoftInputMode="adjustPan|stateHidden"
             android:exported="true"
-            android:launchMode="singleTop"
+            android:launchMode="singleInstance"
             >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>

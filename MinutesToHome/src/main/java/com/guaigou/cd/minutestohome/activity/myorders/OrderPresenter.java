@@ -100,8 +100,8 @@ public class OrderPresenter{
             JsonObject item = dataArray.get(i).getAsJsonObject();
             String orderId = item.get("orderId").getAsString();
             String total = item.get("total").getAsString();
-            ArrayList< OrderProductsEntity> products = gson.fromJson(item.get("products").getAsJsonArray(),
-                    new TypeToken<ArrayList< OrderProductsEntity>>(){}.getType());
+            ArrayList<OrderProductsEntity> products = gson.fromJson(item.get("products").getAsJsonArray(),
+                    new TypeToken<ArrayList<OrderProductsEntity>>(){}.getType());
 
             OrderEntity orderEntity = new OrderEntity(orderId, total, products);
             listOrders.add(orderEntity);

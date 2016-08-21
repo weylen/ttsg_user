@@ -189,8 +189,7 @@ public interface HttpService {
     Observable<JsonObject> wxPay(
             @Field("describe") String describe,
             @Field("orderNum") String orderNum,
-            @Field("money") String money,
-            @Field("clientIp") String ip
+            @Field("money") String money
     );
     /**
      * 获取订单详情

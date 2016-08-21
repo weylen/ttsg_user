@@ -33,8 +33,8 @@
             android:id="@+id/text_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/grayText"
-            android:textSize="@dimen/TextSize_14"
+            android:textColor="@color/blackText"
+            android:textSize="@dimen/TextSize_16"
             android:text="巧克力"
             android:maxLines="2"
             />
@@ -44,7 +44,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/grayText"
-            android:textSize="@dimen/TextSize_10"
+            android:textSize="@dimen/TextSize_12"
             android:layout_below="@id/text_title"
             />
         <TextView
@@ -52,7 +52,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/themeColor"
-            android:textSize="@dimen/TextSize_10"
+            android:textSize="@dimen/TextSize_12"
             android:layout_marginTop="4dp"
             android:layout_below="@id/text_format"
             />
@@ -89,7 +89,7 @@
                     android:textColor="@color/redText"
                     android:text="2.5"
                     android:layout_centerVertical="true"
-                    android:textSize="@dimen/TextSize_16"
+                    android:textSize="@dimen/TextSize_18"
                     />
 
                 <TextView

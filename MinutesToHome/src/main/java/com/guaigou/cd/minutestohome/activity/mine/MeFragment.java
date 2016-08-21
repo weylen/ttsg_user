@@ -1,6 +1,7 @@
 package com.guaigou.cd.minutestohome.activity.mine;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -18,8 +19,10 @@ import com.guaigou.cd.minutestohome.activity.login.LoginActivity;
 import com.guaigou.cd.minutestohome.activity.login.LoginData;
 import com.guaigou.cd.minutestohome.activity.myorders.OrderActivity;
 import com.guaigou.cd.minutestohome.entity.AccountEntity;
+import com.guaigou.cd.minutestohome.entity.RegionEntity;
 import com.guaigou.cd.minutestohome.http.HttpService;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
+import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
 import com.jakewharton.rxbinding.view.RxView;
 
@@ -89,11 +92,13 @@ public class MeFragment extends BaseFragment {
             snackbar.dismiss();
         }else{
             snackbar = Snackbar.make(containerView, "拨打店主电话？", Snackbar.LENGTH_LONG);
-            snackbar.setAction("确定", new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            snackbar.setAction("确定", v -> {
+//                RegionEntity entity = RegionPrefs.getRegionData(getActivity());
+//                if (entity != null){
+//                    Intent intent = new Intent(Intent.ACTION_CALL);
+//                    intent.setData(Uri.parse("tel:" + entity.get))
+//                }
 
-                }
             });
             snackbar.setActionTextColor(getResources().getColor(R.color.themeColor));
             snackbar.show();

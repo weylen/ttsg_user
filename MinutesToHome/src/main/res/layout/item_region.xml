@@ -13,6 +13,8 @@
         android:layout_height="wrap_content"
         android:text="四川"
         android:drawableRight="@mipmap/abc_arrow_right"
+        android:textColor="@color/blackText"
+        android:textSize="@dimen/TextSize_16"
         />
 
 </LinearLayout>
