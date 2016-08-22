@@ -62,7 +62,6 @@ public class RegisterActivity extends BaseActivity implements RegisterView{
         mTextTitle.setText(R.string.Register);
 
         registerPreseter = new RegisterPreseter(this);
-        setPresenter(registerPreseter);
     }
 
     @OnClick(R.id.img_back)
@@ -154,10 +153,5 @@ public class RegisterActivity extends BaseActivity implements RegisterView{
             validateCode = result;
             showSnakeView(containerView, "验证码发送成功");
         }
-    }
-
-    @Override
-    public void setPresenter(RegisterPreseter presenter) {
-
     }
 }

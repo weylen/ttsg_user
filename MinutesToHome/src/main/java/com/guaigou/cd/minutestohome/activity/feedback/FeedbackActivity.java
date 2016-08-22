@@ -15,7 +15,7 @@ import com.guaigou.cd.minutestohome.http.HttpService;
 import com.guaigou.cd.minutestohome.http.ResponseMgr;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
 import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
-import com.guaigou.cd.minutestohome.util.KeybordUtil;
+import com.guaigou.cd.minutestohome.util.KeyboardUtil;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -55,7 +55,7 @@ public class FeedbackActivity extends BaseActivity {
 
     @OnClick(R.id.img_back)
     void onBackClick(){
-        KeybordUtil.hide(this);
+        KeyboardUtil.hide(this, mTextEdit);
         finish();
     }
 

@@ -1,6 +1,5 @@
 package com.guaigou.cd.minutestohome.activity.addressmgr;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,9 +12,8 @@ import android.widget.TextView;
 import com.guaigou.cd.minutestohome.BaseActivity;
 import com.guaigou.cd.minutestohome.R;
 import com.guaigou.cd.minutestohome.entity.AddressEntity;
-import com.guaigou.cd.minutestohome.util.KeybordUtil;
+import com.guaigou.cd.minutestohome.util.KeyboardUtil;
 import com.guaigou.cd.minutestohome.util.ValidateUtil;
-import com.rey.material.app.SimpleDialog;
 import com.rey.material.widget.Switch;
 
 import butterknife.Bind;
@@ -69,7 +67,7 @@ public class EditAddressActivity extends BaseActivity {
 
     @OnClick(R.id.img_back)
     void onBackClick(){
-        KeybordUtil.hide(this);
+        KeyboardUtil.hide(this, mTextName);
         finish();
     }
 

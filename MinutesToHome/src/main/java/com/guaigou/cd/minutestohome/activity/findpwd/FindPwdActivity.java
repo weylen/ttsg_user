@@ -64,7 +64,6 @@ public class FindPwdActivity extends BaseActivity implements FindPwdView{
         mTextTitle.setText("找回密码");
 
         findPwdPreseter = new FindPwdPreseter(this);
-        setPresenter(findPwdPreseter);
     }
 
     @OnClick(R.id.img_back)
@@ -113,6 +112,7 @@ public class FindPwdActivity extends BaseActivity implements FindPwdView{
 
         Intent intent = new Intent(this, ReSetPwdActivity.class);
         intent.putExtra("PhoneNum", phoneNum);
+        intent.putExtra("ValidateCode", validateCode);
         startActivity(intent);
     }
 
@@ -134,27 +134,14 @@ public class FindPwdActivity extends BaseActivity implements FindPwdView{
     }
 
     @Override
-    public void onRequestFailure() {
+    public void onRequestFailure(String errorMessage) {
         dismissProgressDialog();
-        showSnakeView(containerView, "请求失败，请重新操作");
+        showSnakeView(containerView, errorMessage);
     }
 
     @Override
     public void onRequestSuccess(String result) {
         dismissProgressDialog();
-        if ("-1".equalsIgnoreCase(result)){
-            showSnakeView(containerView, "服务器忙，获取验证码失败，需要重新获取");
-        }else if ("1".equalsIgnoreCase(result)){
-            showSnakeView(containerView, "该号码已经注册");
-        }else {
-            // 六位验证码
-            validateCode = result;
-            showSnakeView(containerView, "验证码发送成功");
-        }
-    }
-
-    @Override
-    public void setPresenter(FindPwdPreseter presenter) {
-
+        validateCode = result;
     }
 }

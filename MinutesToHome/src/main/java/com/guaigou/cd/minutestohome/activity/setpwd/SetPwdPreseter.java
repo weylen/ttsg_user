@@ -46,13 +46,13 @@ public class SetPwdPreseter implements BasePresenter{
 
                     @Override
                     public void onError(Throwable e) {
-                        DebugUtil.d(e.getMessage());
+                        DebugUtil.d("SetPwdPresenter 注册设置密码失败：" + e.getMessage());
                         setPwdView.onRequestFailure();
                     }
 
                     @Override
                     public void onNext(JsonObject s) {
-                        DebugUtil.d("SetPwdPreseter onNext s:" + s);
+                        DebugUtil.d("SetPwdPresenter 注册设置用户密码成功:" + s);
                         setPwdView.onRequestSuccess(ResponseMgr.getStatus(s));
                     }
                 });

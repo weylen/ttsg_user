@@ -12,7 +12,7 @@ import com.guaigou.cd.minutestohome.BaseActivity;
 import com.guaigou.cd.minutestohome.R;
 import com.guaigou.cd.minutestohome.entity.AddressEntity;
 import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
-import com.guaigou.cd.minutestohome.util.KeybordUtil;
+import com.guaigou.cd.minutestohome.util.KeyboardUtil;
 import com.guaigou.cd.minutestohome.util.ValidateUtil;
 import com.rey.material.widget.Switch;
 
@@ -44,7 +44,7 @@ public class NewAddressActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        KeybordUtil.hide(this);
+        KeyboardUtil.hide(this, mTextName);
         ButterKnife.unbind(this);
     }
 
@@ -55,7 +55,7 @@ public class NewAddressActivity extends BaseActivity {
 
     @OnClick(R.id.img_back)
     void onBackClick(){
-        KeybordUtil.hide(this);
+        KeyboardUtil.hide(this, mTextName);
         finish();
     }
 

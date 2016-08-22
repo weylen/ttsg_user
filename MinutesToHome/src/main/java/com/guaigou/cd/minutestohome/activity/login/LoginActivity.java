@@ -1,7 +1,6 @@
 package com.guaigou.cd.minutestohome.activity.login;
 
 import android.content.Intent;
-import android.inputmethodservice.Keyboard;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -10,34 +9,20 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 import com.guaigou.cd.minutestohome.BaseActivity;
 import com.guaigou.cd.minutestohome.R;
 import com.guaigou.cd.minutestohome.activity.findpwd.FindPwdActivity;
 import com.guaigou.cd.minutestohome.activity.register.RegisterActivity;
-import com.guaigou.cd.minutestohome.activity.shoppingcart.CartData;
 import com.guaigou.cd.minutestohome.entity.AccountEntity;
-import com.guaigou.cd.minutestohome.entity.CartEntity;
-import com.guaigou.cd.minutestohome.http.HttpService;
-import com.guaigou.cd.minutestohome.http.ResponseMgr;
-import com.guaigou.cd.minutestohome.http.RetrofitFactory;
 import com.guaigou.cd.minutestohome.prefs.CartPrefs;
 import com.guaigou.cd.minutestohome.prefs.LoginPrefs;
 import com.guaigou.cd.minutestohome.util.CartUtil;
-import com.guaigou.cd.minutestohome.util.DebugUtil;
-import com.guaigou.cd.minutestohome.util.KeybordUtil;
+import com.guaigou.cd.minutestohome.util.KeyboardUtil;
 import com.guaigou.cd.minutestohome.util.ValidateUtil;
-
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by weylen on 2016-07-23.
@@ -97,7 +82,7 @@ public class LoginActivity extends BaseActivity implements LoginView{
             mUserLoginPass.requestFocus();
             return;
         }
-        KeybordUtil.hide(this);
+        KeyboardUtil.hide(this, mUserLoginName);
         loginPresenter.login(user, pwd);
     }
 

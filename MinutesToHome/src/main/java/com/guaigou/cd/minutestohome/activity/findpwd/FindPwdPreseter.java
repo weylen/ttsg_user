@@ -1,9 +1,11 @@
 package com.guaigou.cd.minutestohome.activity.findpwd;
 
 import com.google.common.base.Preconditions;
+import com.google.gson.JsonObject;
 import com.guaigou.cd.minutestohome.BasePresenter;
 import com.guaigou.cd.minutestohome.activity.register.RegisterView;
 import com.guaigou.cd.minutestohome.http.HttpService;
+import com.guaigou.cd.minutestohome.http.ResponseMgr;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
 
@@ -34,10 +36,10 @@ public class FindPwdPreseter implements BasePresenter{
         findPwdView.onRequestStart();
 
         RetrofitFactory.getRetrofit().create(HttpService.class)
-                .requestValidateCode(phoneNum)
+                .findPwdValidateCode(phoneNum)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<String>() {
+                .subscribe(new Observer<JsonObject>() {
                     @Override
                     public void onCompleted() {
 
@@ -45,14 +47,18 @@ public class FindPwdPreseter implements BasePresenter{
 
                     @Override
                     public void onError(Throwable e) {
-                        DebugUtil.d(e.getMessage());
-                        findPwdView.onRequestFailure();
+                        DebugUtil.d("FindPwdPreseter 找回密码验证码获取失败：" + e.getMessage());
+                        findPwdView.onRequestFailure("请求失败，请重新操作");
                     }
 
                     @Override
-                    public void onNext(String s) {
-                        DebugUtil.d("FindPwdPreseter onNext s:" + s);
-                        findPwdView.onRequestSuccess(s.toString());
+                    public void onNext(JsonObject s) {
+                        DebugUtil.d("FindPwdPreseter 找回密码验证码获取成功：" + s);
+                        if (ResponseMgr.getStatus(s) != 1){
+                            findPwdView.onRequestFailure(s.get("data").getAsString());
+                        } else {
+                            findPwdView.onRequestSuccess(s.get("data").getAsString());
+                        }
                     }
                 });
     }

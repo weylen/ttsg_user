@@ -21,6 +21,7 @@ import butterknife.OnClick;
 
 /**
  * Created by weylen on 2016-07-23.
+ * 设置用户密码
  */
 public class SetPwdActivity extends BaseActivity implements SetPwdView{
 
@@ -47,7 +48,6 @@ public class SetPwdActivity extends BaseActivity implements SetPwdView{
         mTextTitle.setText(R.string.SetPwd);
 
         setPwdPreseter = new SetPwdPreseter(this);
-        setPresenter(setPwdPreseter);
     }
 
     @OnClick(R.id.img_back)
@@ -127,10 +127,5 @@ public class SetPwdActivity extends BaseActivity implements SetPwdView{
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         }
-    }
-
-    @Override
-    public void setPresenter(SetPwdPreseter presenter) {
-
     }
 }

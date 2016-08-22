@@ -23,17 +23,14 @@ import butterknife.OnClick;
  */
 public class ReSetPwdActivity extends BaseActivity implements ReSetPwdView{
 
-    @Bind(R.id.text_title)
-    TextView mTextTitle;
-    @Bind(R.id.user_login_name)
-    EditText mPwdView;
-    @Bind(R.id.user_login_pass)
-    EditText mRePwdView;
-    @Bind(R.id.Container)
-    View containerView;
+    @Bind(R.id.text_title) TextView mTextTitle;
+    @Bind(R.id.user_login_name) EditText mPwdView;
+    @Bind(R.id.user_login_pass) EditText mRePwdView;
+    @Bind(R.id.Container) View containerView;
 
     private ReSetPwdPreseter reSetPwdPreseter;
     private String phoneNum; // 手机号码
+    private String validateCode; // 验证码
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,11 +39,11 @@ public class ReSetPwdActivity extends BaseActivity implements ReSetPwdView{
         ButterKnife.bind(this);
 
         phoneNum = getIntent().getStringExtra("PhoneNum");
+        validateCode = getIntent().getStringExtra("ValidateCode");
 
         mTextTitle.setText(R.string.ResetPwd);
 
         reSetPwdPreseter = new ReSetPwdPreseter(this);
-        setPresenter(reSetPwdPreseter);
     }
 
     @OnClick(R.id.img_back)
@@ -68,7 +65,7 @@ public class ReSetPwdActivity extends BaseActivity implements ReSetPwdView{
             return;
         }
 
-        if (pwd1.length() <= 5){
+        if (pwd1.length() <= 5 || pwd2.length() <= 5){
             showSnakeView(containerView, "密码长度必须大于6位");
             return;
         }
@@ -78,7 +75,7 @@ public class ReSetPwdActivity extends BaseActivity implements ReSetPwdView{
             return;
         }
 
-        reSetPwdPreseter.register(phoneNum, pwd1);
+        reSetPwdPreseter.resePwd(phoneNum, pwd1, validateCode);
     }
 
     @Override
@@ -89,47 +86,21 @@ public class ReSetPwdActivity extends BaseActivity implements ReSetPwdView{
 
     @Override
     public void onRequestStart() {
-        showProgressDialog("注册中...");
+        showProgressDialog("重置密码中...");
     }
 
     @Override
-    public void onRequestFailure() {
+    public void onRequestFailure(String errorMessage) {
         dismissProgressDialog();
-        showSnakeView(containerView, "注册失败，请重新操作");
+        showSnakeView(containerView, errorMessage);
     }
 
     @Override
-    public void onRequestSuccess(int status) {
+    public void onRequestSuccess() {
         dismissProgressDialog();
-
-        String message = "";
-        switch (status){
-            case -1:
-                message = "服务器忙，注册失败";
-                break;
-            case 1:
-                message = "重置密码成功";
-                break;
-            case 2:
-                message = "数据不完整";
-                break;
-            case 3:
-                message = "该号码已被注册，请更换";
-                break;
-            case 4:
-                message = "注册失败";
-                break;
-        }
-        showSnakeView(containerView, message);
-        if (status == 1){
-            Intent intent = new Intent(this, LoginActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-        }
-    }
-
-    @Override
-    public void setPresenter(ReSetPwdPreseter presenter) {
-
+        showSnakeView(containerView, "重置密码成功");
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 }

@@ -43,7 +43,7 @@
             />
 
         <View
-            android:layout_width="1dp"
+            android:layout_width="0.5dp"
             android:layout_height="match_parent"
             android:background="@color/divider"
             />
@@ -93,6 +93,7 @@
             android:textSize="@dimen/TextSize_14"
             android:hint="请输入您的验证码"
             android:layout_weight="1.0"
+            android:inputType="number"
             />
 
 

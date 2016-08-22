@@ -29,14 +29,19 @@ public class ReSetPwdPreseter implements BasePresenter{
     }
 
     /**
-     * 获取验证码
-     * @param phoneNum 手机号码
+     * 重置密码
+     * @param phoneNum
+     *       手机号码
+     * @param pwd
+     *      新密码
+     * @param validateCode
+     *      验证码
      */
-    void register(String phoneNum, String pwd){
+    void resePwd(String phoneNum, String pwd, String validateCode){
         reSetPwdView.onRequestStart();
 
         RetrofitFactory.getRetrofit().create(HttpService.class)
-                .register(phoneNum, pwd)
+                .resetPwd(phoneNum, pwd, validateCode)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JsonObject>() {
@@ -47,14 +52,17 @@ public class ReSetPwdPreseter implements BasePresenter{
 
                     @Override
                     public void onError(Throwable e) {
-                        DebugUtil.d(e.getMessage());
-                        reSetPwdView.onRequestFailure();
+                        reSetPwdView.onRequestFailure("请求失败，请重新操作");
                     }
 
                     @Override
                     public void onNext(JsonObject s) {
-                        DebugUtil.d("SetPwdPreseter onNext s:" + s);
-                        reSetPwdView.onRequestSuccess(ResponseMgr.getStatus(s));
+                        DebugUtil.d("ReSetPwdPreseter 重置密码成功：" + s);
+                        if (ResponseMgr.getStatus(s) == 1){
+                            reSetPwdView.onRequestSuccess();
+                        }else {
+                            reSetPwdView.onRequestFailure(s.get("data").getAsString());
+                        }
                     }
                 });
     }

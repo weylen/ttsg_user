@@ -3,7 +3,48 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include layout="@layout/layout_title"/>
+    <LinearLayout
+        android:orientation="horizontal" android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/themeColor" android:gravity="center"
+        >
+
+        <ImageView
+            android:id="@+id/img_back"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@mipmap/ic_arrow_back_white"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:background="@drawable/abc_generic_pressed"
+            />
+
+        <TextView
+            android:id="@+id/text_title"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:text="商品列表"
+            android:textColor="@color/white"
+            android:textSize="@dimen/TextSize_18"
+            android:layout_weight="1.0"
+            android:gravity="center"
+            android:padding="10dp"
+            android:textStyle="bold"
+            />
+
+        <TextView
+            android:id="@+id/text_save"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:text="@string/Save"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:background="@drawable/abc_generic_pressed"
+            />
+
+    </LinearLayout>
 
 
     <LinearLayout

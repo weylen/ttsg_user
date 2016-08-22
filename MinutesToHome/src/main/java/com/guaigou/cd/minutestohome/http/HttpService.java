@@ -50,6 +50,35 @@ public interface HttpService {
     );
 
     /**
+     * 找回密码验证接口
+     * @param phoneNum
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("scca- ransom")
+    Observable<JsonObject> findPwdValidateCode(
+            @Field("uname") String phoneNum
+    );
+
+    /**
+     * 重置密码
+     * @param phoneNum
+     *      手机号码
+     * @param newPwd
+     *      新密码
+     * @param validateCode
+     *      验证码
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("scca- updatePass")
+    Observable<JsonObject> resetPwd(
+            @Field("uname") String phoneNum,
+            @Field("upass") String newPwd,
+            @Field("sort") String validateCode
+    );
+
+    /**
      * 获取地区数据
      * @return
      */

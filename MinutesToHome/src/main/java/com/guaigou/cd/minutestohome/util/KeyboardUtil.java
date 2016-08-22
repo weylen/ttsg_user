@@ -8,10 +8,9 @@ import android.view.inputmethod.InputMethodManager;
 /**
  * Created by weylen on 2016-07-24.
  */
-public class KeybordUtil {
+public class KeyboardUtil {
 
-    public static void hide(Activity context){
-        View view = context.getWindow().peekDecorView();
+    public static void hide(Context context, View view){
         if (view != null) {
             InputMethodManager inputManager = (InputMethodManager)
                     context.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -19,12 +18,11 @@ public class KeybordUtil {
         }
     }
 
-    public static void show(Activity context){
-        View view = context.getWindow().peekDecorView();
+    public static void show(Activity context, View view){
         if (view != null) {
             InputMethodManager inputManager = (InputMethodManager)
                     context.getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputManager.showSoftInput(view, 0);
+            inputManager.showSoftInput(view, InputMethodManager.SHOW_FORCED);
         }
     }
 }

@@ -1,11 +1,9 @@
 package com.guaigou.cd.minutestohome.activity.register;
 
-import com.guaigou.cd.minutestohome.BaseView;
-
 /**
  * Created by weylen on 2016-07-23.
  */
-public interface RegisterView extends BaseView<RegisterPreseter>{
+public interface RegisterView{
 
     void onRequestStart();
 

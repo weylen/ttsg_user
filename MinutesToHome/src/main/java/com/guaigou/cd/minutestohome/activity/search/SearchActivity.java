@@ -1,16 +1,12 @@
 package com.guaigou.cd.minutestohome.activity.search;
 
 import android.content.Intent;
-import android.gesture.Prediction;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
-import android.widget.GridView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.common.base.Preconditions;
@@ -22,15 +18,10 @@ import com.guaigou.cd.minutestohome.activity.productdetails.ProductDetailsActivi
 import com.guaigou.cd.minutestohome.activity.shoppingcart.CartData;
 import com.guaigou.cd.minutestohome.entity.ProductEntity;
 import com.guaigou.cd.minutestohome.entity.RegionEntity;
-import com.guaigou.cd.minutestohome.http.Constants;
 import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
-import com.guaigou.cd.minutestohome.util.DebugUtil;
-import com.guaigou.cd.minutestohome.util.KeybordUtil;
+import com.guaigou.cd.minutestohome.util.KeyboardUtil;
 import com.guaigou.cd.minutestohome.view.ZListView;
-import com.rey.material.widget.Button;
 
-import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -96,7 +87,7 @@ public class SearchActivity extends BaseActivity implements SearchView{
 
     @OnClick(R.id.text_cancel)
     public void onCancelClick(){
-        KeybordUtil.hide(this);
+        KeyboardUtil.hide(this, editText);
         finish();
 
     }
@@ -107,7 +98,7 @@ public class SearchActivity extends BaseActivity implements SearchView{
             showSnakeView(containerView, "输入搜索条件");
             return;
         }
-        KeybordUtil.hide(this);
+        KeyboardUtil.hide(this, editText);
         searchPresenter.onSearch(keyword);
     }
 
