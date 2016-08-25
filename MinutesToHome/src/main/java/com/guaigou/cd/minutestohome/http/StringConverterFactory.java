@@ -1,7 +1,5 @@
 package com.guaigou.cd.minutestohome.http;
 
-import com.guaigou.cd.minutestohome.util.DebugUtil;
-
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;

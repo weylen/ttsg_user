@@ -18,6 +18,7 @@ import com.guaigou.cd.minutestohome.prefs.CartPrefs;
 import com.guaigou.cd.minutestohome.prefs.LoginPrefs;
 import com.guaigou.cd.minutestohome.util.CartUtil;
 import com.guaigou.cd.minutestohome.util.KeyboardUtil;
+import com.guaigou.cd.minutestohome.util.SessionUtil;
 import com.guaigou.cd.minutestohome.util.ValidateUtil;
 
 import butterknife.Bind;
@@ -119,7 +120,7 @@ public class LoginActivity extends BaseActivity implements LoginView{
     @Override
     public void loginSuccess(AccountEntity accountEntity) {
         LoginPrefs.setAccountInfo(getApplicationContext(), accountEntity);
-//        showProgressDialog("登录成功，正在获取购物车信息");
+        SessionUtil.sessionId = "JSESSIONID=" + accountEntity.getSid();
         String name = CartPrefs.getCartName(this);
         if (!TextUtils.isEmpty(name) && name.equalsIgnoreCase(accountEntity.getUname())){
             // 获取购物车信息
@@ -139,9 +140,7 @@ public class LoginActivity extends BaseActivity implements LoginView{
     public void setPresenter(LoginPresenter presenter) {}
 
     private void remoteCart(){
-        CartUtil.INSTANCE.remoteCart(this, () -> {
-            onBackClick();
-        });
+        CartUtil.INSTANCE.remoteCart(this, () -> onBackClick());
     }
 
 }

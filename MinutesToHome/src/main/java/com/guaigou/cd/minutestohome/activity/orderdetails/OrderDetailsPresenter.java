@@ -80,10 +80,11 @@ public class OrderDetailsPresenter {
             JsonObject item = dataArray.get(i).getAsJsonObject();
             String orderId = item.get("orderId").getAsString();
             String total = item.get("total").getAsString();
+            String prepay_id = item.get("prepay_id").getAsString();
             ArrayList<OrderDetailsProductsEntity> products = gson.fromJson(item.get("products").getAsJsonArray(),
                     new TypeToken<ArrayList< OrderDetailsProductsEntity>>(){}.getType());
 
-            OrderDetailsEntity orderEntity = new OrderDetailsEntity(orderId, total, products);
+            OrderDetailsEntity orderEntity = new OrderDetailsEntity(orderId, total, prepay_id, products);
             listOrders.add(orderEntity);
         }
 

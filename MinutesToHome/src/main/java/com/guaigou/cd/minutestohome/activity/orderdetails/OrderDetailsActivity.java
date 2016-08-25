@@ -78,10 +78,15 @@ public class OrderDetailsActivity extends BaseActivity implements OrderDetailsVi
         emptyView.setOnClickListener(v -> orderDetailsPresenter.onStartRequestOrderDetails(orderNumber));
 
         // 隐藏所有的布局
-        mainView.setVisibility(View.INVISIBLE);
+        mainView.setVisibility(View.VISIBLE);
         emptyView.setVisibility(View.GONE);
         orderDetailsPresenter = new OrderDetailsPresenter(this);
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isFirstRequest = true;
         ViewTreeObserver vto2 = mOrderNoteView.getViewTreeObserver();
         vto2.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -240,6 +245,7 @@ public class OrderDetailsActivity extends BaseActivity implements OrderDetailsVi
         OrderDetailsEntity detailsEntity = detailsEntities.get(0);
         Intent intent = new Intent(this, PayActivity.class);
         intent.putExtra(PayActivity.ORDER_ID_KEY, detailsEntity.getOrderId());
+        intent.putExtra(PayActivity.ORDER_PREPAY_ID_KEY, detailsEntity.getPrepay_id());
         intent.putExtra(PayActivity.ORDER_PRICE_KEY, detailsEntity.getTotal());
         startActivity(intent);
     }

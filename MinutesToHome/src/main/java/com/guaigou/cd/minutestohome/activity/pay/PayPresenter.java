@@ -57,10 +57,10 @@ public class PayPresenter {
                 });
     }
 
-    void requestRsaPrivate(){
-        payView.onStartRequestRsaPrivate();
+    void aliPay(String order, String details, String desc){
+        payView.onStartRequestAliPay();
         RetrofitFactory.getRetrofit().create(HttpService.class)
-                .getRsaPrivate()
+                .aliPay(order, details, desc)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Subscriber<JsonObject>() {
@@ -71,24 +71,25 @@ public class PayPresenter {
 
                     @Override
                     public void onError(Throwable e) {
-                        payView.onRequestRasPrivateFailure();
+                        payView.onRequestAliPayFailure();
                     }
 
                     @Override
                     public void onNext(JsonObject jsonObject) {
+                        DebugUtil.d("PayPresenter 支付宝结果：" + jsonObject);
                         if (ResponseMgr.getStatus(jsonObject) == 1){
-                            payView.onRequestRsaPrivateSuccess(jsonObject.get("data").getAsString());
+                            payView.onRequestAliPaySuccess(jsonObject.get("data").getAsString());
                         }else {
-                            payView.onRequestRasPrivateFailure();
+                            payView.onRequestAliPayFailure();
                         }
                     }
                 });
     }
 
-    void wxPay(String describe, String orderNum, String money){
+    void wxPay(String describe, String orderNum){
         payView.onStartWxPay();
         RetrofitFactory.getRetrofit().create(HttpService.class)
-                .wxPay(describe, orderNum, money)
+                .wxPay(describe, orderNum)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Subscriber<JsonObject>() {

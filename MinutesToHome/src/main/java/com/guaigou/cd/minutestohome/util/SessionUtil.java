@@ -11,7 +11,7 @@ import com.guaigou.cd.minutestohome.entity.AccountEntity;
  */
 public class SessionUtil {
 
-    private static String sessionId = null;
+    public static String sessionId = null;
 
     public static String getSessionId(){
         if (TextUtils.isEmpty(sessionId)){

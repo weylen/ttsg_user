@@ -56,6 +56,7 @@ public class PayActivity extends BaseActivity implements PayView{
     public static final String ORDER_ID_KEY = "order_id_key";
     public static final String ORDER_PRICE_KEY = "order_price_key";
     public static final String ORDER_PRODUCTS_DETAILS_KEY = "order_products_details_key";
+    public static final String ORDER_PREPAY_ID_KEY = "order_prepay_id_key";
 
     @Bind(R.id.text_title) TextView mTextTitle;
     @Bind(R.id.text_price) TextView mTextPrice;
@@ -70,11 +71,12 @@ public class PayActivity extends BaseActivity implements PayView{
     private PayWay payWay = PayWay.Ali;
 
     private String orderId;
+    private String prepay_id;
     private String orderPrice;
     private List<OrderProductsEntity> productsEntityList;
     private String orderName = "商品货款";
-    private String orderDetails = "商品货款";
-
+    private String orderDetails = "天天闪购-商品货款";
+    private boolean isStartWx; // 是否开始微信支付
     private PayPresenter payPresenter;
 
     @Override
@@ -88,6 +90,7 @@ public class PayActivity extends BaseActivity implements PayView{
         Intent intent = getIntent();
         orderId = intent.getStringExtra(ORDER_ID_KEY);
         orderPrice = intent.getStringExtra(ORDER_PRICE_KEY);
+        prepay_id = intent.getStringExtra(ORDER_PREPAY_ID_KEY);
         productsEntityList = (List<OrderProductsEntity>) intent.getSerializableExtra(ORDER_PRODUCTS_DETAILS_KEY);
         mTextPrice.setText("￥"+orderPrice);
         mTextOrderName.setText(orderName);
@@ -95,22 +98,19 @@ public class PayActivity extends BaseActivity implements PayView{
     }
 
     @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        String action = intent.getAction();
-        if (WXPayEntryActivity.ACTION.equalsIgnoreCase(action)){
-            int errCode = intent.getIntExtra("WXResult", -300);
-            DebugUtil.d("PayActivity onNewIntent errCode;" + errCode);
+    protected void onResume() {
+        super.onResume();
+        if (isStartWx && Constants.WX_RESP != 200){
+            DebugUtil.d("PayActivity onResume errCode;" + Constants.WX_RESP);
 
-            if(errCode == 0){
+            if(Constants.WX_RESP == 0){
                 Toast.makeText(this,"支付成功!",Toast.LENGTH_SHORT).show();
                 peekInOrderDetailsActivity();
                 return;
-            }else if(errCode == -1){
+            }else if(Constants.WX_RESP == -1){
                 Toast.makeText(this,"支付失败!",Toast.LENGTH_SHORT).show();
-                peekInOrderDetailsActivity();
                 return;
-            }else if(errCode == -2){
+            }else if(Constants.WX_RESP == -2){
                 Toast.makeText(this,"取消支付!",Toast.LENGTH_SHORT).show();
             }
         }
@@ -150,7 +150,7 @@ public class PayActivity extends BaseActivity implements PayView{
     @OnClick(R.id.action_pay)
     void onPayClick(){
         if (payWay == PayWay.Ali){
-            payPresenter.requestRsaPrivate();
+            payPresenter.aliPay(orderId, orderDetails, orderDetails);
         }else {
             checkPayEnvironment();
         }
@@ -191,22 +191,22 @@ public class PayActivity extends BaseActivity implements PayView{
     }
 
     @Override
-    public void onStartRequestRsaPrivate() {
+    public void onStartRequestAliPay() {
         showProgressDialog("处理中...");
     }
 
     @Override
-    public void onRequestRsaPrivateSuccess(String rsaPrivate) {
+    public void onRequestAliPaySuccess(String payInfo) {
         dismissProgressDialog();
-        // TODO.. 修改支付价格为orderPrice
-        payByAli(orderName, orderDetails, "0.01", orderId, rsaPrivate);
+        payByAli(payInfo);
     }
 
     @Override
-    public void onRequestRasPrivateFailure() {
+    public void onRequestAliPayFailure() {
         dismissProgressDialog();
-        showSnakeView(containerView, "连接服务器失败，请重试");
+        showSnakeView(containerView, "支付出错，请重新登录");
     }
+
 
     @Override
     public void onStartWxPay() {
@@ -217,6 +217,12 @@ public class PayActivity extends BaseActivity implements PayView{
     public void onWxPaySuccess(WxPayEntity wxPayEntity) {
         dismissProgressDialog();
         if (wxPayEntity != null && "SUCCESS".equalsIgnoreCase(wxPayEntity.getResult_code())){
+            String trade_state = wxPayEntity.getTrade_state();
+            // 订单未支付
+            if (!TextUtils.isEmpty(trade_state) && "NOTPAY".equalsIgnoreCase(trade_state)){
+                wxPayEntity.setPrepay_id(prepay_id);
+            }
+            prepay_id = wxPayEntity.getPrepay_id();
             wxPay(wxPayEntity);
         }else {
             String errorMessage = "微信支付异常，请重试";
@@ -231,7 +237,7 @@ public class PayActivity extends BaseActivity implements PayView{
     @Override
     public void onWxPayFailure() {
         dismissProgressDialog();
-        showSnakeView(containerView, "连接服务器失败，请重试");
+        showSnakeView(containerView, "支付出错，请重新登录");
     }
 
     /*
@@ -292,41 +298,8 @@ public class PayActivity extends BaseActivity implements PayView{
 
     /**
      * call alipay sdk pay. 调用SDK支付
-     *
-     * @param goodsName
-     *            商品名
-     * @param description
-     *            商品描述
-     * @param price
-     *            商品价格 for:"0.01"
      */
-    private void payByAli(String goodsName, String description, String price, String orderId, String rsaPrivate) {
-        if (TextUtils.isEmpty(Constants.PARTNER)
-                || TextUtils.isEmpty(rsaPrivate)
-                || TextUtils.isEmpty(Constants.SELLER)) {
-            new AlertDialog.Builder(this)
-                    .setTitle("警告")
-                    .setMessage("需要配置PARTNER | RSA_PRIVATE| SELLER")
-                    .setPositiveButton("确定",(dialog, i) -> {
-                                finish(); })
-                    .show();
-            return;
-        }
-        // 订单
-        String orderInfo = getOrderInfo(goodsName, description, price, orderId);
-        // 对订单做RSA 签名
-        String sign = sign(orderInfo, rsaPrivate);
-        try {
-            // 仅需对sign 做URL编码
-            sign = URLEncoder.encode(sign, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
-        // 完整的符合支付宝参数规范的订单信息
-        String payInfo = orderInfo + "&sign=\"" + sign + "\"&"
-                + getSignType();
-
+    private void payByAli(String payInfo) {
         Runnable payRunnable = () -> {
             // 构造PayTask 对象
             PayTask alipay = new PayTask(PayActivity.this);
@@ -344,75 +317,19 @@ public class PayActivity extends BaseActivity implements PayView{
         payThread.start();
     }
 
-
-    /**
-     * create the order info. 创建订单信息
-     *
-     */
-    private String getOrderInfo(String subject, String body, String price, String orderId) {
-        // 签约合作者身份ID
-        String orderInfo = "partner=" + "\"" + Constants.PARTNER + "\"";
-        // 签约卖家支付宝账号
-        orderInfo += "&seller_id=" + "\"" + Constants.SELLER + "\"";
-        // 商户网站唯一订单号
-        orderInfo += "&out_trade_no=" + "\"" + orderId + "\"";
-        // 商品名称
-        orderInfo += "&subject=" + "\"" + subject + "\"";
-        // 商品详情
-        orderInfo += "&body=" + "\"" + body + "\"";
-        // 商品金额 // total_amount total_fee
-        orderInfo += "&total_fee=" + "\"" + price + "\"";
-        // 服务器异步通知页面路径
-        orderInfo += "&notify_url=" + "\"" + Constants.ALI_NOTIFY_URL + "\"";
-        // 服务接口名称， 固定值
-        orderInfo += "&service=\"mobile.securitypay.pay\"";
-        // 支付类型， 固定值
-        orderInfo += "&payment_type=\"1\"";
-        // 参数编码， 固定值
-        orderInfo += "&_input_charset=\"utf-8\"";
-        // 设置未付款交易的超时时间
-        // 默认30分钟，一旦超时，该笔交易就会自动被关闭。
-        // 取值范围：1m～15d。
-        // m-分钟，h-小时，d-天，1c-当天（无论交易何时创建，都在0点关闭）。
-        // 该参数数值不接受小数点，如1.5h，可转换为90m。
-        orderInfo += "&it_b_pay=\"30m\"";
-        // extern_token为经过快登授权获取到的alipay_open_id,带上此参数用户将使用授权的账户进行支付
-        // orderInfo += "&extern_token=" + "\"" + extern_token + "\"";
-        // 支付宝处理完请求后，当前页面跳转到商户指定页面的路径，可空
-        orderInfo += "&return_url=\"m.alipay.com\"";
-        // 调用银行卡支付，需配置此参数，参与签名， 固定值 （需要签约《无线银行卡快捷支付》才能使用）
-        // orderInfo += "&paymethod=\"expressGateway\"";
-        return orderInfo;
-    }
-
-    /**
-     * sign the order info. 对订单信息进行签名
-     * @param content 待签名订单信息
-     */
-    private String sign(String content, String rsaPrivate) {
-        return SignUtils.sign(content, rsaPrivate);
-    }
-
-    /**
-     * get the sign type we use. 获取签名方式
-     *
-     */
-    private String getSignType() {
-        return "sign_type=\"RSA\"";
-    }
-
     /*-------------------------------------------微信支付方式---------------------------------------------------------*/
     private IWXAPI api;
     private void checkPayEnvironment(){
         api = WXAPIFactory.createWXAPI(this, Constants.APP_ID);
-        boolean isPaySupported = api.getWXAppSupportAPI() >= Build.PAY_SUPPORTED_SDK_INT;
-        if (!isPaySupported){
-            showSnakeView(containerView, "微信未安装或版本较低，无法进行支付");
+        if (!api.isWXAppInstalled()){
+            showSnakeView(containerView, "请先安装微信");
             return;
         }
-        String describe = "天天闪购-商品货款";
-        //TODO 记得修改商品金额 orderPrice
-        payPresenter.wxPay(describe, orderId, "0.01");
+        if (!api.isWXAppSupportAPI()){
+            showSnakeView(containerView, "微信版本较低，无法进行支付");
+            return;
+        }
+        payPresenter.wxPay(orderDetails, orderId);
     }
 
     private void wxPay(WxPayEntity wxPayEntity){
@@ -423,20 +340,21 @@ public class PayActivity extends BaseActivity implements PayView{
         req.nonceStr		= wxPayEntity.getNonce_str();
         req.timeStamp		= String.valueOf(genTimeStamp());
         req.packageValue 	= "Sign=WXPay";
-//        req.sign			= wxPayEntity.getSign();
+        req.sign			= wxPayEntity.getSign();
         req.extData			= "app data"; // optional
 
-        List<NameValuePair> signParams = new LinkedList<>();
-        signParams.add(new BasicNameValuePair("appid", req.appId));
-        signParams.add(new BasicNameValuePair("noncestr", req.nonceStr));
-        signParams.add(new BasicNameValuePair("package", req.packageValue));
-        signParams.add(new BasicNameValuePair("partnerid", req.partnerId));
-        signParams.add(new BasicNameValuePair("prepayid", req.prepayId));
-        signParams.add(new BasicNameValuePair("timestamp", req.timeStamp));
-
-        req.sign = genAppSign(signParams);
+//        List<NameValuePair> signParams = new LinkedList<>();
+//        signParams.add(new BasicNameValuePair("appid", req.appId));
+//        signParams.add(new BasicNameValuePair("noncestr", req.nonceStr));
+//        signParams.add(new BasicNameValuePair("package", req.packageValue));
+//        signParams.add(new BasicNameValuePair("partnerid", req.partnerId));
+//        signParams.add(new BasicNameValuePair("prepayid", req.prepayId));
+//        signParams.add(new BasicNameValuePair("timestamp", req.timeStamp));
+//
+//        req.sign = genAppSign(signParams);
         api.registerApp(Constants.APP_ID);
         boolean isSuccess = api.sendReq(req);
+        isStartWx = isSuccess;
         if (!isSuccess){
             showSnakeView(containerView, "微信支付失败");
         }

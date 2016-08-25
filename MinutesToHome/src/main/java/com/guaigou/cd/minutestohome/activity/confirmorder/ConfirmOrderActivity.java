@@ -39,7 +39,6 @@ import butterknife.OnClick;
  * Created by weylen on 2016-07-24.
  */
 public class ConfirmOrderActivity extends BaseActivity implements ConfirmOrderView{
-
     /**
      * 请求编辑收获地址
      */

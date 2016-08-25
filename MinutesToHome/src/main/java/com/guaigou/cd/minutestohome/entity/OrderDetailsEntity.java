@@ -10,13 +10,15 @@ public class OrderDetailsEntity implements Serializable{
 
     private String orderId;
     private String total;
+    private String prepay_id;
     private ArrayList<OrderDetailsProductsEntity> products;
 
     public OrderDetailsEntity(){}
 
-    public OrderDetailsEntity(String orderId, String total, ArrayList<OrderDetailsProductsEntity> products) {
+    public OrderDetailsEntity(String orderId, String total, String prepay_id, ArrayList<OrderDetailsProductsEntity> products) {
         this.orderId = orderId;
         this.total = total;
+        this.prepay_id = prepay_id;
         this.products = products;
     }
 
@@ -44,4 +46,11 @@ public class OrderDetailsEntity implements Serializable{
         this.products = products;
     }
 
+    public String getPrepay_id() {
+        return prepay_id;
+    }
+
+    public void setPrepay_id(String prepay_id) {
+        this.prepay_id = prepay_id;
+    }
 }

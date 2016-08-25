@@ -203,11 +203,16 @@ public interface HttpService {
     );
 
     /**
-     * 获取支付宝支付的私匙
+     * 支付宝信息
      * @return
      */
-    @POST("payat-alipay")
-    Observable<JsonObject> getRsaPrivate();
+    @FormUrlEncoded
+    @POST("payat-asign")
+    Observable<JsonObject> aliPay(
+            @Field("orderNum") String orderNum,
+            @Field("body") String details,
+            @Field("describe") String desc
+    );
 
     /**
      * 微信同一下单
@@ -217,8 +222,7 @@ public interface HttpService {
     @POST("payat-wx")
     Observable<JsonObject> wxPay(
             @Field("describe") String describe,
-            @Field("orderNum") String orderNum,
-            @Field("money") String money
+            @Field("orderNum") String orderNum
     );
     /**
      * 获取订单详情

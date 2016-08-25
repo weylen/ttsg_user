@@ -12,14 +12,10 @@ public class Constants {
     public static final String EMPTY_STRING = new String();
 
     public static HashMap<String, String> ORDER_PARAM = null;
-    // 商户PID
-    public static final String PARTNER = "2088901028180245";
-    // 商户收款账号
-    public static final String SELLER = "870508809@qq.com";
-    // 支付宝服务端异步通知网址
-    public static final String ALI_NOTIFY_URL = BASE_URL + "payat-alipaysync";
     // 微信支付 appid
     public static final String APP_ID = "wx0f894d6426a78405";
+
+    public static int WX_RESP = -200;
 
     static {
         ORDER_PARAM = new HashMap<>();

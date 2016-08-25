@@ -222,7 +222,7 @@ public class OrderActivity extends BaseActivity implements OrderView{
     public void onValidateOrderFailure(String message) {
         dismissProgressDialog();
         if (TextUtils.isEmpty(message)){
-            showSnakeView(zListView, "请求失败，请重新操作");
+            showSnakeView(zListView, "请求失败，请重新登录");
         }else {
             new AlertDialog.Builder(this)
                     .setMessage(message)
@@ -240,6 +240,7 @@ public class OrderActivity extends BaseActivity implements OrderView{
         Intent intent = new Intent(this, PayActivity.class);
         intent.putExtra(PayActivity.ORDER_ID_KEY, entity.getOrderId());
         intent.putExtra(PayActivity.ORDER_PRICE_KEY, entity.getTotal());
+        intent.putExtra(PayActivity.ORDER_PREPAY_ID_KEY, entity.getPrepay_id());
         intent.putExtra(PayActivity.ORDER_PRODUCTS_DETAILS_KEY, entity.getProducts());
         startActivity(intent);
     }
@@ -259,6 +260,6 @@ public class OrderActivity extends BaseActivity implements OrderView{
     @Override
     public void onDeleteOrderFailure() {
         dismissProgressDialog();
-        showSnakeView(zListView, "删除订单失败，请重新操作");
+        showSnakeView(zListView, "删除订单失败，请重新登录");
     }
 }
