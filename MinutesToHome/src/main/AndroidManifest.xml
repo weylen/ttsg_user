@@ -111,13 +111,13 @@
             android:configChanges="screenSize|keyboard|orientation|uiMode|screenLayout"
             android:windowSoftInputMode="adjustPan|stateHidden"
             android:exported="true"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             >
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.VIEW"/>-->
-                <!--<category android:name="android.intent.category.DEFAULT"/>-->
-                <!--<data android:scheme="wx0f894d6426a78405"/>-->
-            <!--</intent-filter>-->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="wx0f894d6426a78405"/>
+            </intent-filter>
         </activity>
 
         <activity android:name=".activity.feedback.FeedbackActivity" android:screenOrientation="portrait"

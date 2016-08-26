@@ -222,7 +222,8 @@ public interface HttpService {
     @POST("payat-wx")
     Observable<JsonObject> wxPay(
             @Field("describe") String describe,
-            @Field("orderNum") String orderNum
+            @Field("orderNum") String orderNum,
+            @Field("payId") String payId
     );
     /**
      * 获取订单详情

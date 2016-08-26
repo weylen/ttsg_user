@@ -1,11 +1,9 @@
 package com.guaigou.cd.minutestohome.activity.myorders;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.widget.FrameLayout;
 import android.widget.TextView;

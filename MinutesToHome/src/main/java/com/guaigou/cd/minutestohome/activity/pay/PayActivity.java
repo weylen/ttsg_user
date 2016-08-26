@@ -76,7 +76,6 @@ public class PayActivity extends BaseActivity implements PayView{
     private List<OrderProductsEntity> productsEntityList;
     private String orderName = "商品货款";
     private String orderDetails = "天天闪购-商品货款";
-    private boolean isStartWx; // 是否开始微信支付
     private PayPresenter payPresenter;
 
     @Override
@@ -98,22 +97,30 @@ public class PayActivity extends BaseActivity implements PayView{
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        if (isStartWx && Constants.WX_RESP != 200){
-            DebugUtil.d("PayActivity onResume errCode;" + Constants.WX_RESP);
-
-            if(Constants.WX_RESP == 0){
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        int code = getIntent().getIntExtra("WXResult", 200);
+        DebugUtil.d("PayActivity-onResume code:" + code);
+        String action = getIntent().getAction();
+        if (WXPayEntryActivity.ACTION.equalsIgnoreCase(action) && code != 200){
+            DebugUtil.d("PayActivity onResume errCode：" + code);
+            if(code == 0){
                 Toast.makeText(this,"支付成功!",Toast.LENGTH_SHORT).show();
                 peekInOrderDetailsActivity();
                 return;
-            }else if(Constants.WX_RESP == -1){
+            }else if(code == -1){
                 Toast.makeText(this,"支付失败!",Toast.LENGTH_SHORT).show();
                 return;
-            }else if(Constants.WX_RESP == -2){
+            }else if(code == -2){
                 Toast.makeText(this,"取消支付!",Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
     }
 
     @OnClick(R.id.alipay_layout)
@@ -216,21 +223,10 @@ public class PayActivity extends BaseActivity implements PayView{
     @Override
     public void onWxPaySuccess(WxPayEntity wxPayEntity) {
         dismissProgressDialog();
-        if (wxPayEntity != null && "SUCCESS".equalsIgnoreCase(wxPayEntity.getResult_code())){
-            String trade_state = wxPayEntity.getTrade_state();
-            // 订单未支付
-            if (!TextUtils.isEmpty(trade_state) && "NOTPAY".equalsIgnoreCase(trade_state)){
-                wxPayEntity.setPrepay_id(prepay_id);
-            }
-            prepay_id = wxPayEntity.getPrepay_id();
+        if (wxPayEntity == null){
+            showSnakeView(containerView, "支付出错，请重新登录");
+        }else{
             wxPay(wxPayEntity);
-        }else {
-            String errorMessage = "微信支付异常，请重试";
-            if (wxPayEntity != null && "FAIL".equalsIgnoreCase(wxPayEntity.getResult_code())){
-                errorMessage = wxPayEntity.getErr_code_des();
-            }
-            errorMessage = TextUtils.isEmpty(errorMessage) ? "微信支付异常，请重试" : errorMessage;
-            showSnakeView(containerView, errorMessage);
         }
     }
 
@@ -329,52 +325,23 @@ public class PayActivity extends BaseActivity implements PayView{
             showSnakeView(containerView, "微信版本较低，无法进行支付");
             return;
         }
-        payPresenter.wxPay(orderDetails, orderId);
+        payPresenter.wxPay(orderDetails, orderId, prepay_id);
     }
 
     private void wxPay(WxPayEntity wxPayEntity){
         PayReq req = new PayReq();
         req.appId			= wxPayEntity.getAppid();
-        req.partnerId		= wxPayEntity.getMch_id();
-        req.prepayId		= wxPayEntity.getPrepay_id();
-        req.nonceStr		= wxPayEntity.getNonce_str();
-        req.timeStamp		= String.valueOf(genTimeStamp());
+        req.partnerId		= wxPayEntity.getPartnerid();
+        req.prepayId		= wxPayEntity.getPrepayid();
+        req.nonceStr		= wxPayEntity.getNoncestr();
+        req.timeStamp		= wxPayEntity.getTimestamp();
         req.packageValue 	= "Sign=WXPay";
         req.sign			= wxPayEntity.getSign();
         req.extData			= "app data"; // optional
-
-//        List<NameValuePair> signParams = new LinkedList<>();
-//        signParams.add(new BasicNameValuePair("appid", req.appId));
-//        signParams.add(new BasicNameValuePair("noncestr", req.nonceStr));
-//        signParams.add(new BasicNameValuePair("package", req.packageValue));
-//        signParams.add(new BasicNameValuePair("partnerid", req.partnerId));
-//        signParams.add(new BasicNameValuePair("prepayid", req.prepayId));
-//        signParams.add(new BasicNameValuePair("timestamp", req.timeStamp));
-//
-//        req.sign = genAppSign(signParams);
         api.registerApp(Constants.APP_ID);
         boolean isSuccess = api.sendReq(req);
-        isStartWx = isSuccess;
         if (!isSuccess){
             showSnakeView(containerView, "微信支付失败");
         }
-    }
-
-    private long genTimeStamp() {
-        return System.currentTimeMillis() / 1000;
-    }
-
-    private String genAppSign(List<NameValuePair> params) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < params.size(); i++) {
-            sb.append(params.get(i).getName());
-            sb.append('=');
-            sb.append(params.get(i).getValue());
-            sb.append('&');
-        }
-        sb.append("key=");
-        sb.append("tiantianshangou20160819Securitys");
-        String appSign = MD5.getMessageDigest(sb.toString().getBytes()).toUpperCase();
-        return appSign;
     }
 }

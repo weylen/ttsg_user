@@ -44,10 +44,10 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler{
 	public void onResp(BaseResp resp) {
 		Constants.WX_RESP = resp.errCode;
 		DebugUtil.d("WXPayEntryActivity Constants.WX_RESP : " + Constants.WX_RESP);
-//		Intent intent = new Intent(this, PayActivity.class);
-//		intent.putExtra("WXResult", resp.errCode);
-//		intent.setAction(ACTION);
-//		startActivity(intent);
+		Intent intent = new Intent(this, PayActivity.class);
+		intent.putExtra("WXResult", resp.errCode);
+		intent.setAction(ACTION);
+		startActivity(intent);
 		finish();
 	}
 }

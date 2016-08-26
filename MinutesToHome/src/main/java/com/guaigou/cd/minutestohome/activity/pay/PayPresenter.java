@@ -6,6 +6,7 @@ import com.guaigou.cd.minutestohome.entity.WxPayEntity;
 import com.guaigou.cd.minutestohome.http.HttpService;
 import com.guaigou.cd.minutestohome.http.ResponseMgr;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
+import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
 
 import rx.Subscriber;
@@ -86,10 +87,10 @@ public class PayPresenter {
                 });
     }
 
-    void wxPay(String describe, String orderNum){
+    void wxPay(String describe, String orderNum, String payId){
         payView.onStartWxPay();
         RetrofitFactory.getRetrofit().create(HttpService.class)
-                .wxPay(describe, orderNum)
+                .wxPay(describe, orderNum, payId)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Subscriber<JsonObject>() {
@@ -107,7 +108,12 @@ public class PayPresenter {
                     @Override
                     public void onNext(JsonObject jsonObject) {
                         DebugUtil.d("PayPresenter 微信下单成功：" + jsonObject);
-                        payView.onWxPaySuccess(parseWxResult(jsonObject));
+                        if (ResponseMgr.getStatus(jsonObject) == 1){
+                            payView.onWxPaySuccess(parseWxResult(jsonObject));
+                        }else {
+                            payView.onWxPayFailure();
+                        }
+
                     }
                 });
     }
@@ -118,15 +124,7 @@ public class PayPresenter {
      * @return
      */
     private WxPayEntity parseWxResult(JsonObject jsonObject){
-        String result = jsonObject.get("xml").getAsJsonObject().get("return_code").getAsString();
-        WxPayEntity wxPayEntity;
-        if ("SUCCESS".equalsIgnoreCase(result)){
-            Gson gson = new Gson();
-            wxPayEntity = gson.fromJson(jsonObject.get("xml").getAsJsonObject(), WxPayEntity.class);
-        }else {
-            wxPayEntity = new WxPayEntity();
-            wxPayEntity.setReturn_code("FAIL");
-        }
-        return wxPayEntity;
+        Gson gson = new Gson();
+        return gson.fromJson(jsonObject.get("data").getAsJsonObject(), WxPayEntity.class);
     }
 }
