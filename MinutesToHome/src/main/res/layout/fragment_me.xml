@@ -61,6 +61,7 @@
                 android:textSize="@dimen/TextSize_14"
                 android:layout_marginTop="5dp"
                 android:drawableLeft="@mipmap/icon_phone"
+                android:drawablePadding="5dp"
                 android:gravity="center"
                 android:visibility="gone"
                 />

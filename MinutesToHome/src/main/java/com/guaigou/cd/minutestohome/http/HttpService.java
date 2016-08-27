@@ -257,5 +257,14 @@ public interface HttpService {
             @Field("text") String content
     );
 
-
+    /**
+     * 保存账户信息
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("cia- updateInfo")
+    Observable<JsonObject> saveAccountInfos(
+            @Field("key") String sex,
+            @Field("text") String nickname
+    );
 }

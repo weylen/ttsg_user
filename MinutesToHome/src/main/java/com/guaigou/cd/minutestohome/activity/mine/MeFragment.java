@@ -8,6 +8,7 @@ import android.support.design.widget.Snackbar;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.JsonObject;
@@ -24,6 +25,7 @@ import com.guaigou.cd.minutestohome.http.HttpService;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
 import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
+import com.guaigou.cd.minutestohome.util.DialogUtil;
 import com.jakewharton.rxbinding.view.RxView;
 
 import butterknife.Bind;
@@ -44,7 +46,8 @@ public class MeFragment extends BaseFragment {
     @Bind(R.id.Container) View containerView;
     @Bind(R.id.text_title) TextView mTitleView;
     @Bind(R.id.text_phone) TextView mPhoneView;
-    @Bind(R.id.text_logout) TextView mLogouView;
+    @Bind(R.id.text_logout) TextView mLogoutView;
+    @Bind(R.id.img_head) ImageView imageView;
 
     @Override
     public int layoutId() {
@@ -70,6 +73,11 @@ public class MeFragment extends BaseFragment {
      */
     @OnClick(R.id.text_order)
     void onOrderClick(){
+        if (!LoginData.INSTANCE.isLogin(getContext())){
+            DialogUtil.showLoginDialog(getContext());
+            return;
+        }
+
         Intent intent = new Intent(getActivity(), OrderActivity.class);
         startActivity(intent);
     }
@@ -136,9 +144,7 @@ public class MeFragment extends BaseFragment {
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Subscriber<JsonObject>() {
                     @Override
-                    public void onCompleted() {
-
-                    }
+                    public void onCompleted() {}
 
                     @Override
                     public void onError(Throwable e) {
@@ -148,7 +154,6 @@ public class MeFragment extends BaseFragment {
 
                     @Override
                     public void onNext(JsonObject jsonObject) {
-                        DebugUtil.d("MeFragment 注销：" + jsonObject);
                         dismissProgressDialog();
                         logout();
                     }
@@ -165,13 +170,22 @@ public class MeFragment extends BaseFragment {
         boolean isLogin = LoginData.INSTANCE.isLogin(getContext());
         if (isLogin){
             AccountEntity accountEntity = LoginData.INSTANCE.getAccountEntity(getContext());
-            String nickName = accountEntity.getName();
+            String nickName = accountEntity.getNickname();
             mTitleView.setText(TextUtils.isEmpty(nickName) ? "点击设置昵称" : nickName);
             mPhoneView.setText(accountEntity.getUname());
-            RxView.visibility(mLogouView).call(Boolean.TRUE);
+            RxView.visibility(mLogoutView).call(Boolean.TRUE);
+            RxView.visibility(mPhoneView).call(Boolean.TRUE);
+
+            String sex = accountEntity.getSex();
+            if ("2".equalsIgnoreCase(sex)){
+                imageView.setImageResource(R.mipmap.icon_user_w);
+            }else {
+                imageView.setImageResource(R.mipmap.icon_user_m);
+            }
         }else {
             mTitleView.setText("点击登录");
-            RxView.visibility(mLogouView).call(Boolean.FALSE);
+            RxView.visibility(mLogoutView).call(Boolean.TRUE);
+            RxView.visibility(mPhoneView).call(Boolean.FALSE);
         }
     }
 

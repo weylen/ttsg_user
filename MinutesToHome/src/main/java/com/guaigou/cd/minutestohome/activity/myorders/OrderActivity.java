@@ -16,6 +16,7 @@ import com.guaigou.cd.minutestohome.adapter.OnItemViewClickListener;
 import com.guaigou.cd.minutestohome.adapter.OrderAdapter;
 import com.guaigou.cd.minutestohome.entity.OrderEntity;
 import com.guaigou.cd.minutestohome.entity.OrderProductsEntity;
+import com.guaigou.cd.minutestohome.util.LocaleUtil;
 import com.guaigou.cd.minutestohome.view.EmptyViewHelper;
 import com.guaigou.cd.minutestohome.view.ZListView;
 import com.guaigou.cd.minutestohome.view.ZRefreshingView;
@@ -73,6 +74,7 @@ public class OrderActivity extends BaseActivity implements OrderView{
         emptyViewHelper = new EmptyViewHelper(zListView, "没有订单", parent);
         emptyViewHelper.setRefreshListener(() -> refresh());
         emptyViewHelper.setOnEmptyTouchListener(() -> orderPresenter.requestOrder());
+
         // 设置适配器
         orderAdapter = new OrderAdapter(this, null);
         orderAdapter.setOnItemViewClickListener(itemViewClickListener);
@@ -80,7 +82,6 @@ public class OrderActivity extends BaseActivity implements OrderView{
 
         // 创建业务处理类对象
         orderPresenter = new OrderPresenter(this);
-        orderPresenter.requestOrder();
     }
     private OnItemViewClickListener itemViewClickListener = new OnItemViewClickListener() {
         @Override // 取消操作
@@ -96,6 +97,11 @@ public class OrderActivity extends BaseActivity implements OrderView{
         @Override // 删除订单操作
         public void onClickView3(int position) {
             showDeleteOrderDialog(position, orderAdapter.getItem(position).getOrderId());
+        }
+
+        @Override // 确认收货
+        public void onClickView4(int position) {
+
         }
     };
 
@@ -145,6 +151,12 @@ public class OrderActivity extends BaseActivity implements OrderView{
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        orderPresenter.requestOrder();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         ButterKnife.unbind(this);
@@ -157,7 +169,12 @@ public class OrderActivity extends BaseActivity implements OrderView{
 
     @Override
     public void onStartRequest() {
-        zRefreshingView.setRefreshing(true);
+        List<?> data = orderAdapter.getData();
+        if (LocaleUtil.isListEmpty(data)){
+            emptyViewHelper.setRefreshing(true);
+        }else {
+            zRefreshingView.setRefreshing(true);
+        }
     }
 
     @Override

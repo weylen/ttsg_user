@@ -21,6 +21,7 @@ import com.guaigou.cd.minutestohome.util.DebugUtil;
 import com.guaigou.cd.minutestohome.util.DimensUtil;
 import com.guaigou.cd.minutestohome.view.OrderProductsDetailsView;
 import com.guaigou.cd.minutestohome.view.ZRefreshingView;
+import com.jakewharton.rxbinding.view.RxView;
 
 import java.util.List;
 
@@ -56,6 +57,8 @@ public class OrderDetailsActivity extends BaseActivity implements OrderDetailsVi
     @Bind(R.id.layout_empty) View emptyView;
     @Bind(R.id.refreshLayout) ZRefreshingView zRefreshingView;
     @Bind(R.id.layout_note) View noteLayoutView;
+    // 确认收货
+    @Bind(R.id.confirm_layout) View confirmViewLayout;
 
     private String orderNumber = null; // 订单号
     private List<OrderDetailsEntity> detailsEntities;
@@ -78,14 +81,12 @@ public class OrderDetailsActivity extends BaseActivity implements OrderDetailsVi
         emptyView.setOnClickListener(v -> orderDetailsPresenter.onStartRequestOrderDetails(orderNumber));
 
         // 隐藏所有的布局
-        mainView.setVisibility(View.VISIBLE);
+        mainView.setVisibility(View.INVISIBLE);
         emptyView.setVisibility(View.GONE);
         orderDetailsPresenter = new OrderDetailsPresenter(this);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+    private void request(){
         isFirstRequest = true;
         ViewTreeObserver vto2 = mOrderNoteView.getViewTreeObserver();
         vto2.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -98,6 +99,19 @@ public class OrderDetailsActivity extends BaseActivity implements OrderDetailsVi
                 }
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        request();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        orderDetailsPresenter.onRefresh();
+        zRefreshingView.setRefreshing(true);
     }
 
     @Override
@@ -115,6 +129,12 @@ public class OrderDetailsActivity extends BaseActivity implements OrderDetailsVi
     @OnClick(R.id.img_back)
     void onImgBack(){
         finish();
+    }
+
+    // 确认收货点击事件
+    @OnClick(R.id.confirm_text)
+    void onCofirClick(){
+
     }
 
     /**
@@ -158,15 +178,29 @@ public class OrderDetailsActivity extends BaseActivity implements OrderDetailsVi
         orderProductsDetailsView.setDataAndNotify2(products);
         // 设置支付状态
         String status = productsEntity.getStauts();
-        if ("2".equalsIgnoreCase(status)){
-            paymentView.setVisibility(View.VISIBLE);
-            mLayoutRealPayView.setVisibility(View.GONE);
-        }else if ("1".equalsIgnoreCase(status) || "3".equalsIgnoreCase(status)){
-            mLayoutRealPayView.setVisibility(View.VISIBLE);
-            paymentView.setVisibility(View.GONE);
+        // 3：已支付未发货 6：支付确认中 7：商家已结单 8：商家已送达
+        if ("3".equalsIgnoreCase(status) || "6".equalsIgnoreCase(status)
+                || "7".equalsIgnoreCase(status) || "8".equalsIgnoreCase(status)){
+            RxView.visibility(confirmViewLayout).call(Boolean.TRUE);
+            RxView.visibility(mLayoutRealPayView).call(Boolean.TRUE);
+            RxView.visibility(paymentView).call(Boolean.FALSE);
         }else {
-            mLayoutRealPayView.setVisibility(View.GONE);
-            paymentView.setVisibility(View.GONE);
+            // 1：订单完成
+            if ("1".equalsIgnoreCase(status)){
+                RxView.visibility(confirmViewLayout).call(Boolean.FALSE);
+                RxView.visibility(mLayoutRealPayView).call(Boolean.TRUE);
+                RxView.visibility(paymentView).call(Boolean.FALSE);
+                // 未支付
+            }else if ("2".equalsIgnoreCase(status)){
+                RxView.visibility(confirmViewLayout).call(Boolean.FALSE);
+                RxView.visibility(mLayoutRealPayView).call(Boolean.FALSE);
+                RxView.visibility(paymentView).call(Boolean.TRUE);
+                // 5：取消订单 "4"：客户退单
+            }else if ("5".equalsIgnoreCase(status) || "4".equalsIgnoreCase(status)){
+                RxView.visibility(confirmViewLayout).call(Boolean.FALSE);
+                RxView.visibility(mLayoutRealPayView).call(Boolean.FALSE);
+                RxView.visibility(paymentView).call(Boolean.FALSE);
+            }
         }
         mPayPriceView.setText(detailsEntity.getTotal());
 

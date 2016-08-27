@@ -14,6 +14,11 @@ public class AccountEntity implements Serializable{
     private String shoper; // 店铺名称
     private String sid; // sessionId
     private String uname; // 用户登录名称(电话号码)
+    private String nickname; // 性别
+    /**
+     * 1男，2是女
+     */
+    private String sex; // 昵称
 
     public String getAccount() {
         return account;
@@ -71,6 +76,22 @@ public class AccountEntity implements Serializable{
         this.uname = uname;
     }
 
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
+
     @Override
     public String toString() {
         return "AccountEntity{" +
@@ -81,6 +102,8 @@ public class AccountEntity implements Serializable{
                 ", shoper='" + shoper + '\'' +
                 ", sid='" + sid + '\'' +
                 ", uname='" + uname + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", sex='" + sex + '\'' +
                 '}';
     }
 }

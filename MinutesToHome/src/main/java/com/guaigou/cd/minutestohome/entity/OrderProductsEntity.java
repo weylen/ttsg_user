@@ -13,6 +13,17 @@ public class OrderProductsEntity implements Serializable{
     private String promote;
     private String name;
     private String img;
+    /**
+     "1"："订单完成"
+     "2"："订单未支付"
+     "3"："订单已支付未发货"
+     "4"："客户退货"
+     "5"："客户取消订单"
+     "6": "支付确认中"
+     "7": "商家已接单"
+     "8": "商家已送达"
+
+     */
     private String stauts;
     private String date;
     private String orderId;
@@ -74,6 +85,17 @@ public class OrderProductsEntity implements Serializable{
         this.img = img;
     }
 
+    /**
+     * "1"："订单完成"
+     "2"："订单未支付"
+     "3"："订单已支付未发货"
+     "4"："客户退货"
+     "5"："客户取消订单"
+     "6": "支付确认中"
+     "7": "商家已接单"
+     "8": "商家已送达"
+     * @return
+     */
     public String getStauts() {
         return stauts;
     }

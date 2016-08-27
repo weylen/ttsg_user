@@ -6,13 +6,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.view.menu.ExpandedMenuView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.alipay.sdk.app.PayTask;
 import com.guaigou.cd.minutestohome.BaseActivity;
@@ -22,26 +19,12 @@ import com.guaigou.cd.minutestohome.entity.OrderProductsEntity;
 import com.guaigou.cd.minutestohome.entity.WxPayEntity;
 import com.guaigou.cd.minutestohome.http.Constants;
 import com.guaigou.cd.minutestohome.pay.PayResult;
-import com.guaigou.cd.minutestohome.pay.SignUtils;
-import com.guaigou.cd.minutestohome.pay.Util;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
-import com.guaigou.cd.minutestohome.util.LocaleUtil;
-import com.guaigou.cd.minutestohome.util.MD5;
 import com.guaigou.cd.minutestohome.wxapi.WXPayEntryActivity;
-import com.tencent.mm.sdk.constants.Build;
 import com.tencent.mm.sdk.modelpay.PayReq;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONObject;
-
-import java.io.UnsupportedEncodingException;
-import java.net.InetAddress;
-import java.net.URLEncoder;
-import java.net.UnknownHostException;
-import java.util.LinkedList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -93,26 +76,25 @@ public class PayActivity extends BaseActivity implements PayView{
         productsEntityList = (List<OrderProductsEntity>) intent.getSerializableExtra(ORDER_PRODUCTS_DETAILS_KEY);
         mTextPrice.setText("￥"+orderPrice);
         mTextOrderName.setText(orderName);
+        // 创建PayPresenter对象
         payPresenter = new PayPresenter(this);
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        int code = getIntent().getIntExtra("WXResult", 200);
-        DebugUtil.d("PayActivity-onResume code:" + code);
-        String action = getIntent().getAction();
+        int code = intent.getIntExtra("WXResult", 200);
+        String action = intent.getAction();
+
         if (WXPayEntryActivity.ACTION.equalsIgnoreCase(action) && code != 200){
-            DebugUtil.d("PayActivity onResume errCode：" + code);
+            DebugUtil.d("PayActivity onNewIntent code：" + code);
             if(code == 0){
-                Toast.makeText(this,"支付成功!",Toast.LENGTH_SHORT).show();
+                showSnakeView(containerView, "支付成功");
                 peekInOrderDetailsActivity();
-                return;
             }else if(code == -1){
-                Toast.makeText(this,"支付失败!",Toast.LENGTH_SHORT).show();
-                return;
+                showSnakeView(containerView, "支付失败");
             }else if(code == -2){
-                Toast.makeText(this,"取消支付!",Toast.LENGTH_SHORT).show();
+                showSnakeView(containerView, "取消支付");
             }
         }
     }
@@ -120,7 +102,6 @@ public class PayActivity extends BaseActivity implements PayView{
     @Override
     protected void onResume() {
         super.onResume();
-
     }
 
     @OnClick(R.id.alipay_layout)
@@ -292,9 +273,6 @@ public class PayActivity extends BaseActivity implements PayView{
         finish();
     }
 
-    /**
-     * call alipay sdk pay. 调用SDK支付
-     */
     private void payByAli(String payInfo) {
         Runnable payRunnable = () -> {
             // 构造PayTask 对象
@@ -337,7 +315,7 @@ public class PayActivity extends BaseActivity implements PayView{
         req.timeStamp		= wxPayEntity.getTimestamp();
         req.packageValue 	= "Sign=WXPay";
         req.sign			= wxPayEntity.getSign();
-        req.extData			= "app data"; // optional
+        // req.extData			= "app data"; // optional
         api.registerApp(Constants.APP_ID);
         boolean isSuccess = api.sendReq(req);
         if (!isSuccess){

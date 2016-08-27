@@ -3,12 +3,9 @@ package com.guaigou.cd.minutestohome.wxapi;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
 
-import com.guaigou.cd.minutestohome.R;
 import com.guaigou.cd.minutestohome.activity.pay.PayActivity;
 import com.guaigou.cd.minutestohome.http.Constants;
-import com.guaigou.cd.minutestohome.util.DebugUtil;
 import com.tencent.mm.sdk.modelbase.BaseReq;
 import com.tencent.mm.sdk.modelbase.BaseResp;
 import com.tencent.mm.sdk.openapi.IWXAPI;
@@ -24,7 +21,6 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.pay_result);
     	api = WXAPIFactory.createWXAPI(this, Constants.APP_ID);
         api.handleIntent(getIntent(), this);
     }
@@ -43,7 +39,6 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler{
 	@Override
 	public void onResp(BaseResp resp) {
 		Constants.WX_RESP = resp.errCode;
-		DebugUtil.d("WXPayEntryActivity Constants.WX_RESP : " + Constants.WX_RESP);
 		Intent intent = new Intent(this, PayActivity.class);
 		intent.putExtra("WXResult", resp.errCode);
 		intent.setAction(ACTION);

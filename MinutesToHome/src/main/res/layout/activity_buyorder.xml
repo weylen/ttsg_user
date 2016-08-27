@@ -6,6 +6,33 @@
     <include layout="@layout/layout_title" android:id="@+id/titleLayout"/>
 
     <LinearLayout
+        android:id="@+id/confirm_layout"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:background="@color/white"
+        android:layout_alignParentBottom="true"
+        android:gravity="right|center"
+        android:paddingRight="10dp"
+        android:visibility="gone"
+        >
+
+        <TextView
+            android:id="@+id/confirm_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="确认收货"
+            android:background="@drawable/generic_btn_border_accentcolor_bg"
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/TextSize_14"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="3dp"
+            android:paddingTop="3dp"
+            />
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/payment_layout"
         android:layout_width="match_parent"
         android:layout_height="40dp"

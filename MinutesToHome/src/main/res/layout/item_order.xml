@@ -126,6 +126,22 @@
                 android:layout_marginLeft="10dp"
                 />
 
+            <TextView
+                android:id="@+id/action_confirm_goods"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/TextSize_12"
+                android:textColor="@color/colorAccent"
+                android:text="确认收货"
+                android:layout_gravity="right"
+                android:background="@drawable/generic_btn_border_accentcolor_bg"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="3dp"
+                android:paddingTop="3dp"
+                android:layout_marginLeft="10dp"
+                />
+
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

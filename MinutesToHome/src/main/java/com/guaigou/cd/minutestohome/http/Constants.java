@@ -3,7 +3,7 @@ package com.guaigou.cd.minutestohome.http;
 import java.util.HashMap;
 
 /**
- * Created by weylen on 2016-07-20.
+ * 常量
  */
 public class Constants {
 
@@ -24,7 +24,9 @@ public class Constants {
         ORDER_PARAM.put("3", "等待商家确认订单");
         ORDER_PARAM.put("4", "退单");
         ORDER_PARAM.put("5", "订单已取消");
-        ORDER_PARAM.put("6", "支付结果确认中");
+        ORDER_PARAM.put("6", "支付确认中");
+        ORDER_PARAM.put("7", "商家已接单");
+        ORDER_PARAM.put("8", "商家已送达");
     }
 }
 
