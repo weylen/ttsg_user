@@ -134,7 +134,7 @@ public class OrderDetailsActivity extends BaseActivity implements OrderDetailsVi
     // 确认收货点击事件
     @OnClick(R.id.confirm_text)
     void onCofirClick(){
-
+        showConfirmDelivery();
     }
 
     /**
@@ -204,6 +204,23 @@ public class OrderDetailsActivity extends BaseActivity implements OrderDetailsVi
         }
         mPayPriceView.setText(detailsEntity.getTotal());
 
+    }
+
+    /**
+     * 确认送达
+     */
+    private void showConfirmDelivery(){
+        new AlertDialog.Builder(this)
+                .setTitle("提示")
+                .setMessage("确认商品已经送达？")
+                .setNegativeButton("取消", (dialog, which) -> {
+                    dialog.dismiss();
+                })
+                .setPositiveButton("确定", (dialog, which) -> {
+                    dialog.dismiss();
+                    orderDetailsPresenter.alertOrderStatus(orderNumber, 1);
+                })
+                .show();
     }
 
     private void showNoteDialog(String note){
@@ -282,5 +299,28 @@ public class OrderDetailsActivity extends BaseActivity implements OrderDetailsVi
         intent.putExtra(PayActivity.ORDER_PREPAY_ID_KEY, detailsEntity.getPrepay_id());
         intent.putExtra(PayActivity.ORDER_PRICE_KEY, detailsEntity.getTotal());
         startActivity(intent);
+    }
+
+    @Override
+    public void onStartAlertStatus() {
+        showProgressDialog("处理中...");
+    }
+
+    @Override
+    public void onAlertStatusSuccess(int status) {
+        dismissProgressDialog();
+        if (status == 1){
+            showSnakeView(confirmViewLayout, "收货失败，请重新登录");
+        }
+    }
+
+    @Override
+    public void onAlertStatusFailure(int status) {
+        dismissProgressDialog();
+        if (status == 1){
+            showSnakeView(confirmViewLayout, "收货成功");
+            detailsEntities.get(0).getProducts().get(0).setStauts(String.valueOf(status));
+            setupMessages();
+        }
     }
 }

@@ -24,4 +24,7 @@ public interface OrderView{
     void onStartDeleteOrder();
     void onDeleteOrderSuccess(int position);
     void onDeleteOrderFailure();
+    void onStartAlertStatus();
+    void onAlertStatusSuccess(int position, int status);
+    void onAlertStatusFailure(int position, int status);
 }

@@ -101,7 +101,8 @@ public class OrderActivity extends BaseActivity implements OrderView{
 
         @Override // 确认收货
         public void onClickView4(int position) {
-
+            String orderId = orderAdapter.getItem(position).getOrderId();
+            showConfirmDelivery(orderId, position, 1);
         }
     };
 
@@ -127,6 +128,23 @@ public class OrderActivity extends BaseActivity implements OrderView{
                 })
                 .setPositiveButton("确定", (dialog, which) -> {
                     orderPresenter.deleteOrder(position, orderId);
+                })
+                .show();
+    }
+
+    /**
+     * 确认送达
+     */
+    private void showConfirmDelivery(String orderId, int position, int status){
+        new AlertDialog.Builder(this)
+                .setTitle("提示")
+                .setMessage("确认商品已经送达？")
+                .setNegativeButton("取消", (dialog, which) -> {
+                    dialog.dismiss();
+                })
+                .setPositiveButton("确定", (dialog, which) -> {
+                    dialog.dismiss();
+                    orderPresenter.alertOrderStatus(orderId, status, position);
                 })
                 .show();
     }
@@ -276,5 +294,28 @@ public class OrderActivity extends BaseActivity implements OrderView{
     public void onDeleteOrderFailure() {
         dismissProgressDialog();
         showSnakeView(zListView, "删除订单失败，请重新登录");
+    }
+
+    @Override
+    public void onStartAlertStatus() {
+        showProgressDialog("处理中...");
+    }
+
+    @Override
+    public void onAlertStatusSuccess(int position, int status) {
+        dismissProgressDialog();
+        if (status == 1){
+            showSnakeView(zListView, "收货成功");
+            orderAdapter.getItem(position).getProducts().get(0).setStauts(String.valueOf(status));
+            orderAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onAlertStatusFailure(int position, int status) {
+        dismissProgressDialog();
+        if (status == 1){
+            showSnakeView(zListView, "收货失败，请重新登录");
+        }
     }
 }

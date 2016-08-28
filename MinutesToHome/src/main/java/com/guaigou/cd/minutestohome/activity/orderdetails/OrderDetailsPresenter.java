@@ -129,4 +129,37 @@ public class OrderDetailsPresenter {
                     }
                 });
     }
+
+    /**
+     * 修改订单状态
+     * @param orderId
+     * @param status "1"："订单完成" "2"："订单未支付" "3"："订单已支付未发货" "4"："客户退货" "5"："客户取消订单" "6"："支付结果确认中" "7"："商家已结单" "6"："商家已送达"
+     */
+    void alertOrderStatus(String orderId, int status){
+        orderDetailsView.onStartAlertStatus();
+        RetrofitFactory.getRetrofit().create(HttpService.class)
+                .alertOrderStatus(orderId, String.valueOf(status))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Subscriber<JsonObject>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        orderDetailsView.onAlertStatusFailure(status);
+                    }
+
+                    @Override
+                    public void onNext(JsonObject jsonObject) {
+                        if (ResponseMgr.getStatus(jsonObject) != 1){
+                            orderDetailsView.onAlertStatusFailure(status);
+                        }else{
+                            orderDetailsView.onAlertStatusSuccess(status);
+                        }
+                    }
+                });
+    }
 }
