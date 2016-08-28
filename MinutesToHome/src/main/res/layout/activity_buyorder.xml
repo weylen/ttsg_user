@@ -5,87 +5,96 @@
 
     <include layout="@layout/layout_title" android:id="@+id/titleLayout"/>
 
-    <LinearLayout
-        android:id="@+id/confirm_layout"
+    <FrameLayout
+        android:id="@+id/bottom_layout"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:orientation="horizontal"
-        android:background="@color/white"
         android:layout_alignParentBottom="true"
-        android:gravity="right|center"
-        android:paddingRight="10dp"
+        android:background="@color/white"
         android:visibility="gone"
         >
 
-        <TextView
-            android:id="@+id/confirm_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="确认收货"
-            android:background="@drawable/generic_btn_border_accentcolor_bg"
-            android:textColor="@color/colorAccent"
-            android:textSize="@dimen/TextSize_14"
-            android:paddingLeft="10dp"
+        <LinearLayout
+            android:id="@+id/confirm_layout"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal"
+            android:gravity="right|center"
             android:paddingRight="10dp"
-            android:paddingBottom="3dp"
-            android:paddingTop="3dp"
-            />
-    </LinearLayout>
+            android:visibility="gone"
+            >
 
-    <LinearLayout
-        android:id="@+id/payment_layout"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:orientation="horizontal"
-        android:background="@color/white"
-        android:layout_alignParentBottom="true"
-        android:visibility="gone"
-        >
+            <TextView
+                android:id="@+id/text_confirmGoods"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="确认收货"
+                android:background="@drawable/generic_btn_border_accentcolor_bg"
+                android:textColor="@color/colorAccent"
+                android:textSize="@dimen/TextSize_14"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="3dp"
+                android:paddingTop="3dp"
+                android:focusable="true"
+                />
+        </LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/grayText"
-            android:text="实际支付："
-            android:textSize="@dimen/TextSize_12"
-            android:paddingLeft="10dp"
-            />
+        <LinearLayout
+            android:id="@+id/payment_layout"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            >
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/redText"
-            android:text="￥"
-            android:textSize="@dimen/TextSize_10"
-            />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/grayText"
+                android:text="实际支付："
+                android:textSize="@dimen/TextSize_12"
+                android:paddingLeft="10dp"
+                />
 
-        <TextView
-            android:id="@+id/text_pay"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/redText"
-            android:textSize="20sp"
-            android:layout_weight="1.0"
-            />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/redText"
+                android:text="￥"
+                android:textSize="@dimen/TextSize_10"
+                />
 
-        <TextView
-            android:id="@+id/text_payment"
-            android:layout_width="100dp"
-            android:layout_height="match_parent"
-            android:text="去支付"
-            android:textColor="@color/white"
-            android:textSize="@dimen/TextSize_14"
-            android:gravity="center"
-            android:background="@drawable/abc_generic_theme_btn"
-            />
-    </LinearLayout>
+            <TextView
+                android:id="@+id/text_pay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/redText"
+                android:textSize="20sp"
+                android:layout_weight="1.0"
+                />
+
+            <TextView
+                android:id="@+id/text_payment"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:text="去支付"
+                android:textColor="@color/white"
+                android:textSize="@dimen/TextSize_14"
+                android:gravity="center"
+                android:background="@drawable/abc_generic_theme_btn"
+                />
+        </LinearLayout>
+
+    </FrameLayout>
+
 
     <com.guaigou.cd.minutestohome.view.ZRefreshingView
         android:id="@+id/refreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/titleLayout"
-        android:layout_above="@id/payment_layout"
+        android:layout_above="@id/bottom_layout"
         >
 
         <ScrollView

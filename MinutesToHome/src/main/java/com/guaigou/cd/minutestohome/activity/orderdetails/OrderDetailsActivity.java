@@ -59,6 +59,7 @@ public class OrderDetailsActivity extends BaseActivity implements OrderDetailsVi
     @Bind(R.id.layout_note) View noteLayoutView;
     // 确认收货
     @Bind(R.id.confirm_layout) View confirmViewLayout;
+    @Bind(R.id.bottom_layout) View bottomView;
 
     private String orderNumber = null; // 订单号
     private List<OrderDetailsEntity> detailsEntities;
@@ -131,12 +132,6 @@ public class OrderDetailsActivity extends BaseActivity implements OrderDetailsVi
         finish();
     }
 
-    // 确认收货点击事件
-    @OnClick(R.id.confirm_text)
-    void onCofirClick(){
-        showConfirmDelivery();
-    }
-
     /**
      * 设置订单信息
      */
@@ -187,9 +182,8 @@ public class OrderDetailsActivity extends BaseActivity implements OrderDetailsVi
         }else {
             // 1：订单完成
             if ("1".equalsIgnoreCase(status)){
-                RxView.visibility(confirmViewLayout).call(Boolean.FALSE);
+                RxView.visibility(bottomView).call(Boolean.FALSE);
                 RxView.visibility(mLayoutRealPayView).call(Boolean.TRUE);
-                RxView.visibility(paymentView).call(Boolean.FALSE);
                 // 未支付
             }else if ("2".equalsIgnoreCase(status)){
                 RxView.visibility(confirmViewLayout).call(Boolean.FALSE);
@@ -197,13 +191,11 @@ public class OrderDetailsActivity extends BaseActivity implements OrderDetailsVi
                 RxView.visibility(paymentView).call(Boolean.TRUE);
                 // 5：取消订单 "4"：客户退单
             }else if ("5".equalsIgnoreCase(status) || "4".equalsIgnoreCase(status)){
-                RxView.visibility(confirmViewLayout).call(Boolean.FALSE);
+                RxView.visibility(bottomView).call(Boolean.FALSE);
                 RxView.visibility(mLayoutRealPayView).call(Boolean.FALSE);
-                RxView.visibility(paymentView).call(Boolean.FALSE);
             }
         }
         mPayPriceView.setText(detailsEntity.getTotal());
-
     }
 
     /**
@@ -244,6 +236,14 @@ public class OrderDetailsActivity extends BaseActivity implements OrderDetailsVi
     @OnClick(R.id.text_payment)
     void onConfrimOrderClick(){
         orderDetailsPresenter.validatePayment(orderNumber);
+    }
+
+    /**
+     * 确认收货
+     */
+    @OnClick(R.id.text_confirmGoods)
+    void onConfirmGoods(){
+        showConfirmDelivery();
     }
 
     @Override
@@ -310,7 +310,9 @@ public class OrderDetailsActivity extends BaseActivity implements OrderDetailsVi
     public void onAlertStatusSuccess(int status) {
         dismissProgressDialog();
         if (status == 1){
-            showSnakeView(confirmViewLayout, "收货失败，请重新登录");
+            showSnakeView(confirmViewLayout, "收货成功");
+            detailsEntities.get(0).getProducts().get(0).setStauts(String.valueOf(status));
+            setupMessages();
         }
     }
 
@@ -318,9 +320,8 @@ public class OrderDetailsActivity extends BaseActivity implements OrderDetailsVi
     public void onAlertStatusFailure(int status) {
         dismissProgressDialog();
         if (status == 1){
-            showSnakeView(confirmViewLayout, "收货成功");
-            detailsEntities.get(0).getProducts().get(0).setStauts(String.valueOf(status));
-            setupMessages();
+            showSnakeView(confirmViewLayout, "收货失败，请重新登录");
         }
+
     }
 }
