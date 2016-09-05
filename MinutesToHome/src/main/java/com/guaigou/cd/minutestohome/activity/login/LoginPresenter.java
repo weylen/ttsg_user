@@ -12,6 +12,7 @@ import com.guaigou.cd.minutestohome.http.ResponseMgr;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
 import com.guaigou.cd.minutestohome.prefs.LoginPrefs;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
+import com.guaigou.cd.minutestohome.util.DeviceUtil;
 
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
@@ -38,10 +39,10 @@ public class LoginPresenter implements BasePresenter {
      * @param user
      * @param pwd
      */
-    public void login(String user, String pwd){
+    public void login(String user, String pwd, String deviceId){
         loginView.showWaitDialog();
         RetrofitFactory.getRetrofit().create(HttpService.class)
-                .login(user, pwd)
+                .login(user, pwd, 2, deviceId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JsonObject>() {

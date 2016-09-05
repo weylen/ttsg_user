@@ -17,6 +17,7 @@ import com.guaigou.cd.minutestohome.entity.AccountEntity;
 import com.guaigou.cd.minutestohome.prefs.CartPrefs;
 import com.guaigou.cd.minutestohome.prefs.LoginPrefs;
 import com.guaigou.cd.minutestohome.util.CartUtil;
+import com.guaigou.cd.minutestohome.util.DeviceUtil;
 import com.guaigou.cd.minutestohome.util.KeyboardUtil;
 import com.guaigou.cd.minutestohome.util.SessionUtil;
 import com.guaigou.cd.minutestohome.util.ValidateUtil;
@@ -84,7 +85,7 @@ public class LoginActivity extends BaseActivity implements LoginView{
             return;
         }
         KeyboardUtil.hide(this, mUserLoginName);
-        loginPresenter.login(user, pwd);
+        loginPresenter.login(user, pwd, DeviceUtil.INSTANCE.getDeviceUuid(this));
     }
 
     @OnClick(R.id.text_register)

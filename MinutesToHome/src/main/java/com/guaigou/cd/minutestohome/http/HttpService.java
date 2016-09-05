@@ -17,13 +17,17 @@ public interface HttpService {
      * 登录
      * @param name
      * @param pwd
+     * @param sort 设备标识符，1苹果，2是安卓，3是其他
+     * @param deviceId 设备唯一标识
      * @return
      */
     @FormUrlEncoded
     @POST("scca-clogin")
     Observable<JsonObject> login(
             @Field("uname") String name, // 用户名
-            @Field("upass") String pwd // 密码
+            @Field("upass") String pwd, // 密码
+            @Field("sort") int sort,
+            @Field("areaId") String deviceId // 设备标识
     );
 
     /**
