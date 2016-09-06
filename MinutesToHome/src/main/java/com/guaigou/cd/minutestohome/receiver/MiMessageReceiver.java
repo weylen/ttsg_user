@@ -176,7 +176,8 @@ public class MiMessageReceiver extends PushMessageReceiver {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.putExtra(OrderDetailsActivity.ORDER_KEY, orderId);
         String ticker = "您的订单" + orderId + "商家已接单";
-        showNf(context, ticker, intent, SHOP_RECEIVE_ID);
+        String message ="您的订单" + orderId + "商家已接单, 点击查看详情";
+        showNf(context, ticker, message, intent, SHOP_RECEIVE_ID);
     }
 
     /**
@@ -192,7 +193,8 @@ public class MiMessageReceiver extends PushMessageReceiver {
         Intent intent = new Intent(context, OrderDetailsActivity.class);
         intent.putExtra(OrderDetailsActivity.ORDER_KEY, orderId);
         String ticker = "您的订单" + orderId + "商家已确认送达";
-        showNf(context, ticker, intent, SHOP_CONFIRM_ID);
+        String message =  "您的订单" + orderId + "商家已确认送达, 点击查看详情";
+        showNf(context, ticker, message, intent, SHOP_CONFIRM_ID);
     }
 
 
@@ -203,10 +205,10 @@ public class MiMessageReceiver extends PushMessageReceiver {
         Intent intent = new Intent(context, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         String ticker = "您的账号在另外一台设备上登录，如果不是本人操作，请您尽快修改密码";
-        showNf(context, ticker, intent, LOGIN_ID);
+        showNf(context, ticker, ticker, intent, LOGIN_ID);
     }
 
-    private void showNf(Context context, String ticker, Intent intent, int notifyId){
+    private void showNf(Context context, String ticker, String message, Intent intent, int notifyId){
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setSmallIcon(R.mipmap.icon_message);
         builder.setTicker(ticker);
@@ -219,7 +221,7 @@ public class MiMessageReceiver extends PushMessageReceiver {
 
         builder.setContentIntent(pendingIntent);
         builder.setContentTitle("天天闪购提示您");
-        builder.setContentText(ticker);
+        builder.setContentText(message);
 
         Notification notification = builder.build();
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
