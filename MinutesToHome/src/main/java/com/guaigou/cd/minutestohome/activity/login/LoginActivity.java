@@ -17,10 +17,12 @@ import com.guaigou.cd.minutestohome.entity.AccountEntity;
 import com.guaigou.cd.minutestohome.prefs.CartPrefs;
 import com.guaigou.cd.minutestohome.prefs.LoginPrefs;
 import com.guaigou.cd.minutestohome.util.CartUtil;
+import com.guaigou.cd.minutestohome.util.DebugUtil;
 import com.guaigou.cd.minutestohome.util.DeviceUtil;
 import com.guaigou.cd.minutestohome.util.KeyboardUtil;
 import com.guaigou.cd.minutestohome.util.SessionUtil;
 import com.guaigou.cd.minutestohome.util.ValidateUtil;
+import com.xiaomi.mipush.sdk.MiPushClient;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -55,7 +57,7 @@ public class LoginActivity extends BaseActivity implements LoginView{
         });
 
         mUserLoginName.setText("18108037736");
-        mUserLoginPass.setText("z654321");
+        mUserLoginPass.setText("123456");
     }
 
     @OnClick(R.id.img_back)
@@ -69,18 +71,18 @@ public class LoginActivity extends BaseActivity implements LoginView{
         String pwd = mUserLoginPass.getText().toString();
 
         if (TextUtils.isEmpty(user)) {
-            showSnakeView(containerView, "手机号必须输入");
+            showToast("手机号必须输入");
             mUserLoginName.requestFocus();
             return;
         }
 
         if (!ValidateUtil.isMobile(user)){
-            showSnakeView(containerView, "请输入正确的手机号");
+            showToast("请输入正确的手机号");
             return;
         }
 
         if (TextUtils.isEmpty(pwd)) {
-            showSnakeView(containerView, "密码必须输入");
+            showToast("密码必须输入");
             mUserLoginPass.requestFocus();
             return;
         }
@@ -121,7 +123,10 @@ public class LoginActivity extends BaseActivity implements LoginView{
     @Override
     public void loginSuccess(AccountEntity accountEntity) {
         LoginPrefs.setAccountInfo(getApplicationContext(), accountEntity);
+        DebugUtil.d("LoginActivity 设备id：" + DeviceUtil.INSTANCE.getDeviceUuid(this));
         SessionUtil.sessionId = "JSESSIONID=" + accountEntity.getSid();
+        MiPushClient.setAlias(this, DeviceUtil.INSTANCE.getDeviceUuid(this), null);
+
         String name = CartPrefs.getCartName(this);
         if (!TextUtils.isEmpty(name) && name.equalsIgnoreCase(accountEntity.getUname())){
             // 获取购物车信息
@@ -134,7 +139,7 @@ public class LoginActivity extends BaseActivity implements LoginView{
 
     @Override
     public void loginFailed() {
-        showSnakeView(containerView, "登录失败，请检查用户名或密码");
+        showToast("登录失败，请检查用户名或密码");
     }
 
     @Override

@@ -10,10 +10,9 @@ public interface FindPwdView{
     void onRequestFailure(String errorMessage);
 
     /**
-     * 请求成功
-     * @param result -1：服务器忙，获取验证码失败，需要重新获取
-     *  1：该号码已经注册
-     *  六位字符串：已经发送的验证码
+     *
+     * @param status -1：服务器忙或数据不完整-2：该号码已经注册-3：服务器拒绝-5：短信发送失败，稍候再试，这种情况一般不会发生 1：已经发送的验证码
+     * @param result
      */
-    void onRequestSuccess(String result);
+    void onRequestSuccess(int status, String result);
 }

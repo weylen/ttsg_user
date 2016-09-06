@@ -25,8 +25,10 @@ import com.guaigou.cd.minutestohome.http.HttpService;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
 import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
+import com.guaigou.cd.minutestohome.util.DeviceUtil;
 import com.guaigou.cd.minutestohome.util.DialogUtil;
 import com.jakewharton.rxbinding.view.RxView;
+import com.xiaomi.mipush.sdk.MiPushClient;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -184,8 +186,9 @@ public class MeFragment extends BaseFragment {
             }
         }else {
             mTitleView.setText("点击登录");
-            RxView.visibility(mLogoutView).call(Boolean.TRUE);
+            RxView.visibility(mLogoutView).call(Boolean.FALSE);
             RxView.visibility(mPhoneView).call(Boolean.FALSE);
+            MiPushClient.unsetAlias(getActivity(), DeviceUtil.INSTANCE.getDeviceUuid(getActivity()), null);
         }
     }
 

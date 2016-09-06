@@ -2,7 +2,6 @@ package com.guaigou.cd.minutestohome.activity.setpwd;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
@@ -12,8 +11,6 @@ import android.widget.TextView;
 import com.guaigou.cd.minutestohome.BaseActivity;
 import com.guaigou.cd.minutestohome.R;
 import com.guaigou.cd.minutestohome.activity.login.LoginActivity;
-import com.guaigou.cd.minutestohome.activity.register.RegisterPreseter;
-import com.guaigou.cd.minutestohome.util.ValidateUtil;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -60,22 +57,22 @@ public class SetPwdActivity extends BaseActivity implements SetPwdView{
         String pwd1 = mPwdView.getText().toString();
         String pwd2 = mRePwdView.getText().toString();
         if (TextUtils.isEmpty(pwd1)){
-            showSnakeView(containerView, "请输入密码");
+            showToast("请输入密码");
             return;
         }
 
         if (TextUtils.isEmpty(pwd2)){
-            showSnakeView(containerView, "请再次输入密码");
+            showToast("请再次输入密码");
             return;
         }
 
         if (pwd1.length() <= 5){
-            showSnakeView(containerView, "密码长度必须大于6位");
+            showToast("密码长度必须大于6位");
             return;
         }
 
         if (!pwd1.equalsIgnoreCase(pwd2)){
-            showSnakeView(containerView, "两次密码不一致");
+            showToast("两次密码不一致");
             return;
         }
 
@@ -96,7 +93,7 @@ public class SetPwdActivity extends BaseActivity implements SetPwdView{
     @Override
     public void onRequestFailure() {
         dismissProgressDialog();
-        showSnakeView(containerView, "注册失败，请重新操作");
+        showToast("注册失败，请重新操作");
     }
 
     @Override
@@ -121,7 +118,7 @@ public class SetPwdActivity extends BaseActivity implements SetPwdView{
                 message = "注册失败";
                 break;
         }
-        showSnakeView(containerView, message);
+        showToast(message);
         if (status == 1){
             Intent intent = new Intent(this, LoginActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

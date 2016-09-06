@@ -1,8 +1,10 @@
 package com.guaigou.cd.minutestohome.activity.register;
 
 import com.google.common.base.Preconditions;
+import com.google.gson.JsonObject;
 import com.guaigou.cd.minutestohome.BasePresenter;
 import com.guaigou.cd.minutestohome.http.HttpService;
+import com.guaigou.cd.minutestohome.http.ResponseMgr;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
 
@@ -13,10 +15,10 @@ import rx.schedulers.Schedulers;
 /**
  * Created by weylen on 2016-07-23.
  */
-public class RegisterPreseter implements BasePresenter{
+public class RegisterPresenter implements BasePresenter{
 
     private RegisterView registerView;
-    public RegisterPreseter(RegisterView registerView){
+    public RegisterPresenter(RegisterView registerView){
         this.registerView = Preconditions.checkNotNull(registerView, "RegisterView can not be null");
     }
 
@@ -36,7 +38,7 @@ public class RegisterPreseter implements BasePresenter{
                 .requestValidateCode(phoneNum)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<String>() {
+                .subscribe(new Observer<JsonObject>() {
                     @Override
                     public void onCompleted() {
 
@@ -49,9 +51,9 @@ public class RegisterPreseter implements BasePresenter{
                     }
 
                     @Override
-                    public void onNext(String s) {
-                        DebugUtil.d("RegisterPreseter onNext s:" + s);
-                        registerView.onRequestSuccess(s.toString());
+                    public void onNext(JsonObject s) {
+                        DebugUtil.d("RegisterPresenter onNext s:" + s);
+                        registerView.onRequestSuccess(ResponseMgr.getStatus(s), s.get("data").getAsString());
                     }
                 });
     }

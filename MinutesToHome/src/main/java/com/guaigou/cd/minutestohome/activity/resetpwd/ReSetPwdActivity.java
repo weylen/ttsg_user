@@ -56,22 +56,22 @@ public class ReSetPwdActivity extends BaseActivity implements ReSetPwdView{
         String pwd1 = mPwdView.getText().toString();
         String pwd2 = mRePwdView.getText().toString();
         if (TextUtils.isEmpty(pwd1)){
-            showSnakeView(containerView, "请输入密码");
+            showToast("请输入密码");
             return;
         }
 
         if (TextUtils.isEmpty(pwd2)){
-            showSnakeView(containerView, "请再次输入密码");
+            showToast("请再次输入密码");
             return;
         }
 
         if (pwd1.length() <= 5 || pwd2.length() <= 5){
-            showSnakeView(containerView, "密码长度必须大于6位");
+            showToast("密码长度必须大于6位");
             return;
         }
 
         if (!pwd1.equalsIgnoreCase(pwd2)){
-            showSnakeView(containerView, "两次密码不一致");
+            showToast("两次密码不一致");
             return;
         }
 
@@ -92,13 +92,13 @@ public class ReSetPwdActivity extends BaseActivity implements ReSetPwdView{
     @Override
     public void onRequestFailure(String errorMessage) {
         dismissProgressDialog();
-        showSnakeView(containerView, errorMessage);
+        showToast(errorMessage);
     }
 
     @Override
     public void onRequestSuccess() {
         dismissProgressDialog();
-        showSnakeView(containerView, "重置密码成功");
+        showToast("重置密码成功");
         Intent intent = new Intent(this, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);

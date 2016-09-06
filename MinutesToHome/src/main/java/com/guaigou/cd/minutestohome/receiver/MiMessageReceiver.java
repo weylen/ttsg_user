@@ -36,24 +36,24 @@ public class MiMessageReceiver extends PushMessageReceiver {
 
     @Override // 接收服务器向客户端发送的透传消息
     public void onReceivePassThroughMessage(Context context, MiPushMessage message) {
-        DebugUtil.d("onReceivePassThroughMessage is called. " + message.toString());
+        DebugUtil.d("用户版onReceivePassThroughMessage is called. " + message.toString());
         doMessage(context, message);
     }
 
     @Override // 来接收服务器向客户端发送的通知消息， 这个回调方法会在用户手动点击通知后触发
     public void onNotificationMessageClicked(Context context, MiPushMessage message) {
-        DebugUtil.d("onNotificationMessageClicked is called. " + message.toString());
+        DebugUtil.d("用户版onNotificationMessageClicked is called. " + message.toString());
     }
 
     @Override // 方法用来接收服务器向客户端发送的通知消息，这个回调方法是在通知消息到达客户端时触发。另外应用在前台时不弹出通知的通知消息到达客户端也会触发这个回调函数
     public void onNotificationMessageArrived(Context context, MiPushMessage message) {
-        DebugUtil.d("onNotificationMessageArrived is called. " + message.toString());
+        DebugUtil.d("用户版onNotificationMessageArrived is called. " + message.toString());
 //        doMessage(context, message);
     }
 
     @Override  // 方法用来接收客户端向服务器发送命令后的响应结果。
     public void onCommandResult(Context context, MiPushCommandMessage message) {
-        DebugUtil.d("onCommandResult is called. " + message.toString());
+        DebugUtil.d("用户版onCommandResult is called. " + message.toString());
         String command = message.getCommand();
         List<String> arguments = message.getCommandArguments();
         String cmdArg1 = ((arguments != null && arguments.size() > 0) ? arguments.get(0) : null);
@@ -72,7 +72,7 @@ public class MiMessageReceiver extends PushMessageReceiver {
 
     @Override // 方法用来接收客户端向服务器发送注册命令后的响应结果
     public void onReceiveRegisterResult(Context context, MiPushCommandMessage message) {
-        DebugUtil.d("onReceiveRegisterResult is called." + message.toString());
+        DebugUtil.d("用户版onReceiveRegisterResult is called." + message.toString());
         String command = message.getCommand(); // 获取注册的种类
 
         List<String> arguments = message.getCommandArguments();
@@ -80,13 +80,13 @@ public class MiMessageReceiver extends PushMessageReceiver {
         String log = cmdArg1;
         // 注册服务
         if (MiPushClient.COMMAND_REGISTER.equals(command)) {
-            if (message.getResultCode() == ErrorCode.SUCCESS) {
+            if (message.getResultCode() == ErrorCode.SUCCESS && LoginData.INSTANCE.isLogin(context)) {
                 MiPushClient.setAlias(context, DeviceUtil.INSTANCE.getDeviceUuid(context), null);
             }
         } else {
             log = message.getReason();
         }
-        DebugUtil.d("MiMessageReceiver 注册服务：" + log);
+        DebugUtil.d("用户版MiMessageReceiver 注册服务：" + log);
     }
 
     /**
@@ -94,7 +94,7 @@ public class MiMessageReceiver extends PushMessageReceiver {
      * @param context
      */
     private void showAnotherPlaceDialog(Context context){
-        DebugUtil.d("MiMessageReceiver 显示对话框：" + BaseActivity.getCurrentContext());
+        DebugUtil.d("用户版MiMessageReceiver 显示对话框：" + BaseActivity.getCurrentContext());
         Handler handler = new Handler(context.getMainLooper());
         handler.post(() -> {
             AlertDialog dialog = new AlertDialog.Builder(BaseActivity.getCurrentContext())
@@ -123,8 +123,8 @@ public class MiMessageReceiver extends PushMessageReceiver {
         try{
             JsonObject jsonObject = gson.fromJson(content, JsonObject.class);
             status = jsonObject.get("stauts").getAsInt();
-            DebugUtil.d("MiMessageReceiver status:" + status);
-            String orderId = null;
+            DebugUtil.d("用户版MiMessageReceiver status:" + status);
+            String orderId;
             switch (status){
                 case 1: // 异地登录
                     // 判断当前程序是否在前端执行 如果在则显示对话框 如果不在则弹出通知

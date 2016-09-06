@@ -11,9 +11,7 @@ import android.widget.TextView;
 
 import com.guaigou.cd.minutestohome.BaseActivity;
 import com.guaigou.cd.minutestohome.R;
-import com.guaigou.cd.minutestohome.activity.register.RegisterPreseter;
 import com.guaigou.cd.minutestohome.activity.resetpwd.ReSetPwdActivity;
-import com.guaigou.cd.minutestohome.activity.setpwd.SetPwdActivity;
 import com.guaigou.cd.minutestohome.util.ValidateUtil;
 
 import butterknife.Bind;
@@ -79,7 +77,7 @@ public class FindPwdActivity extends BaseActivity implements FindPwdView{
     void onRequestValidateCodeClick(){
         phoneNum = mUserLoginName.getText().toString();
         if (TextUtils.isEmpty(phoneNum) || !ValidateUtil.isMobile(phoneNum)){
-            showSnakeView(containerView, "请输入正确的手机号码");
+            showToast("请输入正确的手机号码");
             return;
         }
         // 设置不可用
@@ -93,20 +91,20 @@ public class FindPwdActivity extends BaseActivity implements FindPwdView{
     void onNextStepClick(){
         String code = mValidateCodeView.getText().toString();
         if (TextUtils.isEmpty(code)){
-            showSnakeView(containerView, "请输入验证码");
+            showToast("请输入验证码");
             return;
         }
         if (!code.equalsIgnoreCase(validateCode)){
-            showSnakeView(containerView, "验证码不正确");
+            showToast("验证码不正确");
             return;
         }
         String num = mUserLoginName.getText().toString();
         if (TextUtils.isEmpty(num) || !ValidateUtil.isMobile(num)){
-            showSnakeView(containerView, "请输入正确的电话号码");
+            showToast("请输入正确的电话号码");
             return;
         }
         if (!num.equalsIgnoreCase(phoneNum)){
-            showSnakeView(containerView, "电话号码和发送短信验证码的号码不一致");
+            showToast("电话号码和发送短信验证码的号码不一致");
             return;
         }
 
@@ -136,12 +134,24 @@ public class FindPwdActivity extends BaseActivity implements FindPwdView{
     @Override
     public void onRequestFailure(String errorMessage) {
         dismissProgressDialog();
-        showSnakeView(containerView, errorMessage);
+        showToast("请求失败，请重试");
+        resetCounter();
     }
 
     @Override
-    public void onRequestSuccess(String result) {
+    public void onRequestSuccess(int status, String result) {
         dismissProgressDialog();
-        validateCode = result;
+        if(status == -1){
+            showToast("验证码发送失败，请重试");
+            resetCounter();
+        }else if (status == 1){
+            validateCode = result;
+            showToast("验证码发送成功");
+        }
+    }
+
+    private void resetCounter(){
+        countDownTimer.cancel();
+        countDownTimer.onFinish();
     }
 }

@@ -54,11 +54,7 @@ public class FindPwdPreseter implements BasePresenter{
                     @Override
                     public void onNext(JsonObject s) {
                         DebugUtil.d("FindPwdPreseter 找回密码验证码获取成功：" + s);
-                        if (ResponseMgr.getStatus(s) != 1){
-                            findPwdView.onRequestFailure(s.get("data").getAsString());
-                        } else {
-                            findPwdView.onRequestSuccess(s.get("data").getAsString());
-                        }
+                        findPwdView.onRequestSuccess(ResponseMgr.getStatus(s), s.get("data").getAsString());
                     }
                 });
     }

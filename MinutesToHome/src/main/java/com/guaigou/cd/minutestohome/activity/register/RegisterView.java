@@ -15,5 +15,5 @@ public interface RegisterView{
      *  1：该号码已经注册
      *  六位字符串：已经发送的验证码
      */
-    void onRequestSuccess(String result);
+    void onRequestSuccess(int status, String result);
 }

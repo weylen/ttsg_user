@@ -37,7 +37,7 @@ public interface HttpService {
      */
     @FormUrlEncoded
     @POST("scca-smsyzm")
-    Observable<String> requestValidateCode(
+    Observable<JsonObject> requestValidateCode(
             @Field("uname") String phoneNum);
 
     /**

@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.guaigou.cd.minutestohome.BaseActivity;
 import com.guaigou.cd.minutestohome.R;
 import com.guaigou.cd.minutestohome.activity.setpwd.SetPwdActivity;
+import com.guaigou.cd.minutestohome.util.KeyboardUtil;
 import com.guaigou.cd.minutestohome.util.ValidateUtil;
 
 import butterknife.Bind;
@@ -24,18 +25,13 @@ import butterknife.OnClick;
 public class RegisterActivity extends BaseActivity implements RegisterView{
 
 
-    @Bind(R.id.text_title)
-    TextView mTextTitle;
-    @Bind(R.id.text_validatecode)
-    TextView vertifyView; // 验证码视图
-    @Bind(R.id.user_login_name)
-    EditText mUserLoginName;
-    @Bind(R.id.user_login_validatecode)
-    EditText mValidateCodeView;
-    @Bind(R.id.Container)
-    View containerView;
+    @Bind(R.id.text_title) TextView mTextTitle;
+    @Bind(R.id.text_validatecode) TextView vertifyView; // 验证码视图
+    @Bind(R.id.user_login_name) EditText mUserLoginName;
+    @Bind(R.id.user_login_validatecode) EditText mValidateCodeView;
+    @Bind(R.id.Container) View containerView;
 
-    private RegisterPreseter registerPreseter;
+    private RegisterPresenter presenter;
     private String validateCode; // 验证码
     private static final int MAX_TIME = 1 * 60 * 1000;
 
@@ -61,7 +57,7 @@ public class RegisterActivity extends BaseActivity implements RegisterView{
 
         mTextTitle.setText(R.string.Register);
 
-        registerPreseter = new RegisterPreseter(this);
+        presenter = new RegisterPresenter(this);
     }
 
     @OnClick(R.id.img_back)
@@ -77,43 +73,42 @@ public class RegisterActivity extends BaseActivity implements RegisterView{
     void onRequestValidateCodeClick(){
         phoneNum = mUserLoginName.getText().toString();
         if (TextUtils.isEmpty(phoneNum) || !ValidateUtil.isMobile(phoneNum)){
-            showSnakeView(containerView, "请输入正确的手机号码");
+            showToast("请输入正确的手机号码");
             return;
         }
         // 设置不可用
         vertifyView.setEnabled(false);
         // 开始倒计时
         countDownTimer.start();
-        registerPreseter.requestValidateCode(phoneNum);
+        presenter.requestValidateCode(phoneNum);
     }
 
     @OnClick(R.id.text_nextstep)
     void onNextStepClick(){
-        Intent intent = new Intent(this, SetPwdActivity.class);
-        intent.putExtra("PhoneNum", phoneNum);
-        startActivity(intent);
-        if (true){return;}
+        KeyboardUtil.hide(this, mUserLoginName);
 
         String code = mValidateCodeView.getText().toString();
         if (TextUtils.isEmpty(code)){
-            showSnakeView(containerView, "请输入验证码");
+            showToast("请输入验证码");
             return;
         }
         if (!code.equalsIgnoreCase(validateCode)){
-            showSnakeView(containerView, "验证码不正确");
+            showToast("验证码不正确");
             return;
         }
         String num = mUserLoginName.getText().toString();
         if (TextUtils.isEmpty(num) || !ValidateUtil.isMobile(num)){
-            showSnakeView(containerView, "请输入正确的电话号码");
+            showToast("请输入正确的电话号码");
             return;
         }
         if (!num.equalsIgnoreCase(phoneNum)){
-            showSnakeView(containerView, "电话号码和发送短信验证码的号码不一致");
+            showToast("电话号码和发送短信验证码的号码不一致");
             return;
         }
 
-        intent = new Intent(this, SetPwdActivity.class);
+        KeyboardUtil.hide(this, mValidateCodeView);
+
+        Intent intent = new Intent(this, SetPwdActivity.class);
         intent.putExtra("PhoneNum", phoneNum);
         startActivity(intent);
     }
@@ -132,26 +127,34 @@ public class RegisterActivity extends BaseActivity implements RegisterView{
 
     @Override
     public void onRequestStart() {
-        showProgressDialog("发送中");
+        showProgressDialog("请求中");
     }
 
     @Override
     public void onRequestFailure() {
         dismissProgressDialog();
-        showSnakeView(containerView, "请求失败，请重新操作");
+        showToast("请求失败，请重新操作");
+        resetCounter();
     }
 
     @Override
-    public void onRequestSuccess(String result) {
+    public void onRequestSuccess(int status, String result) {
         dismissProgressDialog();
-        if ("-1".equalsIgnoreCase(result)){
-            showSnakeView(containerView, "服务器忙，获取验证码失败，需要重新获取");
-        }else if ("1".equalsIgnoreCase(result)){
-            showSnakeView(containerView, "该号码已经注册");
-        }else {
+        if(status == -2){
+            showToast("该号码已经注册");
+            resetCounter();
+        }else if (status == 1){
             // 六位验证码
             validateCode = result;
-            showSnakeView(containerView, "验证码发送成功");
+            showToast("验证码发送成功");
+        }else {
+            resetCounter();
+            showToast("验证码发送失败，请重试");
         }
+    }
+
+    private void resetCounter(){
+        countDownTimer.cancel();
+        countDownTimer.onFinish();
     }
 }
