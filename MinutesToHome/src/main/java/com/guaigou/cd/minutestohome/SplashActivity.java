@@ -214,4 +214,8 @@ public class SplashActivity extends BaseActivity {
             finish();
         }, isSettingNetwork ? 300 : SLEEP_TIME - (end - start));
     }
+
+    private void checkNewVersion(){
+
+    }
 }

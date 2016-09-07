@@ -98,6 +98,8 @@ dependencies {
         useLibrary 'org.apache.http.legacy'
     }
     compile files('libs/MiPush_SDK_Client_3_0_3.jar')
+
+    compile 'com.github.weylen:AppUpdate:1.1.5'
 }
 retrolambda {
     javaVersion JavaVersion.VERSION_1_6

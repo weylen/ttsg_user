@@ -1,12 +1,15 @@
 package com.guaigou.cd.minutestohome;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import com.cd.weylen.appupdatelibrary.AppUpdate;
 import com.guaigou.cd.minutestohome.activity.login.LoginData;
 import com.guaigou.cd.minutestohome.activity.market.MarketData;
 import com.guaigou.cd.minutestohome.activity.mine.MeFragment;
@@ -16,8 +19,10 @@ import com.guaigou.cd.minutestohome.cache.DataCache;
 import com.guaigou.cd.minutestohome.entity.RegionEntity;
 import com.guaigou.cd.minutestohome.activity.market.MarketFragment;
 import com.guaigou.cd.minutestohome.prefs.CartPrefs;
+import com.guaigou.cd.minutestohome.prefs.NewVersionData;
 import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
+import com.guaigou.cd.minutestohome.util.DeviceUtil;
 import com.guaigou.cd.minutestohome.util.DialogUtil;
 
 import butterknife.Bind;
@@ -75,6 +80,41 @@ public class MainActivity extends BaseActivity{
 
         // 注册观察者
         CartData.INSTANCE.registerObserver(subscriber);
+    }
+
+    private void doNewVersion(){
+        DebugUtil.d("MainActivity doNewVersion:" + this.getTheme());
+        NewVersionData data = NewVersionData.INSTANCE;
+        if (data.isNewVersion){
+            DebugUtil.d("MainActivity 没有来吗？");
+            AppUpdate update = new AppUpdate.Builder(this).message(data.desc)
+                    .isMust(data.isMust)
+                    .downloadUrl(data.downloadUrl)
+                    .callback(new AppUpdate.OnUpdateCallbackListener() {
+                        @Override
+                        public void onCancel(boolean b) {
+                            if (b){
+                                finish();
+                            }
+                        }
+
+                        @Override
+                        public void disableMemory(boolean b) {
+                            if (b){
+                                finish();
+                            }
+                        }
+
+                        @Override
+                        public void downloadFailure(boolean isMust) {
+
+                        }
+                    }).create();
+            String savePath = DeviceUtil.getExternalCacheDir(this);
+            DebugUtil.d("MainActivity 保存的路径：" + savePath);
+            update.setSaveFile(savePath);
+            update.show();
+        }
     }
 
     /**
@@ -149,6 +189,7 @@ public class MainActivity extends BaseActivity{
             replaceFragment(marketFragment, MarketFragment.TAG);
         }
 
+        new Handler().postDelayed(() -> doNewVersion(), 300);
     }
 
     @Override
