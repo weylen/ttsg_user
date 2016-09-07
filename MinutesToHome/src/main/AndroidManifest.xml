@@ -78,6 +78,7 @@
         <activity android:name=".activity.login.LoginActivity" android:screenOrientation="portrait"
             android:configChanges="screenSize|keyboard|orientation|uiMode|screenLayout"
             android:windowSoftInputMode="adjustPan|stateHidden"
+            android:launchMode="singleTask"
             />
 
         <activity android:name=".activity.register.RegisterActivity" android:screenOrientation="portrait"

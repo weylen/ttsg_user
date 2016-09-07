@@ -63,14 +63,17 @@ public class MarketProductAdapter extends GenericBaseAdapter<ProductEntity>{
         // 促销信息
         String promotionPrice = entity.getPromote();
         String promotionMessage = entity.getInfo();
+        holder.promotionView.setText("");
         if (LocaleUtil.hasPromotion(promotionPrice)){
             holder.oldPriceView.setVisibility(View.VISIBLE);
+            holder.promotionView.setVisibility(View.VISIBLE);
             holder.oldPriceView.getPaint().setFlags(Paint. STRIKE_THRU_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
             holder.oldPriceView.setText("￥" + entity.getPrice());
             holder.priceView.setText(entity.getPromote());
             holder.promotionView.setText(entity.getBegin()+"到"+entity.getEnd()+promotionMessage);
         }else {
             holder.oldPriceView.setVisibility(View.GONE);
+            holder.promotionView.setVisibility(View.GONE);
         }
 
         int n = entity.getNumber();

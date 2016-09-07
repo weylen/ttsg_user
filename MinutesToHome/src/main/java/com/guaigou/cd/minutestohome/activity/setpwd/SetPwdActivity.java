@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -22,14 +21,9 @@ import butterknife.OnClick;
  */
 public class SetPwdActivity extends BaseActivity implements SetPwdView{
 
-    @Bind(R.id.text_title)
-    TextView mTextTitle;
-    @Bind(R.id.user_login_name)
-    EditText mPwdView;
-    @Bind(R.id.user_login_pass)
-    EditText mRePwdView;
-    @Bind(R.id.Container)
-    View containerView;
+    @Bind(R.id.text_title) TextView mTextTitle;
+    @Bind(R.id.user_login_name) EditText mPwdView;
+    @Bind(R.id.user_login_pass) EditText mRePwdView;
 
     private SetPwdPreseter setPwdPreseter;
     private String phoneNum; // 手机号码
@@ -121,7 +115,6 @@ public class SetPwdActivity extends BaseActivity implements SetPwdView{
         showToast(message);
         if (status == 1){
             Intent intent = new Intent(this, LoginActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         }
     }

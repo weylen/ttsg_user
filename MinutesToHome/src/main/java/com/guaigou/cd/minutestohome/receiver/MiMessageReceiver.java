@@ -89,6 +89,45 @@ public class MiMessageReceiver extends PushMessageReceiver {
         DebugUtil.d("用户版MiMessageReceiver 注册服务：" + log);
     }
 
+    private void doMessage(Context context, MiPushMessage message){
+        String content = message.getContent();
+        Gson gson = new Gson();
+        int status = -1;
+        try{
+            JsonObject jsonObject = gson.fromJson(content, JsonObject.class);
+            status = jsonObject.get("stauts").getAsInt();
+            DebugUtil.d("用户版MiMessageReceiver status:" + status);
+            String orderId;
+            switch (status){
+                case 1: // 异地登录
+                    // 判断当前程序是否在前端执行 如果在则显示对话框 如果不在则弹出通知
+                    LoginData.INSTANCE.logout(context);
+                    boolean isRunning = DeviceUtil.isRunning(context);
+                    DebugUtil.d("MiMessageReceiver 是否是在前端执行：" + isRunning);
+                    if (isRunning){
+                        showAnotherPlaceDialog(context);
+                    }else {
+                        showAnotherNf(context);
+                    }
+                    break;
+                case 4: // 商家已接单
+                    orderId = jsonObject.get("data").getAsString();
+                    showReceiveOrder(context, orderId);
+                    break;
+                case 3: // 商家确认送达
+                    orderId = jsonObject.get("data").getAsString();
+                    showConfirmGoodsNf(context, orderId);
+                    break;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            // 如果弹出对话框失败， 就直接跳转到登录页面
+            if (status == 1){
+                reLogin(context);
+            }
+        }
+    }
+
     /**
      * 显示异地登录框
      * @param context
@@ -114,43 +153,6 @@ public class MiMessageReceiver extends PushMessageReceiver {
             dialog.setCanceledOnTouchOutside(false);
             dialog.show();
         });
-    }
-
-    private void doMessage(Context context, MiPushMessage message){
-        String content = message.getContent();
-        Gson gson = new Gson();
-        int status = -1;
-        try{
-            JsonObject jsonObject = gson.fromJson(content, JsonObject.class);
-            status = jsonObject.get("stauts").getAsInt();
-            DebugUtil.d("用户版MiMessageReceiver status:" + status);
-            String orderId;
-            switch (status){
-                case 1: // 异地登录
-                    // 判断当前程序是否在前端执行 如果在则显示对话框 如果不在则弹出通知
-                    LoginData.INSTANCE.logout(context);
-                    if (DeviceUtil.isRunning(context)){
-                        showAnotherPlaceDialog(context);
-                    }else {
-                        showAnotherNf(context);
-                    }
-                    break;
-                case 4: // 商家已接单
-                    orderId = jsonObject.get("data").getAsString();
-                    showReceiveOrder(context, orderId);
-                    break;
-                case 3: // 商家确认送达
-                    orderId = jsonObject.get("data").getAsString();
-                    showConfirmGoodsNf(context, orderId);
-                    break;
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-            // 如果弹出对话框失败， 就直接跳转到登录页面
-            if (status == 1){
-                reLogin(context);
-            }
-        }
     }
 
     /**

@@ -35,15 +35,15 @@ public class ReSetPwdActivity extends BaseActivity implements ReSetPwdView{
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_setpwd);
+        setContentView(R.layout.activity_resetpwd);
         ButterKnife.bind(this);
 
         phoneNum = getIntent().getStringExtra("PhoneNum");
         validateCode = getIntent().getStringExtra("ValidateCode");
 
         mTextTitle.setText(R.string.ResetPwd);
-
         reSetPwdPreseter = new ReSetPwdPreseter(this);
+
     }
 
     @OnClick(R.id.img_back)
@@ -100,7 +100,6 @@ public class ReSetPwdActivity extends BaseActivity implements ReSetPwdView{
         dismissProgressDialog();
         showToast("重置密码成功");
         Intent intent = new Intent(this, LoginActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
 }
