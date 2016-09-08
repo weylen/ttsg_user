@@ -6,8 +6,8 @@ package com.guaigou.cd.minutestohome.prefs;
 public enum NewVersionData {
     INSTANCE;
 
-    public boolean isNewVersion = true;
-    public boolean isMust = true;
-    public String downloadUrl = "测试下载地址";
-    public String desc = "测试描述";
+    public boolean isNewVersion = false;
+    public boolean isMust = false;
+    public String downloadUrl = "";
+    public String desc = "";
 }

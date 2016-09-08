@@ -2,6 +2,7 @@ package com.guaigou.cd.minutestohome;
 
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -18,9 +19,11 @@ import com.guaigou.cd.minutestohome.activity.region.RegionActivity;
 import com.guaigou.cd.minutestohome.activity.region.RegionData;
 import com.guaigou.cd.minutestohome.activity.shoppingcart.CartData;
 import com.guaigou.cd.minutestohome.entity.CartEntity;
+import com.guaigou.cd.minutestohome.http.Constants;
 import com.guaigou.cd.minutestohome.http.HttpService;
 import com.guaigou.cd.minutestohome.http.ResponseMgr;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
+import com.guaigou.cd.minutestohome.prefs.NewVersionData;
 import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
 import com.guaigou.cd.minutestohome.util.CartUtil;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
@@ -77,6 +80,7 @@ public class SplashActivity extends BaseActivity {
         if (!LocaleUtil.isNetworkConnected(this)){
             showAlertDialog();
         }else{
+            checkNewVersion();
             // 判断是否选择了小区
             if (!LocaleUtil.hasChooseRegion(this)){
                 start = System.currentTimeMillis();
@@ -215,7 +219,31 @@ public class SplashActivity extends BaseActivity {
         }, isSettingNetwork ? 300 : SLEEP_TIME - (end - start));
     }
 
-    private void checkNewVersion(){
-
+    private void checkNewVersion() {
+        RetrofitFactory.getRetrofit().create(HttpService.class)
+                .newVersion(2)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(jsonObject -> {
+                    DebugUtil.d("SplashActivity 获取新版本:" + jsonObject);
+                    if (ResponseMgr.getStatus(jsonObject) == 1) {
+                        NewVersionData newVersionData = NewVersionData.INSTANCE;
+                        JsonObject dataObject = jsonObject.get("data").getAsJsonObject();
+                        String vNum = dataObject.get("v_n").getAsString();
+                        try {
+                            String name = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+                            DebugUtil.d("SplashActivity vNum:" + vNum + ".name:" + name);
+                            // 有新版本
+                            if (name != null && !name.equalsIgnoreCase(vNum)) {
+                                newVersionData.isNewVersion = true;
+                                newVersionData.downloadUrl = Constants.BASE_URL + dataObject.get("path").getAsString();
+                                newVersionData.desc = dataObject.get("context").getAsString();
+                                newVersionData.isMust = dataObject.get("update").getAsInt() == 1;
+                            }
+                        } catch (PackageManager.NameNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
     }
 }

@@ -83,10 +83,8 @@ public class MainActivity extends BaseActivity{
     }
 
     private void doNewVersion(){
-        DebugUtil.d("MainActivity doNewVersion:" + this.getTheme());
         NewVersionData data = NewVersionData.INSTANCE;
         if (data.isNewVersion){
-            DebugUtil.d("MainActivity 没有来吗？");
             AppUpdate update = new AppUpdate.Builder(this).message(data.desc)
                     .isMust(data.isMust)
                     .downloadUrl(data.downloadUrl)

@@ -271,4 +271,15 @@ public interface HttpService {
             @Field("key") String sex,
             @Field("text") String nickname
     );
+
+    /**
+     * 检查新版本
+     * @param type 1是安卓商家版，2是安卓用户版
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("scca-getLatestVersion")
+    Observable<JsonObject> newVersion(
+            @Field("sort") int type
+    );
 }
