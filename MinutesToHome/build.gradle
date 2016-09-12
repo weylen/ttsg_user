@@ -10,7 +10,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 22
         versionCode 1
-        versionName "1.0"
+        versionName "1.01"
     }
 
     signingConfigs {
@@ -22,10 +22,6 @@ android {
 //            keyPassword "ttsguser"
         }
         relealse {
-            storeFile file("D:\\ttsg_user.jks")
-            storePassword "ttsguser"
-            keyAlias "ttsg"
-            keyPassword "ttsguser"
         }
     }
 

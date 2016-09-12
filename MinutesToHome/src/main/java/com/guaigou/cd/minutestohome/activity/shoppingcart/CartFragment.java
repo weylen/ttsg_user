@@ -12,9 +12,11 @@ import android.widget.TextView;
 import com.guaigou.cd.minutestohome.BaseFragment;
 import com.guaigou.cd.minutestohome.R;
 import com.guaigou.cd.minutestohome.activity.confirmorder.ConfirmOrderActivity;
+import com.guaigou.cd.minutestohome.activity.market.ShopStatusData;
 import com.guaigou.cd.minutestohome.activity.productdetails.ProductDetailsActivity;
 import com.guaigou.cd.minutestohome.adapter.CartAdapter;
 import com.guaigou.cd.minutestohome.entity.CartEntity;
+import com.guaigou.cd.minutestohome.util.CalendarUtil;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
 import com.guaigou.cd.minutestohome.util.LocaleUtil;
 import com.guaigou.cd.minutestohome.util.MathUtil;
@@ -22,6 +24,10 @@ import com.guaigou.cd.minutestohome.view.EmptyViewHelper;
 import com.guaigou.cd.minutestohome.view.ZListView;
 import com.guaigou.cd.minutestohome.view.ZRefreshingView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.Bind;
@@ -46,6 +52,7 @@ public class CartFragment extends BaseFragment implements CartView{
     @Bind(R.id.parentFrameLayout) FrameLayout parentFrameLayout; // 刷新父视图
     @Bind(R.id.text_price) TextView allPriceView; // 总价格
     @Bind(R.id.Container) View containerView;
+    @Bind(R.id.text_settlement) TextView settlementView;
 
     private EmptyViewHelper emptyViewHelper; // 空视图
 
@@ -179,6 +186,17 @@ public class CartFragment extends BaseFragment implements CartView{
         super.onResume();
         // 注册观察者
         CartData.INSTANCE.registerObserver(subscriber);
+        ShopStatusData data = ShopStatusData.INSTANCE;
+        if (data.status != 1){
+            settlementView.setText("未营业");
+            settlementView.setEnabled(false);
+        }else if (LocaleUtil.isOnTime()){
+            settlementView.setText("不在营业时间");
+            settlementView.setEnabled(false);
+        }else {
+            settlementView.setText("去结算");
+            settlementView.setEnabled(true);
+        }
     }
 
     @Override

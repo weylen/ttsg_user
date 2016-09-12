@@ -282,4 +282,28 @@ public interface HttpService {
     Observable<JsonObject> newVersion(
             @Field("sort") int type
     );
+
+    /**
+     * 验证验证码是否正确
+     * @param phone 手机号码
+     * @param code 验证码
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("scca-vilcode")
+    Observable<JsonObject> validateCode(
+            @Field("uname") String phone,
+            @Field("upass") String code
+    );
+
+    /**
+     * 获取商家状态和营业时间
+     * @param areaId
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("scca-getTradeState")
+    Observable<JsonObject> getShopStatus(
+            @Field("areaId") String areaId
+    );
 }

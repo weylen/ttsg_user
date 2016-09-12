@@ -15,6 +15,7 @@ import com.guaigou.cd.minutestohome.cache.Data;
 import com.guaigou.cd.minutestohome.cache.DataCache;
 import com.guaigou.cd.minutestohome.entity.MarketDataEntity;
 import com.guaigou.cd.minutestohome.entity.ProductEntity;
+import com.guaigou.cd.minutestohome.http.Constants;
 import com.guaigou.cd.minutestohome.http.HttpService;
 import com.guaigou.cd.minutestohome.http.ResponseMgr;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
@@ -94,7 +95,6 @@ public class MarketPresenter implements BasePresenter{
 
                     @Override
                     public void onNext(JsonObject s) {
-                        DebugUtil.d("LoginPresenter onNext s:" + s);
                         int status = ResponseMgr.getStatus(s);
                         if (status == 1){
                             // 缓存数据
@@ -129,7 +129,6 @@ public class MarketPresenter implements BasePresenter{
 
                     @Override
                     public void onNext(JsonObject s) {
-                        DebugUtil.d("LoginPresenter onNext s:" + s);
                         int status = ResponseMgr.getStatus(s);
                         if (status == 1){
                             marketView.onLoadSuccess();
@@ -192,7 +191,6 @@ public class MarketPresenter implements BasePresenter{
      * @param typeId
      */
     private void getRemoteProductData(boolean isRefresh, String typeId, int pageNum){
-        DebugUtil.d("getRemoteProductData：" + typeId +", pageNum -->" + pageNum);
         RetrofitFactory.getRetrofit().create(HttpService.class)
                 .getRegionProducts(entity.getId(), typeId, pageNum, "")
                 .subscribeOn(Schedulers.io())
@@ -210,7 +208,6 @@ public class MarketPresenter implements BasePresenter{
                     @Override
                     public void onNext(JsonObject s) {
                         isLoading = false;
-                        DebugUtil.d("getRemoteProductData onNext s:" + s);
                         int status = ResponseMgr.getStatus(s);
                         if (status == 1){
                             parseProductData(isRefresh, typeId, s);
@@ -326,10 +323,8 @@ public class MarketPresenter implements BasePresenter{
      */
     void refresh(){
         if (TextUtils.isEmpty(MarketData.INSTANCE.currentProductId)){
-            DebugUtil.d("MarketPresenter refresh 获取大类");
             start();
         }else {
-            DebugUtil.d("MarketPresenter refresh 获取当前小类产品");
             getRemoteProductData(true, MarketData.INSTANCE.currentProductId, 1);
         }
     }
@@ -339,7 +334,6 @@ public class MarketPresenter implements BasePresenter{
      */
     void onLoadmore(){
         if (isLoading){return;}
-        DebugUtil.d("MarketPresenter onLoadmore 加载更多：");
         Data<?> data = DataCache.INSTANCE.getData(MarketData.INSTANCE.currentProductId);
         if (data == null){ // 判断缓存的数据对象
             getRemoteProductData(true, MarketData.INSTANCE.currentProductId, 1);
@@ -470,5 +464,61 @@ public class MarketPresenter implements BasePresenter{
     private void addSmallTypeAll(String parentId, List<MarketDataEntity> smallTypeData){
         MarketDataEntity entity = new MarketDataEntity(parentId, parentId, "全部");
         smallTypeData.add(0, entity);
+    }
+
+
+    public void shopStatus(){
+//        if (MarketData.INSTANCE.shopStatus != null && ShopStatusData.INSTANCE.areaId == entity.getId()){
+//            parseShopStatus(MarketData.INSTANCE.shopStatus);
+//            return;
+//        }
+        MarketData.INSTANCE.shopStatus = null;
+        ShopStatusData.INSTANCE.reset();
+        remoteShopStatus();
+    }
+
+    void remoteShopStatus(){
+        RetrofitFactory.getRetrofit().create(HttpService.class)
+                .getShopStatus(entity.getId())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Subscriber<JsonObject>() {
+                    @Override
+                    public void onCompleted() {}
+
+                    @Override
+                    public void onError(Throwable e) {
+                        marketView.onRequestShopStatus(false, -1, null, null);
+                    }
+
+                    @Override
+                    public void onNext(JsonObject jsonObject) {
+                        DebugUtil.d("MarketPresenter entityId:"+ entity.getId() +", 商家状态：" + jsonObject);
+                        if (ResponseMgr.getStatus(jsonObject) == 1){
+                            MarketData.INSTANCE.shopStatus = jsonObject;
+                            ShopStatusData.INSTANCE.areaId = entity.getId();
+                            parseShopStatus(jsonObject);
+                        }else {
+                            marketView.onRequestShopStatus(false, -1, null, null);
+                        }
+                    }
+                });
+    }
+
+    void parseShopStatus(JsonObject jsonObject){
+        JsonObject dataObject = ResponseMgr.getData(jsonObject).get(entity.getId()).getAsJsonObject();
+        int status = dataObject.get("tradeState").getAsInt();
+        ShopStatusData.INSTANCE.status = status;
+        String timeStr = dataObject.get("tradeTime").getAsString();
+        if (!TextUtils.isEmpty(timeStr)){
+            Gson gson = new Gson();
+            JsonObject timeObject = gson.fromJson(timeStr, JsonObject.class);
+            ShopStatusData.INSTANCE.startTime = timeObject.get("start").getAsString();
+            ShopStatusData.INSTANCE.endTime = timeObject.get("end").getAsString();
+        }else {
+            ShopStatusData.INSTANCE.startTime = Constants.EMPTY_STRING;
+            ShopStatusData.INSTANCE.endTime = Constants.EMPTY_STRING;
+        }
+        marketView.onRequestShopStatus(true, status, ShopStatusData.INSTANCE.startTime, ShopStatusData.INSTANCE.endTime);
     }
 }

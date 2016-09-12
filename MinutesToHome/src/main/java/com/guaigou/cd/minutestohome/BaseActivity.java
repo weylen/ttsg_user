@@ -39,7 +39,8 @@ public class BaseActivity extends AppCompatActivity{
     }
 
     protected void showSnakeView(View containerView, String message){
-        Snackbar.make(containerView, message, Snackbar.LENGTH_SHORT).show();
+//        Snackbar.make(containerView, message, Snackbar.LENGTH_SHORT).show();
+        showToast(message);
     }
 
     @Override

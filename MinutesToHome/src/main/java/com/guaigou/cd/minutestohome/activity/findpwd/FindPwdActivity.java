@@ -9,14 +9,21 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.gson.JsonObject;
 import com.guaigou.cd.minutestohome.BaseActivity;
 import com.guaigou.cd.minutestohome.R;
 import com.guaigou.cd.minutestohome.activity.resetpwd.ReSetPwdActivity;
+import com.guaigou.cd.minutestohome.http.HttpService;
+import com.guaigou.cd.minutestohome.http.ResponseMgr;
+import com.guaigou.cd.minutestohome.http.RetrofitFactory;
 import com.guaigou.cd.minutestohome.util.ValidateUtil;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by weylen on 2016-07-23.
@@ -24,19 +31,13 @@ import butterknife.OnClick;
 public class FindPwdActivity extends BaseActivity implements FindPwdView{
 
 
-    @Bind(R.id.text_title)
-    TextView mTextTitle;
-    @Bind(R.id.text_validatecode)
-    TextView vertifyView; // 验证码视图
-    @Bind(R.id.user_login_name)
-    EditText mUserLoginName;
-    @Bind(R.id.user_login_validatecode)
-    EditText mValidateCodeView;
-    @Bind(R.id.Container)
-    View containerView;
+    @Bind(R.id.text_title) TextView mTextTitle;
+    @Bind(R.id.text_validatecode) TextView vertifyView; // 验证码视图
+    @Bind(R.id.user_login_name) EditText mUserLoginName;
+    @Bind(R.id.user_login_validatecode) EditText mValidateCodeView;
+    @Bind(R.id.Container) View containerView;
 
     private FindPwdPreseter findPwdPreseter;
-    private String validateCode; // 验证码
     private static final int MAX_TIME = 1 * 60 * 1000;
 
     // 第一个参数是总时间 第二个参数是间隔时间
@@ -90,12 +91,8 @@ public class FindPwdActivity extends BaseActivity implements FindPwdView{
     @OnClick(R.id.text_nextstep)
     void onNextStepClick(){
         String code = mValidateCodeView.getText().toString();
-        if (TextUtils.isEmpty(code)){
-            showToast("请输入验证码");
-            return;
-        }
-        if (!code.equalsIgnoreCase(validateCode)){
-            showToast("验证码不正确");
+        if (TextUtils.isEmpty(code) || code.length() != 6){
+            showToast("请输入6位验证码");
             return;
         }
         String num = mUserLoginName.getText().toString();
@@ -107,11 +104,7 @@ public class FindPwdActivity extends BaseActivity implements FindPwdView{
             showToast("电话号码和发送短信验证码的号码不一致");
             return;
         }
-
-        Intent intent = new Intent(this, ReSetPwdActivity.class);
-        intent.putExtra("PhoneNum", phoneNum);
-        intent.putExtra("ValidateCode", validateCode);
-        startActivity(intent);
+        validate(num, code);
     }
 
     @Override
@@ -145,7 +138,6 @@ public class FindPwdActivity extends BaseActivity implements FindPwdView{
             showToast("验证码发送失败，请重试");
             resetCounter();
         }else if (status == 1){
-            validateCode = result;
             showToast("验证码发送成功");
         }
     }
@@ -153,5 +145,37 @@ public class FindPwdActivity extends BaseActivity implements FindPwdView{
     private void resetCounter(){
         countDownTimer.cancel();
         countDownTimer.onFinish();
+    }
+
+    private void validate(String phone, String code){
+        showProgressDialog("请稍后...");
+        RetrofitFactory.getRetrofit().create(HttpService.class)
+                .validateCode(phone, code)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Subscriber<JsonObject>() {
+                    @Override
+                    public void onCompleted() {}
+
+                    @Override
+                    public void onError(Throwable e) {
+                        dismissProgressDialog();
+                        showToast("请求失败，请检查网络");
+                    }
+
+                    @Override
+                    public void onNext(JsonObject jsonObject) {
+                        dismissProgressDialog();
+                        if (ResponseMgr.getStatus(jsonObject) != 1){
+                            showToast("验证码或者手机号码不正确");
+                            return;
+                        }
+                        Intent intent = new Intent(FindPwdActivity.this, ReSetPwdActivity.class);
+                        intent.putExtra("PhoneNum", phone);
+                        intent.putExtra("ValidateCode", code);
+                        startActivity(intent);
+                    }
+                });
+
     }
 }

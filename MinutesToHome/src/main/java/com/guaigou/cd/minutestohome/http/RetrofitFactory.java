@@ -52,7 +52,6 @@ public class RetrofitFactory {
                                 .addHeader("Cookie", SessionUtil.getSessionId())
                                 .build();
                         Response response = chain.proceed(request);
-                        DebugUtil.d("RetrofitFactory-response body:" + response.body());
                         return response;
                     })
                     .connectTimeout(5, TimeUnit.SECONDS)

@@ -28,4 +28,6 @@ public interface MarketView extends BaseView<MarketPresenter> {
     void onLoadProductData(List<ProductEntity> dataEntityList, boolean isLoadComplete, boolean isLoadmore);
     void onLoadMoreFailure();
     void onLoadMoreComplete();
+
+    void onRequestShopStatus(boolean isSuccess, int status, String startTime, String endTime);
 }

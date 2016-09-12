@@ -12,6 +12,7 @@ import com.bigkoo.pickerview.OptionsPickerView;
 import com.guaigou.cd.minutestohome.BaseActivity;
 import com.guaigou.cd.minutestohome.R;
 import com.guaigou.cd.minutestohome.activity.addressmgr.AddressActivity;
+import com.guaigou.cd.minutestohome.activity.market.ShopStatusData;
 import com.guaigou.cd.minutestohome.activity.orderdetails.OrderDetailsActivity;
 import com.guaigou.cd.minutestohome.activity.note.NoteActivity;
 import com.guaigou.cd.minutestohome.activity.pay.PayActivity;
@@ -21,6 +22,7 @@ import com.guaigou.cd.minutestohome.entity.ConfirmOrderEntity;
 import com.guaigou.cd.minutestohome.entity.RegionEntity;
 import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
 import com.guaigou.cd.minutestohome.util.AddressUtil;
+import com.guaigou.cd.minutestohome.util.LocaleUtil;
 import com.guaigou.cd.minutestohome.util.MathUtil;
 import com.guaigou.cd.minutestohome.view.OrderProductsDetailsView;
 import com.rey.material.app.SimpleDialog;
@@ -62,6 +64,7 @@ public class ConfirmOrderActivity extends BaseActivity implements ConfirmOrderVi
     @Bind(R.id.text_address_hint) TextView mTextAddressHint;
     @Bind(R.id.layout_products) OrderProductsDetailsView orderProductsDetailsView;
     @Bind(R.id.Container) View containerView;
+    @Bind(R.id.text_confirmorder) TextView mConfrimOrderView;
 
     private AddressEntity addressEntity;
 
@@ -190,6 +193,22 @@ public class ConfirmOrderActivity extends BaseActivity implements ConfirmOrderVi
         presenter.onRequestOrder(entity.getId(), mTextNote.getText().toString(),
                 mTextAddress.getText().toString(),  mTextDeliveryTime.getText().toString(),
                 addressEntity.getContacts(), addressEntity.getMobilePhone());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ShopStatusData data = ShopStatusData.INSTANCE;
+        if (data.status != 1){
+            mConfrimOrderView.setText("未营业");
+            mConfrimOrderView.setEnabled(false);
+        }else if (LocaleUtil.isOnTime()){
+            mConfrimOrderView.setText("不在营业时间");
+            mConfrimOrderView.setEnabled(false);
+        }else {
+            mConfrimOrderView.setText("确认下单");
+            mConfrimOrderView.setEnabled(true);
+        }
     }
 
     private void showScoreHintDialog() {

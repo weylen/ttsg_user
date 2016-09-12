@@ -7,6 +7,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.text.TextUtils;
 
+import com.guaigou.cd.minutestohome.activity.market.ShopStatusData;
 import com.guaigou.cd.minutestohome.entity.CartEntity;
 import com.guaigou.cd.minutestohome.entity.ProductEntity;
 import com.guaigou.cd.minutestohome.entity.RegionEntity;
@@ -15,6 +16,10 @@ import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -159,5 +164,25 @@ public class LocaleUtil {
         cartEntity.setKind(entity.getKind());
         cartEntity.setAmount(1);
         return cartEntity;
+    }
+
+    public static boolean isOnTime(){
+        SimpleDateFormat sdf = new SimpleDateFormat("mm:ss");
+        try {
+            Date startDate = sdf.parse(ShopStatusData.INSTANCE.startTime);
+            Date endDate = sdf.parse(ShopStatusData.INSTANCE.endTime);
+            Calendar calendar = Calendar.getInstance();
+            String nowTime = CalendarUtil.getStandardTime(calendar.get(Calendar.MINUTE), calendar.get(Calendar.HOUR_OF_DAY));
+            Date now = sdf.parse(nowTime);
+            if (now.equals(startDate) || now.equals(endDate)){
+                return true;
+            }
+            if (now.after(startDate) && now.before(endDate)){
+                return true;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

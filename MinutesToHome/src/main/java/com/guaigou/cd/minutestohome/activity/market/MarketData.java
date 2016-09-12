@@ -40,4 +40,6 @@ public enum MarketData {
     public int largeTypeIndex = 0;
     public int smallTypeIndex = 0;
     public int listSelectIndex = 0;
+
+    public JsonObject shopStatus;
 }

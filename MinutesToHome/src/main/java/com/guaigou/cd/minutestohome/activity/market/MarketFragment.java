@@ -51,6 +51,7 @@ public class MarketFragment extends BaseFragment implements MarketView, MarketPr
     @Bind(R.id.Generic_List) ZListView zListView;
     @Bind(R.id.refreshLayout) ZRefreshingView zRefreshingView; // 刷新组件
     @Bind(R.id.parentFrameLayout) FrameLayout parentLayout;
+    @Bind(R.id.text_hint) TextView hintView;
 
     private EmptyViewHelper emptyViewHelper; // 空视图辅助类
 
@@ -148,6 +149,8 @@ public class MarketFragment extends BaseFragment implements MarketView, MarketPr
             locationView.setText("选择地址");
             showChooseRegionDialog();
         }else{
+            // request shop status
+            marketPresenter.shopStatus();
             // request data
             marketPresenter.start();
         }
@@ -315,6 +318,19 @@ public class MarketFragment extends BaseFragment implements MarketView, MarketPr
     @Override
     public void onLoadMoreComplete() {
 
+    }
+
+    @Override
+    public void onRequestShopStatus(boolean isSuccess, int status, String startTime, String endTime) {
+        if (isSuccess){
+            if (status != 1){
+                hintView.setText(ShopStatusData.INSTANCE.getStatus());
+            }else {
+                hintView.setText("营业时间：" + startTime +" ~ " + endTime);
+            }
+        }else {
+            hintView.setText("获取数据失败");
+        }
     }
 
     @Override
