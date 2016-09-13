@@ -516,6 +516,7 @@ public class MarketPresenter implements BasePresenter{
             JsonObject timeObject = gson.fromJson(timeStr, JsonObject.class);
             ShopStatusData.INSTANCE.startTime = timeObject.get("start").getAsString();
             ShopStatusData.INSTANCE.endTime = timeObject.get("end").getAsString();
+            ShopStatusData.INSTANCE.phone =  dataObject.get("phone").getAsString();
         }else {
             ShopStatusData.INSTANCE.startTime = Constants.EMPTY_STRING;
             ShopStatusData.INSTANCE.endTime = Constants.EMPTY_STRING;

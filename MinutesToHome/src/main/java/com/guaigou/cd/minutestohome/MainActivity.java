@@ -117,6 +117,7 @@ public class MainActivity extends BaseActivity{
             DebugUtil.d("MainActivity 保存的路径：" + savePath);
             update.setSaveFile(savePath);
             update.show();
+            data.isNewVersion = false;
         }
     }
 

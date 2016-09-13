@@ -18,6 +18,7 @@ import com.guaigou.cd.minutestohome.activity.addressmgr.AddressActivity;
 import com.guaigou.cd.minutestohome.activity.feedback.FeedbackActivity;
 import com.guaigou.cd.minutestohome.activity.login.LoginActivity;
 import com.guaigou.cd.minutestohome.activity.login.LoginData;
+import com.guaigou.cd.minutestohome.activity.market.ShopStatusData;
 import com.guaigou.cd.minutestohome.activity.myorders.OrderActivity;
 import com.guaigou.cd.minutestohome.entity.AccountEntity;
 import com.guaigou.cd.minutestohome.entity.RegionEntity;
@@ -27,6 +28,8 @@ import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
 import com.guaigou.cd.minutestohome.util.DeviceUtil;
 import com.guaigou.cd.minutestohome.util.DialogUtil;
+import com.guaigou.cd.minutestohome.util.LocaleUtil;
+import com.guaigou.cd.minutestohome.util.ValidateUtil;
 import com.jakewharton.rxbinding.view.RxView;
 import com.xiaomi.mipush.sdk.MiPushClient;
 
@@ -104,10 +107,13 @@ public class MeFragment extends BaseFragment {
             snackbar = Snackbar.make(containerView, "拨打店主电话？", Snackbar.LENGTH_LONG);
             snackbar.setAction("确定", v -> {
 //                RegionEntity entity = RegionPrefs.getRegionData(getActivity());
-//                if (entity != null){
-//                    Intent intent = new Intent(Intent.ACTION_CALL);
-//                    intent.setData(Uri.parse("tel:" + entity.get))
-//                }
+                if (!TextUtils.isEmpty(ShopStatusData.INSTANCE.phone) && ValidateUtil.isMobile(ShopStatusData.INSTANCE.phone)){
+                    Intent intent = new Intent(Intent.ACTION_CALL);
+                    intent.setData(Uri.parse("tel:" + ShopStatusData.INSTANCE.phone));
+                    startActivity(intent);
+                }else {
+                    showToast("店主电话解析错误");
+                }
 
             });
             snackbar.setActionTextColor(getResources().getColor(R.color.themeColor));
