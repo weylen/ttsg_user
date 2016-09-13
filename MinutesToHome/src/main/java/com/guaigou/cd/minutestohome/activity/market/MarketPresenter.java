@@ -41,7 +41,6 @@ public class MarketPresenter implements BasePresenter{
 
     private MarketView marketView;
     private RegionEntity entity;
-    private boolean isLoading;
     public MarketPresenter(MarketView marketView, RegionEntity entity){
         this.marketView = Preconditions.checkNotNull(marketView, "MarketView can't be null");
         this.entity = Preconditions.checkNotNull(entity, "RegionEntity can't be null");
@@ -191,6 +190,7 @@ public class MarketPresenter implements BasePresenter{
      * @param typeId
      */
     private void getRemoteProductData(boolean isRefresh, String typeId, int pageNum){
+        DebugUtil.d("MarketPresenter getRemoteProductData pageNum:" + pageNum);
         RetrofitFactory.getRetrofit().create(HttpService.class)
                 .getRegionProducts(entity.getId(), typeId, pageNum, "")
                 .subscribeOn(Schedulers.io())
@@ -201,13 +201,12 @@ public class MarketPresenter implements BasePresenter{
 
                     @Override
                     public void onError(Throwable e) {
-                        isLoading = false;
                         doError(pageNum, typeId);
                     }
 
                     @Override
                     public void onNext(JsonObject s) {
-                        isLoading = false;
+                        DebugUtil.d("MarketPresenter s:"+ s);
                         int status = ResponseMgr.getStatus(s);
                         if (status == 1){
                             parseProductData(isRefresh, typeId, s);
@@ -312,6 +311,8 @@ public class MarketPresenter implements BasePresenter{
         data.setListData(saveListData);
         DataCache.INSTANCE.remove(primaryTag);
         DataCache.INSTANCE.putData(primaryTag, data);
+
+        DebugUtil.d("MarketPresenter cacheProductData pageNum:" +pageNum );
     }
 
     private String getPrimaryTag(String typeId){
@@ -333,8 +334,8 @@ public class MarketPresenter implements BasePresenter{
      * 加载更多
      */
     void onLoadmore(){
-        if (isLoading){return;}
-        Data<?> data = DataCache.INSTANCE.getData(MarketData.INSTANCE.currentProductId);
+        String tag = getPrimaryTag(MarketData.INSTANCE.currentProductId);
+        Data<?> data = DataCache.INSTANCE.getData(tag);
         if (data == null){ // 判断缓存的数据对象
             getRemoteProductData(true, MarketData.INSTANCE.currentProductId, 1);
         }else {
