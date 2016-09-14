@@ -50,6 +50,7 @@ public class RetrofitFactory {
                         Request request = chain.request()
                                 .newBuilder()
                                 .addHeader("Cookie", SessionUtil.getSessionId())
+                                .addHeader("DeviceType", "Android")
                                 .build();
                         Response response = chain.proceed(request);
                         return response;

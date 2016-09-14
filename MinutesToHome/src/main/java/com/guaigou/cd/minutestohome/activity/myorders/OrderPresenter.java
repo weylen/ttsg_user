@@ -10,6 +10,7 @@ import com.guaigou.cd.minutestohome.entity.OrderEntity;
 import com.guaigou.cd.minutestohome.entity.OrderProductsEntity;
 import com.guaigou.cd.minutestohome.http.Constants;
 import com.guaigou.cd.minutestohome.http.HttpService;
+import com.guaigou.cd.minutestohome.http.RespSubscribe;
 import com.guaigou.cd.minutestohome.http.ResponseMgr;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
 import com.guaigou.cd.minutestohome.util.CartUtil;
@@ -56,7 +57,7 @@ public class OrderPresenter{
                 .requestOrderList(Constants.EMPTY_STRING, Constants.EMPTY_STRING, pageNum)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(new Subscriber<JsonObject>() {
+                .subscribe(new RespSubscribe(new Subscriber<JsonObject>() {
                     @Override
                     public void onCompleted() {}
 
@@ -75,7 +76,7 @@ public class OrderPresenter{
                             map(jsonObject);
                         }
                     }
-                });
+                }));
     }
 
     private void error(int pageNum){
@@ -136,7 +137,7 @@ public class OrderPresenter{
                 .alertOrderStatus(orderId, "5")
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(new Subscriber<JsonObject>() {
+                .subscribe(new RespSubscribe(new Subscriber<JsonObject>() {
                     @Override
                     public void onCompleted() {}
 
@@ -155,7 +156,7 @@ public class OrderPresenter{
                             orderView.onCancelOrderFailure();
                         }
                     }
-                });
+                }));
     }
 
     void validatePayment(int position, String orderId){
@@ -164,7 +165,7 @@ public class OrderPresenter{
                 .validateOrder(orderId)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(new Subscriber<JsonObject>() {
+                .subscribe(new RespSubscribe(new Subscriber<JsonObject>() {
                     @Override
                     public void onCompleted() {}
 
@@ -183,7 +184,7 @@ public class OrderPresenter{
                             orderView.onValidateOrderFailure(jsonObject.get("data").getAsString());
                         }
                     }
-                });
+                }));
     }
 
     void deleteOrder(int position, String orderId){
@@ -192,7 +193,7 @@ public class OrderPresenter{
                 .deleteOrder(orderId)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(new Subscriber<JsonObject>() {
+                .subscribe(new RespSubscribe(new Subscriber<JsonObject>() {
                     @Override
                     public void onCompleted() {}
 
@@ -211,7 +212,7 @@ public class OrderPresenter{
                             orderView.onDeleteOrderFailure();
                         }
                     }
-                });
+                }));
     }
 
     /**
@@ -225,7 +226,7 @@ public class OrderPresenter{
                 .alertOrderStatus(orderId, String.valueOf(status))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(new Subscriber<JsonObject>() {
+                .subscribe(new RespSubscribe(new Subscriber<JsonObject>() {
                     @Override
                     public void onCompleted() {
 
@@ -244,6 +245,6 @@ public class OrderPresenter{
                             orderView.onAlertStatusSuccess(position, status);
                         }
                     }
-                });
+                }));
     }
 }

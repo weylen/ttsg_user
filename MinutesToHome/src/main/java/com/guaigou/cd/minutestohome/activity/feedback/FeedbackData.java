@@ -5,7 +5,7 @@ package com.guaigou.cd.minutestohome.activity.feedback;
  */
 public enum FeedbackData {
 
-    INSTANCE;
+    INSTANCE, LoginData;
 
     String content = "";
 }

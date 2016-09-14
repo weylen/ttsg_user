@@ -174,13 +174,9 @@ public class LocaleUtil {
             Calendar calendar = Calendar.getInstance();
             String nowTime = CalendarUtil.getStandardTime(calendar.get(Calendar.MINUTE), calendar.get(Calendar.HOUR_OF_DAY));
             Date now = sdf.parse(nowTime);
-            if (now.equals(startDate) || now.equals(endDate)){
-                return true;
-            }
-            if (now.after(startDate) && now.before(endDate)){
-                return true;
-            }
-        } catch (ParseException e) {
+            long nowMills = now.getTime();
+            return nowMills >= startDate.getTime() && nowMills <= endDate.getTime();
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;

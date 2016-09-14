@@ -9,17 +9,12 @@ android {
         applicationId "com.guaigou.cd.minutestohome"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 3
-        versionName "1.03"
+        versionCode 5
+        versionName "1.05"
     }
 
     signingConfigs {
         debug {
-//            storeFile file("C:/Users/Administrator/.android/debug.keystore")
-////            storeFile file("D:\\ttsg_user.jks")
-//            storePassword "ttsguser"
-//            keyAlias "ttsg"
-//            keyPassword "ttsguser"
         }
         relealse {
         }

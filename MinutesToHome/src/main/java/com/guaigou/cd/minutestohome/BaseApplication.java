@@ -7,6 +7,7 @@ import android.content.Context;
 import android.os.Process;
 import android.util.Log;
 
+import com.guaigou.cd.minutestohome.util.LocaleUtil;
 import com.xiaomi.channel.commonutils.logger.LoggerInterface;
 import com.xiaomi.mipush.sdk.Logger;
 import com.xiaomi.mipush.sdk.MiPushClient;
@@ -91,4 +92,12 @@ public class BaseApplication extends Application{
         }
         activityList.clear();
     }
+
+    public static Activity getLast(){
+        if (!LocaleUtil.isListEmpty(activityList)){
+            return activityList.get(activityList.size()-1);
+        }
+        return null;
+    }
+
 }

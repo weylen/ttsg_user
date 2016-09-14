@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.guaigou.cd.minutestohome.entity.WxPayEntity;
 import com.guaigou.cd.minutestohome.http.HttpService;
+import com.guaigou.cd.minutestohome.http.RespSubscribe;
 import com.guaigou.cd.minutestohome.http.ResponseMgr;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
 import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
@@ -34,7 +35,7 @@ public class PayPresenter {
                 .alertOrderStatus(orderId, status)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(new Subscriber<JsonObject>() {
+                .subscribe(new RespSubscribe(new Subscriber<JsonObject>() {
                     @Override
                     public void onCompleted() {
 
@@ -55,7 +56,7 @@ public class PayPresenter {
                             payView.onAlertOrderStatusFailure();
                         }
                     }
-                });
+                }));
     }
 
     void aliPay(String order, String details, String desc){
@@ -64,7 +65,7 @@ public class PayPresenter {
                 .aliPay(order, details, desc)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(new Subscriber<JsonObject>() {
+                .subscribe(new RespSubscribe(new Subscriber<JsonObject>() {
                     @Override
                     public void onCompleted() {
 
@@ -84,7 +85,7 @@ public class PayPresenter {
                             payView.onRequestAliPayFailure();
                         }
                     }
-                });
+                }));
     }
 
     void wxPay(String describe, String orderNum, String payId){
@@ -93,7 +94,7 @@ public class PayPresenter {
                 .wxPay(describe, orderNum, payId)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(new Subscriber<JsonObject>() {
+                .subscribe(new RespSubscribe(new Subscriber<JsonObject>() {
                     @Override
                     public void onCompleted() {
 
@@ -115,7 +116,7 @@ public class PayPresenter {
                         }
 
                     }
-                });
+                }));
     }
 
     /**

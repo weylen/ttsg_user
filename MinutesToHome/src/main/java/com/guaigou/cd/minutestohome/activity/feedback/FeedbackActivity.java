@@ -12,6 +12,7 @@ import com.guaigou.cd.minutestohome.BaseActivity;
 import com.guaigou.cd.minutestohome.R;
 import com.guaigou.cd.minutestohome.entity.RegionEntity;
 import com.guaigou.cd.minutestohome.http.HttpService;
+import com.guaigou.cd.minutestohome.http.RespSubscribe;
 import com.guaigou.cd.minutestohome.http.ResponseMgr;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
 import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
@@ -77,7 +78,7 @@ public class FeedbackActivity extends BaseActivity {
                 .feedBack(entity.getId(), mTextEdit.getText().toString())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(new Subscriber<JsonObject>() {
+                .subscribe(new RespSubscribe(new Subscriber<JsonObject>() {
                     @Override
                     public void onCompleted() {}
 
@@ -98,7 +99,7 @@ public class FeedbackActivity extends BaseActivity {
                             showSnakeView(containerView, "反馈失败，请重新操作");
                         }
                     }
-                });
+                }));
 
     }
 

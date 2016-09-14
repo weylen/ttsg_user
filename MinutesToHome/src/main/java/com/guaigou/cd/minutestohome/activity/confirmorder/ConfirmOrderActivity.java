@@ -202,7 +202,7 @@ public class ConfirmOrderActivity extends BaseActivity implements ConfirmOrderVi
         if (data.status != 1){
             mConfrimOrderView.setText("未营业");
             mConfrimOrderView.setEnabled(false);
-        }else if (LocaleUtil.isOnTime()){
+        }else if (!LocaleUtil.isOnTime()){
             mConfrimOrderView.setText("不在营业时间");
             mConfrimOrderView.setEnabled(false);
         }else {

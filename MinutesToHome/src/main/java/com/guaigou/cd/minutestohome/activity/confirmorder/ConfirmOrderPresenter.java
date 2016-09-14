@@ -8,6 +8,7 @@ import com.guaigou.cd.minutestohome.activity.shoppingcart.CartData;
 import com.guaigou.cd.minutestohome.entity.CartEntity;
 import com.guaigou.cd.minutestohome.entity.ConfirmOrderEntity;
 import com.guaigou.cd.minutestohome.http.HttpService;
+import com.guaigou.cd.minutestohome.http.RespSubscribe;
 import com.guaigou.cd.minutestohome.http.ResponseMgr;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
 import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
@@ -60,7 +61,7 @@ public class ConfirmOrderPresenter implements BasePresenter {
                 .requestOrder(orderInfo, note, address, time, name, phone)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<JsonObject>() {
+                .subscribe(new RespSubscribe(new Subscriber<JsonObject>() {
                     @Override
                     public void onCompleted() {
 
@@ -81,6 +82,6 @@ public class ConfirmOrderPresenter implements BasePresenter {
                             confirmOrderView.onRequestFailure();
                         }
                     }
-                });
+                }));
     }
 }

@@ -7,6 +7,7 @@ import com.google.gson.reflect.TypeToken;
 import com.guaigou.cd.minutestohome.entity.OrderDetailsEntity;
 import com.guaigou.cd.minutestohome.entity.OrderDetailsProductsEntity;
 import com.guaigou.cd.minutestohome.http.HttpService;
+import com.guaigou.cd.minutestohome.http.RespSubscribe;
 import com.guaigou.cd.minutestohome.http.ResponseMgr;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
@@ -45,7 +46,7 @@ public class OrderDetailsPresenter {
                 .getOrderDetails(orderId)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(new Subscriber<JsonObject>() {
+                .subscribe(new RespSubscribe(new Subscriber<JsonObject>() {
                     @Override
                     public void onCompleted() {
 
@@ -66,7 +67,7 @@ public class OrderDetailsPresenter {
                             orderDetailsView.onRequestOrderDetailsFailure();
                         }
                     }
-                });
+                }));
     }
 
     void map(JsonObject jsonObject){
@@ -108,7 +109,7 @@ public class OrderDetailsPresenter {
                 .validateOrder(orderId)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(new Subscriber<JsonObject>() {
+                .subscribe(new RespSubscribe(new Subscriber<JsonObject>() {
                     @Override
                     public void onCompleted() {}
 
@@ -127,7 +128,7 @@ public class OrderDetailsPresenter {
                             orderDetailsView.onValidateOrderFailure(jsonObject.get("data").getAsString());
                         }
                     }
-                });
+                }));
     }
 
     /**
@@ -141,7 +142,7 @@ public class OrderDetailsPresenter {
                 .alertOrderStatus(orderId, String.valueOf(status))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(new Subscriber<JsonObject>() {
+                .subscribe(new RespSubscribe(new Subscriber<JsonObject>() {
                     @Override
                     public void onCompleted() {
 
@@ -160,6 +161,6 @@ public class OrderDetailsPresenter {
                             orderDetailsView.onAlertStatusSuccess(status);
                         }
                     }
-                });
+                }));
     }
 }

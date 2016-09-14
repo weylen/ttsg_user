@@ -190,7 +190,7 @@ public class CartFragment extends BaseFragment implements CartView{
         if (data.status != 1){
             settlementView.setText("未营业");
             settlementView.setEnabled(false);
-        }else if (LocaleUtil.isOnTime()){
+        }else if (!LocaleUtil.isOnTime()){
             settlementView.setText("不在营业时间");
             settlementView.setEnabled(false);
         }else {
