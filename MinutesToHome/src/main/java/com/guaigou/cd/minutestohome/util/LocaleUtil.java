@@ -173,9 +173,25 @@ public class LocaleUtil {
             Date endDate = sdf.parse(ShopStatusData.INSTANCE.endTime);
             Calendar calendar = Calendar.getInstance();
             String nowTime = CalendarUtil.getStandardTime(calendar.get(Calendar.MINUTE), calendar.get(Calendar.HOUR_OF_DAY));
-            Date now = sdf.parse(nowTime);
-            long nowMills = now.getTime();
-            return nowMills >= startDate.getTime() && nowMills <= endDate.getTime();
+            Date nowDate = sdf.parse(nowTime);
+
+            long start = startDate.getTime();
+            long end = endDate.getTime();
+            long now = nowDate.getTime();
+
+            if (end < start) {
+                if (now >= end && now <= start) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }else {
+                if (now >= start && now <= end) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
