@@ -1,8 +1,10 @@
 package com.guaigou.cd.minutestohome.activity.confirmorder;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -27,6 +29,7 @@ import com.guaigou.cd.minutestohome.util.MathUtil;
 import com.guaigou.cd.minutestohome.view.OrderProductsDetailsView;
 import com.rey.material.app.SimpleDialog;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -83,12 +86,36 @@ public class ConfirmOrderActivity extends BaseActivity implements ConfirmOrderVi
         setupAddress(entity);
         // 设置商品价格
         String price = MathUtil.calculate();
+        // 商品价格
         mTextProductPrice.setText("￥" + price);
-        mTextRealPrice.setText(price);
+        // 运费
+        boolean isNeedFreight = isNeedFreight(price);
+        mTextFreightPrice.setText(isNeedFreight ? "￥1.0" : "￥0");
+        // 实际支付
+        mTextRealPrice.setText(isNeedFreight?getRealPay(price) : price);
 
         orderProductsDetailsView.setDataAndNotify3(CartData.INSTANCE.getData());
 
         presenter = new ConfirmOrderPresenter(this);
+    }
+
+    private String getRealPay(String price){
+        return new BigDecimal(price).add(new BigDecimal("1")).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+    }
+
+    /**
+     * 判断是否需要运费
+     * @return
+     */
+    private boolean isNeedFreight(String price){
+        boolean isNeedFreight = false;
+        try{
+            double d = Double.parseDouble(price);
+            if (d < 10){
+                isNeedFreight = true;
+            }
+        }catch (NumberFormatException e){}
+        return isNeedFreight;
     }
 
     @Override

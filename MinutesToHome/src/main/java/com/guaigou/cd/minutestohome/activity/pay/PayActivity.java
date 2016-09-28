@@ -25,6 +25,7 @@ import com.tencent.mm.sdk.modelpay.PayReq;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import butterknife.Bind;
@@ -74,7 +75,7 @@ public class PayActivity extends BaseActivity implements PayView{
         orderPrice = intent.getStringExtra(ORDER_PRICE_KEY);
         prepay_id = intent.getStringExtra(ORDER_PREPAY_ID_KEY);
         productsEntityList = (List<OrderProductsEntity>) intent.getSerializableExtra(ORDER_PRODUCTS_DETAILS_KEY);
-        mTextPrice.setText("￥"+orderPrice);
+        mTextPrice.setText("￥"+ new BigDecimal(orderPrice).setScale(2, BigDecimal.ROUND_HALF_UP).toString());
         mTextOrderName.setText(orderName);
         // 创建PayPresenter对象
         payPresenter = new PayPresenter(this);

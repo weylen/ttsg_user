@@ -304,6 +304,7 @@
                 <LinearLayout
                     style="@style/ConfirmOrderItem"
                     android:background="@color/white"
+                    android:gravity="center"
                     >
 
                     <TextView
@@ -313,7 +314,6 @@
                         android:text="配送费"
                         android:textColor="@color/blackText"
                         />
-
 
                     <TextView
                         android:id="@+id/text_freight_price"
@@ -360,6 +360,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@color/divider"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/TextSize_12"
+                    android:textColor="@color/colorAccent"
+                    android:text="提示：商品总金额不足10元会收取1元的配送费"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:paddingTop="10dp"
+                    />
 
             </LinearLayout>
         </ScrollView>

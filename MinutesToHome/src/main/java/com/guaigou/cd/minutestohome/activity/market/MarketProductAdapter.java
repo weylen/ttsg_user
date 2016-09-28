@@ -17,6 +17,7 @@ import com.guaigou.cd.minutestohome.activity.shoppingcart.CartData;
 import com.guaigou.cd.minutestohome.adapter.GenericBaseAdapter;
 import com.guaigou.cd.minutestohome.entity.ProductEntity;
 import com.guaigou.cd.minutestohome.http.Constants;
+import com.guaigou.cd.minutestohome.util.CalendarUtil;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
 import com.guaigou.cd.minutestohome.util.DialogUtil;
 import com.guaigou.cd.minutestohome.util.LocaleUtil;
@@ -70,10 +71,10 @@ public class MarketProductAdapter extends GenericBaseAdapter<ProductEntity>{
             holder.oldPriceView.getPaint().setFlags(Paint. STRIKE_THRU_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
             holder.oldPriceView.setText("￥" + entity.getPrice());
             holder.priceView.setText(entity.getPromote());
-            holder.promotionView.setText(entity.getBegin()+"到"+entity.getEnd()+promotionMessage);
+            holder.promotionView.setText(CalendarUtil.format(entity.getBegin())+"到"+CalendarUtil.format(entity.getEnd())+"   " + promotionMessage);
         }else {
             holder.oldPriceView.setVisibility(View.GONE);
-            holder.promotionView.setVisibility(View.GONE);
+//            holder.promotionView.setVisibility(View.GONE);
         }
 
         int n = entity.getNumber();

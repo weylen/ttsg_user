@@ -54,4 +54,16 @@ public class CalendarUtil {
     }
 
 
+    public static String format(String date){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+        try {
+            Date d = sdf.parse(date);
+
+            sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA);
+            date = sdf.format(d);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
+    }
 }

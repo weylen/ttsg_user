@@ -19,6 +19,7 @@ import com.guaigou.cd.minutestohome.activity.market.MarketData;
 import com.guaigou.cd.minutestohome.activity.shoppingcart.CartData;
 import com.guaigou.cd.minutestohome.entity.ProductEntity;
 import com.guaigou.cd.minutestohome.http.Constants;
+import com.guaigou.cd.minutestohome.util.CalendarUtil;
 import com.guaigou.cd.minutestohome.util.DialogUtil;
 import com.guaigou.cd.minutestohome.util.LocaleUtil;
 import com.guaigou.cd.minutestohome.util.ParseUtil;
@@ -85,17 +86,18 @@ public class ProductDetailsActivity extends BaseActivity {
             mTextPromotionView.setVisibility(View.GONE);
             mOldPriceView.setVisibility(View.GONE);
 
-            mTextPrice.setText("￥" + productEntity.getPrice());
+            mTextPrice.setText(productEntity.getPrice());
         }else {
             mTextPromotionView.setVisibility(View.VISIBLE);
             mOldPriceView.setVisibility(View.VISIBLE);
-            mOldPriceView.getPaint().setFlags(Paint. STRIKE_THRU_TEXT_FLAG);
+            mOldPriceView.getPaint().setFlags(Paint. STRIKE_THRU_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
             // 原价格
             mOldPriceView.setText("￥" + productEntity.getPrice());
             // 促销信息
-            mTextPromotionView.setText(productEntity.getBegin()+"到"+productEntity.getEnd()+productEntity.getInfo());
+            mTextPromotionView.setText(CalendarUtil.format(productEntity.getBegin())+"到"+CalendarUtil.format(productEntity.getEnd())+
+                    "  " + productEntity.getInfo());
             // 促销价格
-            mTextPrice.setText("￥" + promotePrice);
+            mTextPrice.setText(promotePrice);
         }
         mNameView.setText(productEntity.getName());
         mTextFormat.setText("规格：" + productEntity.getStandard());

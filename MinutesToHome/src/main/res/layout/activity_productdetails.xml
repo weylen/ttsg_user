@@ -83,12 +83,20 @@
                     >
 
                     <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="￥"
+                        android:textSize="@dimen/TextSize_14"
+                        android:textColor="@color/redText"
+                        android:paddingLeft="20dp"
+                        />
+
+                    <TextView
                         android:id="@+id/text_price"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="@dimen/TextSize_16"
+                        android:textSize="@dimen/TextSize_18"
                         android:textColor="@color/themeColor"
-                        android:paddingLeft="20dp"
                         android:paddingTop="10dp"
                         android:paddingBottom="10dp"
                         />
@@ -97,8 +105,9 @@
                         android:id="@+id/text_old_price"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="@dimen/TextSize_16"
+                        android:textSize="@dimen/TextSize_14"
                         android:textColor="@color/grayText"
+                        android:paddingLeft="5dp"
                         />
 
                 </LinearLayout>

@@ -162,7 +162,7 @@ public class MiMessageReceiver extends PushMessageReceiver {
     private void reLogin(Context context){
         LoginData.INSTANCE.logout(context);
         Intent intent = new Intent(context, LoginActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
 
@@ -175,7 +175,7 @@ public class MiMessageReceiver extends PushMessageReceiver {
             return;
         }
         Intent intent = new Intent(context, OrderDetailsActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.putExtra(OrderDetailsActivity.ORDER_KEY, orderId);
         String ticker = "您的订单" + orderId + "商家已接单";
         String message ="您的订单" + orderId + "商家已接单, 点击查看详情";

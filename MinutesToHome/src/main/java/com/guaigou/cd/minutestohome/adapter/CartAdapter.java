@@ -20,6 +20,7 @@ import com.guaigou.cd.minutestohome.activity.shoppingcart.CartData;
 import com.guaigou.cd.minutestohome.entity.CartEntity;
 import com.guaigou.cd.minutestohome.entity.ProductEntity;
 import com.guaigou.cd.minutestohome.http.Constants;
+import com.guaigou.cd.minutestohome.util.CalendarUtil;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
 import com.guaigou.cd.minutestohome.util.LocaleUtil;
 import com.guaigou.cd.minutestohome.util.ParseUtil;
@@ -115,7 +116,8 @@ public class CartAdapter extends GenericBaseAdapter<CartEntity>{
             holder.oldPriceView.getPaint().setFlags(Paint. STRIKE_THRU_TEXT_FLAG);
             holder.oldPriceView.setText("￥" + entity.getSalePrice());
             holder.priceView.setText(entity.getPromote());
-            holder.promotionView.setText(entity.getBegin()+"到"+entity.getEnd()+promotionMessage);
+            holder.promotionView.setText(CalendarUtil.format(entity.getBegin())+"到"+CalendarUtil.format(entity.getEnd())+
+                    "  " + promotionMessage);
         }else {
             holder.oldPriceView.setVisibility(View.GONE);
             holder.priceView.setText(entity.getSalePrice());
