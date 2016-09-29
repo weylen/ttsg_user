@@ -15,6 +15,7 @@ import com.google.gson.JsonObject;
 import com.guaigou.cd.minutestohome.BaseActivity;
 import com.guaigou.cd.minutestohome.BaseApplication;
 import com.guaigou.cd.minutestohome.R;
+import com.guaigou.cd.minutestohome.SplashActivity;
 import com.guaigou.cd.minutestohome.activity.login.LoginActivity;
 import com.guaigou.cd.minutestohome.activity.login.LoginData;
 import com.guaigou.cd.minutestohome.activity.orderdetails.OrderDetailsActivity;
@@ -204,7 +205,7 @@ public class MiMessageReceiver extends PushMessageReceiver {
      * 显示异地登录的通知消息
      */
     private void showAnotherNf(Context context){
-        Intent intent = new Intent(context, LoginActivity.class);
+        Intent intent = new Intent(context, SplashActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         String ticker = "您的账号在另外一台设备上登录，如果不是本人操作，请您尽快修改密码";
         showNf(context, ticker, ticker, intent, LOGIN_ID);

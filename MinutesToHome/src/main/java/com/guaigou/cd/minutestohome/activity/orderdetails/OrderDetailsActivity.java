@@ -23,6 +23,7 @@ import com.guaigou.cd.minutestohome.view.OrderProductsDetailsView;
 import com.guaigou.cd.minutestohome.view.ZRefreshingView;
 import com.jakewharton.rxbinding.view.RxView;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import butterknife.Bind;
@@ -169,7 +170,10 @@ public class OrderDetailsActivity extends BaseActivity implements OrderDetailsVi
         // 地址
         mOrderAddressView.setText(productsEntity.getAddr());
         // 商品价格
-        mOrderProductsPriceView.setText("￥" + detailsEntity.getTotal());
+        mOrderProductsPriceView.setText("￥" + new BigDecimal(detailsEntity.getTotal()).subtract(new BigDecimal("1")).setScale(2, BigDecimal.ROUND_HALF_UP));
+        // 运费
+        boolean isNeedFreight = isNeedFreight(detailsEntity.getTotal());
+        mOrderFreightPriceView.setText(isNeedFreight ? "￥1.0" : "￥0");
         orderProductsDetailsView.setDataAndNotify2(products);
         // 设置支付状态
         String status = productsEntity.getStauts();
@@ -322,6 +326,20 @@ public class OrderDetailsActivity extends BaseActivity implements OrderDetailsVi
         if (status == 1){
             showSnakeView(confirmViewLayout, "收货失败，请重新登录");
         }
+    }
 
+    /**
+     * 判断是否需要运费
+     * @return
+     */
+    private boolean isNeedFreight(String price){
+        boolean isNeedFreight = false;
+        try{
+            double d = Double.parseDouble(price);
+            if (d < 10){
+                isNeedFreight = true;
+            }
+        }catch (NumberFormatException e){}
+        return isNeedFreight;
     }
 }
