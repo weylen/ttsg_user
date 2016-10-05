@@ -20,7 +20,7 @@ public interface OrderView{
     void onCancelOrderFailure();
     void onStartValidateOrder();
     void onValidateOrderFailure(String message);
-    void oNValidateOrderSuccess(int position);
+    void oNValidateOrderSuccess(int position, String price);
     void onStartDeleteOrder();
     void onDeleteOrderSuccess(int position);
     void onDeleteOrderFailure();

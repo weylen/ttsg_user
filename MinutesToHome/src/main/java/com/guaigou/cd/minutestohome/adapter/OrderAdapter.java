@@ -13,6 +13,7 @@ import com.guaigou.cd.minutestohome.entity.OrderProductsEntity;
 import com.guaigou.cd.minutestohome.http.Constants;
 import com.guaigou.cd.minutestohome.view.OrderProductsDetailsView;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import butterknife.Bind;
@@ -53,10 +54,9 @@ public class OrderAdapter extends GenericBaseAdapter<OrderEntity> {
         String status = productsEntity.getStauts();
         holder.mOrderStatusView.setText(Constants.ORDER_PARAM.get(status));
         holder.mOrderTimeView.setText(productsEntity.getDate());
-        holder.mOrderPriceView.setText("￥" + entity.getTotal());
+        holder.mOrderPriceView.setText("￥" + new BigDecimal(entity.getTotal()).add(new BigDecimal(productsEntity.getFare())).setScale(2, BigDecimal.ROUND_HALF_UP).toString());
         int size = productsEntities.size();
         holder.mOrderContentView.setText(productsEntity.getName() + " 等"+size+"种商品");
-
 
         // 检查订单状态
         if (!"2".equalsIgnoreCase(status)){

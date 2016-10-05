@@ -14,7 +14,7 @@ public interface OrderDetailsView {
 
     void onStartValidateOrder();
     void onValidateOrderFailure(String message);
-    void onValidateOrderSuccess();
+    void onValidateOrderSuccess(String price);
 
     void onStartAlertStatus();
     void onAlertStatusSuccess(int status);

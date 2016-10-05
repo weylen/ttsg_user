@@ -170,7 +170,7 @@ public class OrderDetailsActivity extends BaseActivity implements OrderDetailsVi
         // 地址
         mOrderAddressView.setText(productsEntity.getAddr());
         // 商品价格
-        mOrderProductsPriceView.setText("￥" + new BigDecimal(detailsEntity.getTotal()).subtract(new BigDecimal(productsEntity.getFare())).setScale(2, BigDecimal.ROUND_HALF_UP));
+        mOrderProductsPriceView.setText("￥" + new BigDecimal(detailsEntity.getTotal()).setScale(2, BigDecimal.ROUND_HALF_UP));
         // 运费
         mOrderFreightPriceView.setText("￥" + productsEntity.getFare());
         orderProductsDetailsView.setDataAndNotify2(products);
@@ -198,7 +198,8 @@ public class OrderDetailsActivity extends BaseActivity implements OrderDetailsVi
                 RxView.visibility(mLayoutRealPayView).call(Boolean.FALSE);
             }
         }
-        mPayPriceView.setText(detailsEntity.getTotal());
+        // 实际支付
+        mPayPriceView.setText(new BigDecimal(detailsEntity.getTotal()).add(new BigDecimal(productsEntity.getFare())).setScale(2, BigDecimal.ROUND_HALF_UP).toString());
     }
 
     /**
@@ -294,13 +295,13 @@ public class OrderDetailsActivity extends BaseActivity implements OrderDetailsVi
     }
 
     @Override
-    public void onValidateOrderSuccess() {
+    public void onValidateOrderSuccess(String price) {
         dismissProgressDialog();
         OrderDetailsEntity detailsEntity = detailsEntities.get(0);
         Intent intent = new Intent(this, PayActivity.class);
         intent.putExtra(PayActivity.ORDER_ID_KEY, detailsEntity.getOrderId());
         intent.putExtra(PayActivity.ORDER_PREPAY_ID_KEY, detailsEntity.getPrepay_id());
-        intent.putExtra(PayActivity.ORDER_PRICE_KEY, detailsEntity.getTotal());
+        intent.putExtra(PayActivity.ORDER_PRICE_KEY, price);
         startActivity(intent);
     }
 
@@ -325,20 +326,5 @@ public class OrderDetailsActivity extends BaseActivity implements OrderDetailsVi
         if (status == 1){
             showSnakeView(confirmViewLayout, "收货失败，请重新登录");
         }
-    }
-
-    /**
-     * 判断是否需要运费
-     * @return
-     */
-    private boolean isNeedFreight(String price){
-        boolean isNeedFreight = false;
-        try{
-            double d = Double.parseDouble(price);
-            if (d < 10){
-                isNeedFreight = true;
-            }
-        }catch (NumberFormatException e){}
-        return isNeedFreight;
     }
 }

@@ -267,12 +267,12 @@ public class OrderActivity extends BaseActivity implements OrderView{
     }
 
     @Override
-    public void oNValidateOrderSuccess(int position) {
+    public void oNValidateOrderSuccess(int position, String price) {
         dismissProgressDialog();
         OrderEntity entity = orderAdapter.getItem(position);
         Intent intent = new Intent(this, PayActivity.class);
         intent.putExtra(PayActivity.ORDER_ID_KEY, entity.getOrderId());
-        intent.putExtra(PayActivity.ORDER_PRICE_KEY, entity.getTotal());
+        intent.putExtra(PayActivity.ORDER_PRICE_KEY, price);
         intent.putExtra(PayActivity.ORDER_PREPAY_ID_KEY, entity.getPrepay_id());
         intent.putExtra(PayActivity.ORDER_PRODUCTS_DETAILS_KEY, entity.getProducts());
         startActivity(intent);

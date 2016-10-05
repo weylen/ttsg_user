@@ -123,7 +123,7 @@ public class OrderDetailsPresenter {
                     public void onNext(JsonObject jsonObject) {
                         DebugUtil.d("OrderPresenter验证支付订单成功：" + jsonObject);
                         if (ResponseMgr.getStatus(jsonObject) == 1){
-                            orderDetailsView.onValidateOrderSuccess();
+                            orderDetailsView.onValidateOrderSuccess(jsonObject.get("t_price").getAsString());
                         }else {
                             orderDetailsView.onValidateOrderFailure(jsonObject.get("data").getAsString());
                         }
