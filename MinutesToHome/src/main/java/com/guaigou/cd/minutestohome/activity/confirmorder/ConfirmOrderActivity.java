@@ -68,6 +68,7 @@ public class ConfirmOrderActivity extends BaseActivity implements ConfirmOrderVi
     @Bind(R.id.layout_products) OrderProductsDetailsView orderProductsDetailsView;
     @Bind(R.id.Container) View containerView;
     @Bind(R.id.text_confirmorder) TextView mConfrimOrderView;
+    @Bind(R.id.text_delivery_hint) TextView mDeliveryHintView; // 配送费提示
 
     private AddressEntity addressEntity;
 
@@ -88,9 +89,11 @@ public class ConfirmOrderActivity extends BaseActivity implements ConfirmOrderVi
         String price = MathUtil.calculate();
         // 商品价格
         mTextProductPrice.setText("￥" + price);
+        // 配送费提示
+        mDeliveryHintView.setText(String.format("提示：商品总金额不足%s元会收取%s元的配送费", ShopStatusData.INSTANCE.fareLimit, ShopStatusData.INSTANCE.fare));
         // 运费
         boolean isNeedFreight = isNeedFreight(price);
-        mTextFreightPrice.setText(isNeedFreight ? "￥1.0" : "￥0");
+        mTextFreightPrice.setText(isNeedFreight ? "￥" + ShopStatusData.INSTANCE.fare : "￥0");
         // 实际支付
         mTextRealPrice.setText(isNeedFreight?getRealPay(price) : price);
 
@@ -100,7 +103,7 @@ public class ConfirmOrderActivity extends BaseActivity implements ConfirmOrderVi
     }
 
     private String getRealPay(String price){
-        return new BigDecimal(price).add(new BigDecimal("1")).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+        return new BigDecimal(price).add(new BigDecimal(ShopStatusData.INSTANCE.fare)).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
     }
 
     /**
@@ -111,7 +114,7 @@ public class ConfirmOrderActivity extends BaseActivity implements ConfirmOrderVi
         boolean isNeedFreight = false;
         try{
             double d = Double.parseDouble(price);
-            if (d < 10){
+            if (d < LocaleUtil.pareseDouble(ShopStatusData.INSTANCE.fareLimit)){
                 isNeedFreight = true;
             }
         }catch (NumberFormatException e){}

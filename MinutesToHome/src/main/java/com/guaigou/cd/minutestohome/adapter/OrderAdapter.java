@@ -54,7 +54,13 @@ public class OrderAdapter extends GenericBaseAdapter<OrderEntity> {
         holder.mOrderStatusView.setText(Constants.ORDER_PARAM.get(status));
         holder.mOrderTimeView.setText(productsEntity.getDate());
         holder.mOrderPriceView.setText("￥" + entity.getTotal());
-        holder.mOrderContentView.setDataAndNotify1(productsEntities);
+        int size = productsEntities.size();
+        if (size == 1){
+            holder.mOrderContentView.setText(productsEntity.getName());
+        }else {
+            holder.mOrderContentView.setText(productsEntity.getName() + " 等"+size+"件商品");
+        }
+
 
         // 检查订单状态
         if (!"2".equalsIgnoreCase(status)){
@@ -128,7 +134,7 @@ public class OrderAdapter extends GenericBaseAdapter<OrderEntity> {
 
         @Bind(R.id.orderStatusView) TextView mOrderStatusView; // 订单状态
         @Bind(R.id.orderTimeView) TextView mOrderTimeView; // 订单时间
-        @Bind(R.id.orderContentView) OrderProductsDetailsView mOrderContentView; // 订单内容
+        @Bind(R.id.orderContentView) TextView mOrderContentView; // 订单内容
         @Bind(R.id.orderPriceView) TextView mOrderPriceView; // 订单价格
         @Bind(R.id.action_layout) LinearLayout mActionLayout; // 订单动作布局
         @Bind(R.id.action_cancel) View mCancelView; // 取消订单

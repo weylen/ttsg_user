@@ -510,6 +510,8 @@ public class MarketPresenter implements BasePresenter{
         JsonObject dataObject = ResponseMgr.getData(jsonObject).get(entity.getId()).getAsJsonObject();
         int status = dataObject.get("tradeState").getAsInt();
         ShopStatusData.INSTANCE.status = status;
+        ShopStatusData.INSTANCE.fare = dataObject.get("fare").getAsString();
+        ShopStatusData.INSTANCE.fareLimit = dataObject.get("fareLimit").getAsString();
         String timeStr = dataObject.get("tradeTime").getAsString();
         if (!TextUtils.isEmpty(timeStr)){
             Gson gson = new Gson();

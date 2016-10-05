@@ -15,6 +15,8 @@ public enum ShopStatusData {
     public String startTime = Constants.EMPTY_STRING;
     public String endTime = Constants.EMPTY_STRING;
     public String phone = null;
+    public String fare = "0";
+    public String fareLimit = "0";
 
 
     private HashMap<Integer, String> statusStrs;

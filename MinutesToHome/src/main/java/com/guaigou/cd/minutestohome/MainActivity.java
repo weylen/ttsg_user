@@ -1,6 +1,5 @@
 package com.guaigou.cd.minutestohome;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -14,12 +13,12 @@ import android.widget.Toast;
 import com.cd.weylen.appupdatelibrary.AppUpdate;
 import com.guaigou.cd.minutestohome.activity.login.LoginData;
 import com.guaigou.cd.minutestohome.activity.market.MarketData;
+import com.guaigou.cd.minutestohome.activity.market.MarketFragment;
 import com.guaigou.cd.minutestohome.activity.mine.MeFragment;
 import com.guaigou.cd.minutestohome.activity.shoppingcart.CartData;
 import com.guaigou.cd.minutestohome.activity.shoppingcart.CartFragment;
 import com.guaigou.cd.minutestohome.cache.DataCache;
 import com.guaigou.cd.minutestohome.entity.RegionEntity;
-import com.guaigou.cd.minutestohome.activity.market.MarketFragment;
 import com.guaigou.cd.minutestohome.prefs.CartPrefs;
 import com.guaigou.cd.minutestohome.prefs.NewVersionData;
 import com.guaigou.cd.minutestohome.prefs.RegionPrefs;

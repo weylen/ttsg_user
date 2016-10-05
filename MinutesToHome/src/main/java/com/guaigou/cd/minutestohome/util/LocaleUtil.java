@@ -28,6 +28,17 @@ import java.util.List;
  */
 public class LocaleUtil {
 
+
+    public static double pareseDouble(String str){
+        if (TextUtils.isEmpty(str)){
+            return 0;
+        }
+        try {
+            return Double.parseDouble(str);
+        }catch (Exception e){}
+        return 0;
+    }
+
     /**
      * 是否有促销信息
      * @param promotionPrice

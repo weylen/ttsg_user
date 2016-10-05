@@ -28,6 +28,7 @@ public class OrderProductsEntity implements Serializable{
     private String date;
     private String orderId;
     private String kind;
+    private String fare; // 配送费
 
     public String getTotal() {
         return total;
@@ -126,5 +127,13 @@ public class OrderProductsEntity implements Serializable{
 
     public void setKind(String kind) {
         this.kind = kind;
+    }
+
+    public String getFare() {
+        return fare;
+    }
+
+    public void setFare(String fare) {
+        this.fare = fare;
     }
 }

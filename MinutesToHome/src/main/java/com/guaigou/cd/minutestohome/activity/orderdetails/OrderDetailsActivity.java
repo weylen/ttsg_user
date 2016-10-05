@@ -170,10 +170,9 @@ public class OrderDetailsActivity extends BaseActivity implements OrderDetailsVi
         // 地址
         mOrderAddressView.setText(productsEntity.getAddr());
         // 商品价格
-        mOrderProductsPriceView.setText("￥" + new BigDecimal(detailsEntity.getTotal()).subtract(new BigDecimal("1")).setScale(2, BigDecimal.ROUND_HALF_UP));
+        mOrderProductsPriceView.setText("￥" + new BigDecimal(detailsEntity.getTotal()).subtract(new BigDecimal(productsEntity.getFare())).setScale(2, BigDecimal.ROUND_HALF_UP));
         // 运费
-        boolean isNeedFreight = isNeedFreight(detailsEntity.getTotal());
-        mOrderFreightPriceView.setText(isNeedFreight ? "￥1.0" : "￥0");
+        mOrderFreightPriceView.setText("￥" + productsEntity.getFare());
         orderProductsDetailsView.setDataAndNotify2(products);
         // 设置支付状态
         String status = productsEntity.getStauts();
