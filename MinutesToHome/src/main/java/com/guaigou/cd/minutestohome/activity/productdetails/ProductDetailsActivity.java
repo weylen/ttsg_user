@@ -82,7 +82,7 @@ public class ProductDetailsActivity extends BaseActivity {
     private void setupProductsInfo(){
         String promotePrice = productEntity.getPromote();// 获取促销价格
 
-        if (!LocaleUtil.hasPromotion(promotePrice)){ // 促销价为空
+        if (!LocaleUtil.hasPromotion(promotePrice, productEntity.getEnd())){ // 促销价为空
             mTextPromotionView.setVisibility(View.GONE);
             mOldPriceView.setVisibility(View.GONE);
 

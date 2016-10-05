@@ -45,7 +45,7 @@ public class MathUtil {
                 String price;
                 // 促销价格
                 String promotionPrice = entity.getPromote();
-                if (LocaleUtil.hasPromotion(promotionPrice)){
+                if (LocaleUtil.hasPromotion(promotionPrice, entity.getEnd())){
                     price = promotionPrice;
                 }else {
                     price = entity.getSalePrice();

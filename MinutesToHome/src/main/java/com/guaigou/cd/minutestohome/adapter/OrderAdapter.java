@@ -55,11 +55,7 @@ public class OrderAdapter extends GenericBaseAdapter<OrderEntity> {
         holder.mOrderTimeView.setText(productsEntity.getDate());
         holder.mOrderPriceView.setText("￥" + entity.getTotal());
         int size = productsEntities.size();
-        if (size == 1){
-            holder.mOrderContentView.setText(productsEntity.getName());
-        }else {
-            holder.mOrderContentView.setText(productsEntity.getName() + " 等"+size+"件商品");
-        }
+        holder.mOrderContentView.setText(productsEntity.getName() + " 等"+size+"种商品");
 
 
         // 检查订单状态

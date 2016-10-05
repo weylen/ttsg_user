@@ -44,11 +44,16 @@ public class LocaleUtil {
      * @param promotionPrice
      * @return true 有促销
      */
-    public static boolean hasPromotion(String promotionPrice){
+    public static boolean hasPromotion(String promotionPrice, String endTime){
         if (!TextUtils.isEmpty(promotionPrice)){
             try{
                 double d = Double.valueOf(promotionPrice);
-                if (d > 0){
+                if (d > 0){ // 促销价格>0的时候 再检查时间
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    Date date = sdf.parse(endTime);
+                    if (System.currentTimeMillis() >= date.getTime()){
+                        return false;
+                    }
                     return true;
                 }
             }catch (Exception e){

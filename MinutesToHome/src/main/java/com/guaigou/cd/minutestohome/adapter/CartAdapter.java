@@ -111,7 +111,7 @@ public class CartAdapter extends GenericBaseAdapter<CartEntity>{
         // 促销信息
         String promotionPrice = entity.getPromote();
         String promotionMessage = entity.getInfo();
-        if (LocaleUtil.hasPromotion(promotionPrice)){
+        if (LocaleUtil.hasPromotion(promotionPrice, entity.getEnd())){
             holder.oldPriceView.setVisibility(View.VISIBLE);
             holder.oldPriceView.getPaint().setFlags(Paint. STRIKE_THRU_TEXT_FLAG);
             holder.oldPriceView.setText("￥" + entity.getSalePrice());

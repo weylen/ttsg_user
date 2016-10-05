@@ -65,7 +65,7 @@ public class MarketProductAdapter extends GenericBaseAdapter<ProductEntity>{
         String promotionPrice = entity.getPromote();
         String promotionMessage = entity.getInfo();
         holder.promotionView.setText("");
-        if (LocaleUtil.hasPromotion(promotionPrice)){
+        if (LocaleUtil.hasPromotion(promotionPrice, entity.getEnd())){
             holder.oldPriceView.setVisibility(View.VISIBLE);
             holder.promotionView.setVisibility(View.VISIBLE);
             holder.oldPriceView.getPaint().setFlags(Paint. STRIKE_THRU_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);

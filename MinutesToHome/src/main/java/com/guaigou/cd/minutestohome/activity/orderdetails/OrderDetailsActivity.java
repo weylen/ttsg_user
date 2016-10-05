@@ -139,7 +139,7 @@ public class OrderDetailsActivity extends BaseActivity implements OrderDetailsVi
     private void setupMessages(){
         OrderDetailsEntity detailsEntity = detailsEntities.get(0);
         // 订单号
-        mOrderCodeView.setText(detailsEntity.getOrderId());
+        mOrderCodeView.setText(orderNumber);
         // 订单总金额
         mOrderPaymentView.setText(detailsEntity.getTotal());
         // 获取商品列表信息

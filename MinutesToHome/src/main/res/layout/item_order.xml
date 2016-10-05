@@ -48,6 +48,7 @@
         style="@style/SmallTextView"
         android:textColor="@color/grayText"
         android:textSize="@dimen/TextSize_14"
+        android:layout_marginTop="5dp"
         />
 
     <LinearLayout

@@ -87,7 +87,7 @@ public class OrderProductsDetailsView extends LinearLayout{
             TextView nameView = (TextView) view.findViewById(R.id.text_name);
             nameView.setText(entity.getName() + "  x" + entity.getAmount());
             TextView priceView = (TextView) view.findViewById(R.id.text_price);
-            if (LocaleUtil.hasPromotion(entity.getPromote())){
+            if (LocaleUtil.hasPromotion(entity.getPromote(), entity.getEnd())){
                 priceView.setText("￥" + MathUtil.mul(entity.getAmount() + "", entity.getPromote()));
             }else {
                 priceView.setText("￥" + MathUtil.mul(entity.getAmount() + "", entity.getSalePrice()));
