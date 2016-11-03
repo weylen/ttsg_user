@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import com.guaigou.cd.minutestohome.BaseActivity;
 import com.guaigou.cd.minutestohome.R;
+import com.guaigou.cd.minutestohome.activity.login.LoginData;
+import com.guaigou.cd.minutestohome.entity.AccountEntity;
 import com.guaigou.cd.minutestohome.entity.AddressEntity;
 import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
 import com.guaigou.cd.minutestohome.util.KeyboardUtil;
@@ -39,6 +41,11 @@ public class NewAddressActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         mTextCommunity.setText(RegionPrefs.getRegionData(getApplicationContext()).getName());
+        AccountEntity entity = LoginData.INSTANCE.getAccountEntity(this);
+        if (entity != null){
+            String phone = entity.getUname();
+            mTextPhone.setText(phone);
+        }
     }
 
     @Override

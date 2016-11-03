@@ -140,8 +140,6 @@ public class OrderDetailsActivity extends BaseActivity implements OrderDetailsVi
         OrderDetailsEntity detailsEntity = detailsEntities.get(0);
         // 订单号
         mOrderCodeView.setText(orderNumber);
-        // 订单总金额
-        mOrderPaymentView.setText(detailsEntity.getTotal());
         // 获取商品列表信息
         List<OrderDetailsProductsEntity> products = detailsEntity.getProducts();
         OrderDetailsProductsEntity productsEntity = products.get(0);
@@ -198,8 +196,12 @@ public class OrderDetailsActivity extends BaseActivity implements OrderDetailsVi
                 RxView.visibility(mLayoutRealPayView).call(Boolean.FALSE);
             }
         }
+
+        String realPay = new BigDecimal(detailsEntity.getTotal()).add(new BigDecimal(productsEntity.getFare())).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
         // 实际支付
-        mPayPriceView.setText(new BigDecimal(detailsEntity.getTotal()).add(new BigDecimal(productsEntity.getFare())).setScale(2, BigDecimal.ROUND_HALF_UP).toString());
+        mPayPriceView.setText(realPay);
+        // 订单总金额
+        mOrderPaymentView.setText(realPay);
     }
 
     /**

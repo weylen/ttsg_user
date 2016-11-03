@@ -16,6 +16,7 @@ import com.guaigou.cd.minutestohome.activity.register.RegisterActivity;
 import com.guaigou.cd.minutestohome.entity.AccountEntity;
 import com.guaigou.cd.minutestohome.prefs.CartPrefs;
 import com.guaigou.cd.minutestohome.prefs.LoginPrefs;
+import com.guaigou.cd.minutestohome.prefs.PhonePrefs;
 import com.guaigou.cd.minutestohome.util.CartUtil;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
 import com.guaigou.cd.minutestohome.util.DeviceUtil;
@@ -55,6 +56,10 @@ public class LoginActivity extends BaseActivity implements LoginView{
             }
             return false;
         });
+        mUserLoginName.setText(PhonePrefs.getPhone(this));
+        if (!mUserLoginName.getText().toString().isEmpty()){
+            mUserLoginPass.requestFocus();
+        }
     }
 
     @OnClick(R.id.img_back)

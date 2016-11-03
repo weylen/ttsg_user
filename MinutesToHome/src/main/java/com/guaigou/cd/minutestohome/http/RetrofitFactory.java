@@ -1,18 +1,14 @@
 package com.guaigou.cd.minutestohome.http;
 
-import com.guaigou.cd.minutestohome.util.DebugUtil;
 import com.guaigou.cd.minutestohome.util.SessionUtil;
 
-import java.io.IOException;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -50,9 +46,15 @@ public class RetrofitFactory {
                         Request request = chain.request()
                                 .newBuilder()
                                 .addHeader("Cookie", SessionUtil.getSessionId())
+                                .addHeader("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
                                 .addHeader("DeviceType", "Android")
                                 .build();
-                        Response response = chain.proceed(request);
+                        Response response = null;
+                        try{
+                            response = chain.proceed(request);
+                        }catch (SocketTimeoutException e){
+                            e.printStackTrace();
+                        }
                         return response;
                     })
                     .connectTimeout(5, TimeUnit.SECONDS)

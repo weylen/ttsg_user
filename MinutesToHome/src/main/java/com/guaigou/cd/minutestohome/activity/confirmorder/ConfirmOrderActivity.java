@@ -91,6 +91,12 @@ public class ConfirmOrderActivity extends BaseActivity implements ConfirmOrderVi
         mTextProductPrice.setText("￥" + price);
         // 配送费提示
         mDeliveryHintView.setText(String.format("提示：商品总金额不足%s元会收取%s元的配送费", ShopStatusData.INSTANCE.fareLimit, ShopStatusData.INSTANCE.fare));
+        String fare = ShopStatusData.INSTANCE.fare;
+        if (LocaleUtil.pareseDouble(fare) == 0){
+            mDeliveryHintView.setVisibility(View.GONE);
+        }else {
+            mDeliveryHintView.setVisibility(View.VISIBLE);
+        }
         // 运费
         boolean isNeedFreight = isNeedFreight(price);
         mTextFreightPrice.setText(isNeedFreight ? "￥" + ShopStatusData.INSTANCE.fare : "￥0");

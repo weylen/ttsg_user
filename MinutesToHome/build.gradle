@@ -9,8 +9,8 @@ android {
         applicationId "com.guaigou.cd.minutestohome"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 9
-        versionName "1.09"
+        versionCode 10
+        versionName "1.10"
     }
 
     signingConfigs {
@@ -90,7 +90,7 @@ dependencies {
     }
     compile files('libs/MiPush_SDK_Client_3_0_3.jar')
 
-    compile 'com.github.weylen:AppUpdate:1.1.5'
+    compile 'com.github.weylen:AppUpdate:1.1.6'
 }
 retrolambda {
     javaVersion JavaVersion.VERSION_1_6

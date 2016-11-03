@@ -27,10 +27,11 @@
             android:layout_height="match_parent"
             android:text="编辑地址"
             android:textColor="@color/white"
-            android:textSize="@dimen/TextSize_16"
+            android:textSize="@dimen/TextSize_18"
             android:layout_weight="1.0"
             android:gravity="center"
             android:padding="10dp"
+            android:textStyle="bold"
             />
 
         <TextView
@@ -123,7 +124,7 @@
                 android:id="@+id/text_community"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:textColor="@color/grayText"
+                android:textColor="@color/tabGrayText"
                 android:textSize="@dimen/TextSize_14"
                 android:text="成都市锦江花园"
                 android:layout_marginLeft="20dp"
