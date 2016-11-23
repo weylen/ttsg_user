@@ -46,8 +46,11 @@ public class RetrofitFactory {
                         Request request = chain.request()
                                 .newBuilder()
                                 .addHeader("Cookie", SessionUtil.getSessionId())
-                                .addHeader("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
                                 .addHeader("DeviceType", "Android")
+                                .addHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
+                                .addHeader("Accept-Encoding", "gzip, deflate")
+                                .addHeader("Connection", "keep-alive")
+                                .addHeader("Accept", "*/*")
                                 .build();
                         Response response = null;
                         try{

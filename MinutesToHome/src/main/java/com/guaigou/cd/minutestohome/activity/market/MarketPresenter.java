@@ -469,10 +469,10 @@ public class MarketPresenter implements BasePresenter{
 
 
     public void shopStatus(){
-//        if (MarketData.INSTANCE.shopStatus != null && ShopStatusData.INSTANCE.areaId == entity.getId()){
-//            parseShopStatus(MarketData.INSTANCE.shopStatus);
-//            return;
-//        }
+        if (MarketData.INSTANCE.shopStatus != null && ShopStatusData.INSTANCE.areaId == entity.getId()){
+            parseShopStatus(MarketData.INSTANCE.shopStatus);
+            return;
+        }
         MarketData.INSTANCE.shopStatus = null;
         ShopStatusData.INSTANCE.reset();
         remoteShopStatus();
@@ -507,22 +507,27 @@ public class MarketPresenter implements BasePresenter{
     }
 
     void parseShopStatus(JsonObject jsonObject){
-        JsonObject dataObject = ResponseMgr.getData(jsonObject).get(entity.getId()).getAsJsonObject();
-        int status = dataObject.get("tradeState").getAsInt();
-        ShopStatusData.INSTANCE.status = status;
-        ShopStatusData.INSTANCE.fare = dataObject.get("fare").getAsString();
-        ShopStatusData.INSTANCE.fareLimit = dataObject.get("fareLimit").getAsString();
-        String timeStr = dataObject.get("tradeTime").getAsString();
-        if (!TextUtils.isEmpty(timeStr)){
-            Gson gson = new Gson();
-            JsonObject timeObject = gson.fromJson(timeStr, JsonObject.class);
-            ShopStatusData.INSTANCE.startTime = timeObject.get("start").getAsString();
-            ShopStatusData.INSTANCE.endTime = timeObject.get("end").getAsString();
-            ShopStatusData.INSTANCE.phone =  dataObject.get("phone").getAsString();
-        }else {
-            ShopStatusData.INSTANCE.startTime = Constants.EMPTY_STRING;
-            ShopStatusData.INSTANCE.endTime = Constants.EMPTY_STRING;
+        try{
+            JsonObject dataObject = ResponseMgr.getData(jsonObject).get(entity.getId()).getAsJsonObject();
+            int status = dataObject.get("tradeState").getAsInt();
+            ShopStatusData.INSTANCE.status = status;
+            ShopStatusData.INSTANCE.fare = dataObject.get("fare").getAsString();
+            ShopStatusData.INSTANCE.fareLimit = dataObject.get("fareLimit").getAsString();
+            String timeStr = dataObject.get("tradeTime").getAsString();
+            if (!TextUtils.isEmpty(timeStr)){
+                Gson gson = new Gson();
+                JsonObject timeObject = gson.fromJson(timeStr, JsonObject.class);
+                ShopStatusData.INSTANCE.startTime = timeObject.get("start").getAsString();
+                ShopStatusData.INSTANCE.endTime = timeObject.get("end").getAsString();
+                ShopStatusData.INSTANCE.phone =  dataObject.get("phone").getAsString();
+            }else {
+                ShopStatusData.INSTANCE.startTime = Constants.EMPTY_STRING;
+                ShopStatusData.INSTANCE.endTime = Constants.EMPTY_STRING;
+            }
+            marketView.onRequestShopStatus(true, status, ShopStatusData.INSTANCE.startTime, ShopStatusData.INSTANCE.endTime);
+        }catch (Exception e) {
+            marketView.onRequestShopStatus(false, 0, null, null);
         }
-        marketView.onRequestShopStatus(true, status, ShopStatusData.INSTANCE.startTime, ShopStatusData.INSTANCE.endTime);
+
     }
 }

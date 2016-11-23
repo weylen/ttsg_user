@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -16,6 +17,7 @@ import com.guaigou.cd.minutestohome.adapter.OnItemViewClickListener;
 import com.guaigou.cd.minutestohome.adapter.OrderAdapter;
 import com.guaigou.cd.minutestohome.entity.OrderEntity;
 import com.guaigou.cd.minutestohome.entity.OrderProductsEntity;
+import com.guaigou.cd.minutestohome.util.DebugUtil;
 import com.guaigou.cd.minutestohome.util.LocaleUtil;
 import com.guaigou.cd.minutestohome.view.EmptyViewHelper;
 import com.guaigou.cd.minutestohome.view.ZListView;
@@ -36,6 +38,7 @@ public class OrderActivity extends BaseActivity implements OrderView{
     @Bind(R.id.text_title) TextView mTitleView; // 标题视图
     @Bind(R.id.Generic_List) ZListView zListView; // 订单列表
     @Bind(R.id.refreshLayout) ZRefreshingView zRefreshingView; // 刷新组件
+    @Bind(R.id.parentFrameLayout) View parentView;
 
     private OrderAdapter orderAdapter;
     private EmptyViewHelper emptyViewHelper; // 空视图辅助类
@@ -205,6 +208,36 @@ public class OrderActivity extends BaseActivity implements OrderView{
         resetRefresh();
         zListView.setState(isFinish ? ZListView.State.STATE_COMPLETE : ZListView.State.STATE_NORMAL);
         orderAdapter.setData(data);
+
+        if (!isOverListHeight && !isFinish){
+            int totalHeight = getListViewItemHeight();
+            int listViewHeight = parentView.getHeight();
+            if (totalHeight < listViewHeight){
+                ZListView.State state = zListView.getState();
+                if (state == ZListView.State.STATE_COMPLETE || state == ZListView.State.STATE_LOADING){
+                    return;
+                }
+                zListView.setState(ZListView.State.STATE_LOADING);
+                orderPresenter.onLoadmore();
+            }else {
+                isOverListHeight = true;
+            }
+        }
+    }
+
+    private boolean isOverListHeight;
+    private int getListViewItemHeight(){
+        int totalHeight = 0;
+        int count = orderAdapter.getCount();
+        for (int i = 0; i < count; i++) {
+            View mView = orderAdapter.getView(i, null, zListView);
+            mView.measure(
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+            //mView.measure(0, 0);
+            totalHeight += mView.getMeasuredHeight();
+        }
+        return totalHeight;
     }
 
     @Override

@@ -15,6 +15,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.guaigou.cd.minutestohome.activity.login.LoginData;
+import com.guaigou.cd.minutestohome.activity.market.MarketData;
 import com.guaigou.cd.minutestohome.activity.region.RegionActivity;
 import com.guaigou.cd.minutestohome.activity.region.RegionData;
 import com.guaigou.cd.minutestohome.activity.shoppingcart.CartData;
@@ -44,11 +45,13 @@ public class SplashActivity extends BaseActivity {
 
     private boolean isSettingNetwork = false;
     private static final int SLEEP_TIME = 2 * 1000; // 休眠时间2秒钟
-
+    private boolean isHaveData = false;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+
+        isHaveData = MarketData.INSTANCE.getKindData() != null;
     }
 
     private void showAlertDialog(){
@@ -179,7 +182,7 @@ public class SplashActivity extends BaseActivity {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             finish();
-        }, isSettingNetwork ? 300 : SLEEP_TIME - (end - start));
+        }, isSettingNetwork ? 300 : isHaveData ? 500 : (SLEEP_TIME - (end - start)));
     }
 
     private void remoteRegion(){
@@ -220,6 +223,9 @@ public class SplashActivity extends BaseActivity {
     }
 
     private void checkNewVersion() {
+        if (isHaveData){ // 如果数据已经存在 则不检查新版本
+            return;
+        }
         RetrofitFactory.getRetrofit().create(HttpService.class)
                 .newVersion(2)
                 .observeOn(AndroidSchedulers.mainThread())

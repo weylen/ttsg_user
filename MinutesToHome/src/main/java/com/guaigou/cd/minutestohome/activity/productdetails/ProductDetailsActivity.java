@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.guaigou.cd.minutestohome.BaseActivity;
 import com.guaigou.cd.minutestohome.MainActivity;
 import com.guaigou.cd.minutestohome.R;
@@ -107,6 +108,7 @@ public class ProductDetailsActivity extends BaseActivity {
         Glide.with(this)
                 .load(Constants.BASE_URL + productEntity.getImg())
                 .fitCenter()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(R.mipmap.img_load_default)
                 .crossFade()
                 .dontAnimate()

@@ -1,9 +1,11 @@
 package com.guaigou.cd.minutestohome.activity.market;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -63,6 +65,7 @@ public class MarketFragment extends BaseFragment implements MarketView, MarketPr
 
     private String lastLargeTypeId;
     private String lastSmallTypeId;
+    private boolean isShowing;
 
     @Override
     public int layoutId() {
@@ -149,8 +152,6 @@ public class MarketFragment extends BaseFragment implements MarketView, MarketPr
             locationView.setText("选择地址");
             showChooseRegionDialog();
         }else{
-            // request shop status
-            marketPresenter.shopStatus();
             // request data
             marketPresenter.start();
         }
@@ -190,11 +191,15 @@ public class MarketFragment extends BaseFragment implements MarketView, MarketPr
             marketPresenter.refresh();
         }
         MarketData.INSTANCE.isChanged = false;
+        isShowing = true;
+        // request shop status
+        marketPresenter.shopStatus();
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        isShowing = false;
         MarketData.INSTANCE.listSelectIndex = zListView.getSelectedItemPosition();
     }
 
@@ -329,8 +334,26 @@ public class MarketFragment extends BaseFragment implements MarketView, MarketPr
                 hintView.setText("营业时间：" + startTime +" ~ " + endTime);
             }
         }else {
-            hintView.setText("获取数据失败");
+            hintView.setText("获取营业时间失败");
+            if (isShowing){
+                showErrorStatusDialog();
+            }
         }
+    }
+
+    // 显示获取商家营业时间失败对话框
+    private void showErrorStatusDialog(){
+        new AlertDialog.Builder(getActivity())
+                .setTitle("提示")
+                .setMessage("获取商家营业时间失败，将导致无法购买商品，是否重新获取？")
+                .setNegativeButton("取消", (dialog, which) -> {
+                    dialog.dismiss();
+                })
+                .setPositiveButton("重新获取", (dialog, which) -> {
+                    // request shop status
+                    marketPresenter.shopStatus();
+                })
+                .show();
     }
 
     @Override

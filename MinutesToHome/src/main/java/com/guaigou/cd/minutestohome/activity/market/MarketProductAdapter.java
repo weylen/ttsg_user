@@ -10,6 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.GlideBuilder;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.guaigou.cd.minutestohome.R;
 import com.guaigou.cd.minutestohome.activity.login.LoginData;
 import com.guaigou.cd.minutestohome.activity.search.SearchActivity;
@@ -138,9 +140,12 @@ public class MarketProductAdapter extends GenericBaseAdapter<ProductEntity>{
                     }
                 });
 
+
+
         Glide.with(context)
                 .load(Constants.BASE_URL+entity.getImg())
                 .fitCenter()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(R.mipmap.img_load_default)
                 .crossFade()
                 .dontAnimate()
