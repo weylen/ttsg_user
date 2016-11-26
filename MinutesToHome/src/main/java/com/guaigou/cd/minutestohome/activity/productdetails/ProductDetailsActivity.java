@@ -100,7 +100,7 @@ public class ProductDetailsActivity extends BaseActivity {
             // 促销价格
             mTextPrice.setText(promotePrice);
         }
-        mNameView.setText(productEntity.getName());
+        mNameView.setText(productEntity.getDisplayName());
         mTextFormat.setText("规格：" + productEntity.getStandard());
         mTextStockNum.setText("库存：" + productEntity.getReserve()); // 库存
 

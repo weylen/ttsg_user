@@ -162,6 +162,8 @@ public class LocaleUtil {
         productEntity.setReserve(entity.getStock());
         productEntity.setKind(entity.getKind());
         productEntity.setNumber(entity.getAmount());
+        productEntity.setDisplayName(entity.getDisplayName());
+        productEntity.setNightPorduct(entity.isNightProduct());
         return productEntity;
     }
 
@@ -179,6 +181,8 @@ public class LocaleUtil {
         cartEntity.setStock(entity.getReserve());
         cartEntity.setKind(entity.getKind());
         cartEntity.setAmount(1);
+        cartEntity.setDisplayName(entity.getDisplayName());
+        cartEntity.setNightProduct(entity.isNightPorduct());
         return cartEntity;
     }
 

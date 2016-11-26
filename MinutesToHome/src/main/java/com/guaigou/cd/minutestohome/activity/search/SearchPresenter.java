@@ -124,6 +124,18 @@ public class SearchPresenter implements BasePresenter {
                     ProductEntity entity = listData.get(i);
                     entity.setNumber(CartData.INSTANCE.getNumber(entity.getId()));
                     entity.setImg(imgObject.get(entity.getImg().split(",")[0]).getAsString());
+                    String name = entity.getName();
+                    entity.setNightPorduct(false);
+                    if(name.contains(",")){
+                        String strs[] = name.split(",");
+                        entity.setDisplayName(strs[0]);
+                        // 如果后缀为1 则说明是夜间商品
+                        if ("1".equalsIgnoreCase(strs[1])){
+                            entity.setNightPorduct(true);
+                        }
+                    }else{
+                        entity.setDisplayName(name);
+                    }
                 }
                 int current = s.get("pageNum").getAsInt();
                 // 缓存数据

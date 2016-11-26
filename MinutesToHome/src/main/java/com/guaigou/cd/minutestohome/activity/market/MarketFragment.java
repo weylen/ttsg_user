@@ -1,6 +1,8 @@
 package com.guaigou.cd.minutestohome.activity.market;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -81,42 +84,7 @@ public class MarketFragment extends BaseFragment implements MarketView, MarketPr
 
         largeTypeAdapter = new LargeTypeAdapter(getActivity(), null);
         largeTypeList.setAdapter(largeTypeAdapter);
-        largeTypeList.setOnItemClickListener((parent, view1, position, id) -> {
-            MarketData.INSTANCE.largeTypeIndex = position;
-            MarketData.INSTANCE.smallTypeIndex = 0;
-            MarketData.INSTANCE.listSelectIndex = 0;
-
-            MarketDataEntity entity = largeTypeAdapter.getData().get(position);
-            String night = entity.getNight();
-            if (DataType.TYPE_NIGHT.equalsIgnoreCase(night)){ // 是夜间模式
-                if (!LocaleUtil.isOnNightTime()){
-                    showToast("当前时间不是夜间模式");
-                    return;
-                }
-
-            }else if(DataType.TYPE_NORMAL.equalsIgnoreCase(night)){ // 是普通模式
-                if (LocaleUtil.isOnNightTime()){
-                    showToast("当前时间是夜间模式，已为您自动选择夜间模式");
-                    // 选中夜间模式
-                    int size = largeTypeAdapter.getData().size();
-                    List<MarketDataEntity> data = largeTypeAdapter.getData();
-                    for (int i = 0; i < size; i++){
-                        if ("1".equalsIgnoreCase(data.get(i).getNight())){
-                            largeTypeAdapter.setCheckedPosition(i);
-                            MarketData.INSTANCE.largeTypeIndex = i;
-                            break;
-                        }
-                    }
-                    return;
-                }
-            }
-
-            if (lastLargeTypeId == null || ! entity.getId().equalsIgnoreCase(lastLargeTypeId)){
-                lastLargeTypeId = entity.getId();
-                marketPresenter.parseSmallTypeData(lastLargeTypeId);
-                largeTypeAdapter.setCheckedPosition(position);
-            }
-        });
+        largeTypeList.setOnItemClickListener(largeListener);
 
         smallTypeAdapter = new SmallTypeAdapter(getActivity(), null);
         smallTypeAdapter.setOnItemClickListener((position, entity) -> {
@@ -182,6 +150,58 @@ public class MarketFragment extends BaseFragment implements MarketView, MarketPr
         }
     }
 
+    private AdapterView.OnItemClickListener largeListener = (parent, view, position, id) -> {
+        MarketDataEntity entity = largeTypeAdapter.getData().get(position);
+        String night = entity.getNight();
+        if (DataType.TYPE_NIGHT.equalsIgnoreCase(night)){ // 是夜间模式
+            if (!LocaleUtil.isOnNightTime()){
+                showNightDialog();
+                return;
+            }
+            MarketData.INSTANCE.largeTypeIndex = position;
+        }else if(DataType.TYPE_NORMAL.equalsIgnoreCase(night)){ // 是普通模式
+            MarketData.INSTANCE.largeTypeIndex = position;
+            if (LocaleUtil.isOnNightTime()){
+                showToast("当前时间是直营模式，已为您自动选择直营模式");
+                // 选中夜间模式
+                int size = largeTypeAdapter.getData().size();
+                List<MarketDataEntity> data = largeTypeAdapter.getData();
+                for (int i = 0; i < size; i++){
+                    if (DataType.TYPE_NIGHT.equalsIgnoreCase(data.get(i).getNight())){
+                        largeTypeAdapter.setCheckedPosition(i);
+                        MarketData.INSTANCE.largeTypeIndex = i;
+                        lastLargeTypeId = data.get(i).getId();
+                        break;
+                    }
+                }
+            }
+        }
+        MarketData.INSTANCE.smallTypeIndex = 0;
+        MarketData.INSTANCE.listSelectIndex = 0;
+        entity = largeTypeAdapter.getData().get(MarketData.INSTANCE.largeTypeIndex);
+
+        if (lastLargeTypeId == null || !entity.getId().equalsIgnoreCase(lastLargeTypeId)){
+            lastLargeTypeId = entity.getId();
+            marketPresenter.parseSmallTypeData(lastLargeTypeId);
+            largeTypeAdapter.setCheckedPosition(position);
+        }
+
+    };
+
+    /**
+     * 显示非直营模式而购买的对话框
+     */
+    private void showNightDialog(){
+        new AlertDialog.Builder(getActivity())
+                .setTitle("提示")
+                .setMessage("当前时间不是直营模式，不能进行直营模式购买")
+                .setPositiveButton("知道了", (dialog, which) -> {
+                    dialog.dismiss();
+                })
+                .show();
+    }
+
+
     @OnItemClick(R.id.Generic_List)
     public void onItemClick(int position){
         if (position < adapter.getData().size()){
@@ -222,6 +242,27 @@ public class MarketFragment extends BaseFragment implements MarketView, MarketPr
             showProgressDialog("正在获取营业时间");
         }
         marketPresenter.shopStatus();
+        checkMode();
+    }
+
+    // 检查当前是什么模式
+    private void checkMode(){
+        int index = MarketData.INSTANCE.largeTypeIndex;
+        List<MarketDataEntity> data = largeTypeAdapter.getData();
+        if (!LocaleUtil.isListEmpty(data)){
+            if (index >= 0 && index < data.size()){
+                String night = data.get(index).getNight();
+                if (!LocaleUtil.isOnNightTime()){ // 不在夜间模式
+                    if (DataType.TYPE_NIGHT.equalsIgnoreCase(night)){
+                        largeListener.onItemClick(largeTypeList, null, 0, 0);
+                    }
+                }else if (LocaleUtil.isOnNightTime()){
+                    if (DataType.TYPE_NORMAL.equalsIgnoreCase(night)){
+                        largeListener.onItemClick(largeTypeList, null, data.size()-1, data.size()-1);
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -297,6 +338,28 @@ public class MarketFragment extends BaseFragment implements MarketView, MarketPr
                 onDataEmpty();
                 return;
             }
+
+            // 判断当前时间是否在夜间模式时间段内
+            if (LocaleUtil.isOnNightTime()){
+                // 如果在 则默认选中为夜间模式
+                showToast("当前时间是直营模式，已为您自动选择直营模式");
+                // 选中夜间模式
+                int size = largeTypeAdapter.getData().size();
+                List<MarketDataEntity> data = largeTypeAdapter.getData();
+                for (int i = 0; i < size; i++){
+                    if (DataType.TYPE_NIGHT.equalsIgnoreCase(data.get(i).getNight())){
+                        largeTypeAdapter.setCheckedPosition(i);
+                        MarketData.INSTANCE.largeTypeIndex = i;
+                        break;
+                    }
+                }
+            }else{
+                int index = MarketData.INSTANCE.largeTypeIndex;
+                if (DataType.TYPE_NIGHT.equalsIgnoreCase(dataEntityList.get(index).getNight())){
+                    MarketData.INSTANCE.largeTypeIndex = 0;
+                }
+            }
+
             final int index = MarketData.INSTANCE.largeTypeIndex;
             largeTypeList.setSelection(index);
             largeTypeAdapter.setCheckedPosition(index);
@@ -360,7 +423,11 @@ public class MarketFragment extends BaseFragment implements MarketView, MarketPr
             if (status != 1){
                 hintView.setText(ShopStatusData.INSTANCE.getStatus());
             }else {
-                hintView.setText("营业时间：" + startTime +" ~ " + endTime);
+                if (LocaleUtil.isOnNightTime()){
+                    hintView.setText("直营模式：" + ShopStatusData.INSTANCE.nightStart +" ~ " + ShopStatusData.INSTANCE.nightEnd);
+                }else {
+                    hintView.setText("营业时间：" + startTime +" ~ " + endTime);
+                }
             }
         }else {
             hintView.setText("获取营业时间失败");

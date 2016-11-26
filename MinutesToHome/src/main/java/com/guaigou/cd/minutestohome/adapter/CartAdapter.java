@@ -105,7 +105,7 @@ public class CartAdapter extends GenericBaseAdapter<CartEntity>{
         }
 
         final CartEntity entity = getItem(position);
-        holder.titleView.setText(entity.getName());
+        holder.titleView.setText(entity.getDisplayName());
         holder.formatView.setText(entity.getStandard());
 
         // 促销信息

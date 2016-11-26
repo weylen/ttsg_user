@@ -20,9 +20,8 @@ public enum CartUtil {
     INSTANCE;
 
     public void remoteCart(Context context, OnLoadCompleteListener onLoadCompleteListener){
-        Observable.create((Observable.OnSubscribe<List<CartEntity>>) subscriber -> {
-            subscriber.onNext(CartPrefs.getCartData(context));
-        }).subscribeOn(Schedulers.io())
+        Observable.create((Observable.OnSubscribe<List<CartEntity>>) subscriber ->
+                subscriber.onNext(CartPrefs.getCartData(context))).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(o -> {
                     CartData.INSTANCE.setData(o);

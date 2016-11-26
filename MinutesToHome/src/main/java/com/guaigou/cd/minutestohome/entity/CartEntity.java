@@ -12,6 +12,8 @@ public class CartEntity implements Parcelable, Serializable{
 
     private String id, name, standard, kind, imgPath, buyPrice, salePrice, stock, info, promote, stauts, begin, end;
     private int amount;
+    private String displayName;
+    private boolean isNightProduct;
 
     public CartEntity(){}
 
@@ -30,6 +32,8 @@ public class CartEntity implements Parcelable, Serializable{
         begin = in.readString();
         end = in.readString();
         amount = in.readInt();
+        displayName = in.readString();
+        isNightProduct = in.readInt() == 1;
     }
 
     public static final Creator<CartEntity> CREATOR = new Creator<CartEntity>() {
@@ -65,6 +69,8 @@ public class CartEntity implements Parcelable, Serializable{
         dest.writeString(begin);
         dest.writeString(end);
         dest.writeInt(amount);
+        dest.writeString(displayName);
+        dest.writeInt(isNightProduct? 1 : 0);
     }
 
     public String getId() {
@@ -177,5 +183,21 @@ public class CartEntity implements Parcelable, Serializable{
 
     public void setAmount(int amount) {
         this.amount = amount;
+    }
+
+    public boolean isNightProduct() {
+        return isNightProduct;
+    }
+
+    public void setNightProduct(boolean nightProduct) {
+        isNightProduct = nightProduct;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 }

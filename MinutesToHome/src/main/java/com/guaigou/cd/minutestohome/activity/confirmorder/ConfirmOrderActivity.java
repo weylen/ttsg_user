@@ -14,6 +14,7 @@ import com.bigkoo.pickerview.OptionsPickerView;
 import com.guaigou.cd.minutestohome.BaseActivity;
 import com.guaigou.cd.minutestohome.R;
 import com.guaigou.cd.minutestohome.activity.addressmgr.AddressActivity;
+import com.guaigou.cd.minutestohome.activity.login.LoginData;
 import com.guaigou.cd.minutestohome.activity.market.ShopStatusData;
 import com.guaigou.cd.minutestohome.activity.orderdetails.OrderDetailsActivity;
 import com.guaigou.cd.minutestohome.activity.note.NoteActivity;
@@ -24,6 +25,7 @@ import com.guaigou.cd.minutestohome.entity.ConfirmOrderEntity;
 import com.guaigou.cd.minutestohome.entity.RegionEntity;
 import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
 import com.guaigou.cd.minutestohome.util.AddressUtil;
+import com.guaigou.cd.minutestohome.util.DebugUtil;
 import com.guaigou.cd.minutestohome.util.LocaleUtil;
 import com.guaigou.cd.minutestohome.util.MathUtil;
 import com.guaigou.cd.minutestohome.view.OrderProductsDetailsView;
@@ -90,7 +92,12 @@ public class ConfirmOrderActivity extends BaseActivity implements ConfirmOrderVi
         // 商品价格
         mTextProductPrice.setText("￥" + price);
         // 配送费提示
-        mDeliveryHintView.setText(String.format("提示：商品总金额不足%s元会收取%s元的配送费", ShopStatusData.INSTANCE.fareLimit, ShopStatusData.INSTANCE.fare));
+        if (LocaleUtil.isOnNightTime()){
+            mDeliveryHintView.setText("当前时间属于直营模式，不收取配送费");
+        }else{
+            mDeliveryHintView.setText(String.format("提示：商品总金额不足%s元会收取%s元的配送费", ShopStatusData.INSTANCE.fareLimit, ShopStatusData.INSTANCE.fare));
+        }
+
         String fare = ShopStatusData.INSTANCE.fare;
         if (LocaleUtil.pareseDouble(fare) == 0){
             mDeliveryHintView.setVisibility(View.GONE);
@@ -117,6 +124,10 @@ public class ConfirmOrderActivity extends BaseActivity implements ConfirmOrderVi
      * @return
      */
     private boolean isNeedFreight(String price){
+        if (LocaleUtil.isOnNightTime()){ // 如果是在夜间模式 都不要配送费
+            DebugUtil.d("ConfirmOrderActivity 当前时间属于夜间模式，不收取配送费：");
+            return false;
+        }
         boolean isNeedFreight = false;
         try{
             double d = Double.parseDouble(price);
@@ -238,7 +249,7 @@ public class ConfirmOrderActivity extends BaseActivity implements ConfirmOrderVi
         if (data.status != 1){
             mConfrimOrderView.setText("未营业");
             mConfrimOrderView.setEnabled(false);
-        }else if (!LocaleUtil.isOnTime()){
+        }else if (!LocaleUtil.isOnTime() && !LocaleUtil.isOnNightTime()){
             mConfrimOrderView.setText("不在营业时间");
             mConfrimOrderView.setEnabled(false);
         }else {

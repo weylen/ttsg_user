@@ -60,7 +60,7 @@ public class MarketProductAdapter extends GenericBaseAdapter<ProductEntity>{
 
         final ProductEntity entity = getItem(position);
 
-        holder.titleView.setText(entity.getName());
+        holder.titleView.setText(entity.getDisplayName());
         holder.formatView.setText(entity.getStandard() );
         holder.priceView.setText(entity.getPrice());
         // 促销信息

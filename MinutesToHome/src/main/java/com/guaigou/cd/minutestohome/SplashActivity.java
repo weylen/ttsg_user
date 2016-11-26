@@ -117,6 +117,12 @@ public class SplashActivity extends BaseActivity {
             peekInHome();
             return;
         }
+
+        if (true){
+            peekInHome();
+            return;
+        }
+
         StringBuilder builder = new StringBuilder();
         for (CartEntity entity : entities){
             builder.append(entity.getId()+",");

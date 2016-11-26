@@ -46,6 +46,16 @@ public class ProductEntity implements Parcelable, Cloneable{
      */
     private int number;
 
+    /**
+     * 商品显示名字
+     */
+    private String displayName;
+
+    /**
+     * 是否为夜间商品
+     */
+    private boolean isNightPorduct;
+
     public ProductEntity() {
     }
 
@@ -63,6 +73,8 @@ public class ProductEntity implements Parcelable, Cloneable{
         info = in.readString();
         number = in.readInt();
         largeTypeId = in.readString();
+        displayName = in.readString();
+        isNightPorduct = in.readInt() == 1;
     }
 
     public static final Creator<ProductEntity> CREATOR = new Creator<ProductEntity>() {
@@ -181,6 +193,22 @@ public class ProductEntity implements Parcelable, Cloneable{
         this.largeTypeId = largeTypeId;
     }
 
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public boolean isNightPorduct() {
+        return isNightPorduct;
+    }
+
+    public void setNightPorduct(boolean nightPorduct) {
+        isNightPorduct = nightPorduct;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -201,6 +229,8 @@ public class ProductEntity implements Parcelable, Cloneable{
         dest.writeString(info);
         dest.writeInt(number);
         dest.writeString(largeTypeId);
+        dest.writeString(displayName);
+        dest.writeInt(isNightPorduct ? 1 : 0);
     }
 
     @Override

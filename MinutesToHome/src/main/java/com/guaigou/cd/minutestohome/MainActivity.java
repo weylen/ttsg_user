@@ -22,9 +22,11 @@ import com.guaigou.cd.minutestohome.entity.RegionEntity;
 import com.guaigou.cd.minutestohome.prefs.CartPrefs;
 import com.guaigou.cd.minutestohome.prefs.NewVersionData;
 import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
+import com.guaigou.cd.minutestohome.util.CalendarUtil;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
 import com.guaigou.cd.minutestohome.util.DeviceUtil;
 import com.guaigou.cd.minutestohome.util.DialogUtil;
+import com.guaigou.cd.minutestohome.util.LocaleUtil;
 
 import java.util.Timer;
 import java.util.TimerTask;

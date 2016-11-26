@@ -159,11 +159,53 @@ public class CartFragment extends BaseFragment implements CartView{
         // 判断当前时间是否为夜间模式
         if (LocaleUtil.isOnNightTime()){
             // 是夜间模式 则判断购物车的商品有没有不属于夜间模式的
-            //TODO...
+            if (!checkProducts(true)){
+                return;
+            }
+        }else if (LocaleUtil.isOnTime()){
+            if (!checkProducts(false)){
+                return;
+            }
         }
 
         Intent intent = new Intent(getActivity(), ConfirmOrderActivity.class);
         startActivity(intent);
+    }
+
+    /**
+     * 返回true表示满足条件 否则不满足条件
+     * @param isNightProduct
+     * @return
+     */
+    private boolean checkProducts(boolean isNightProduct){
+        List<CartEntity> data = adapter.getData();
+        if (!LocaleUtil.isListEmpty(data)){
+            int size = data.size();
+            for (int i = 0; i < size; i++){
+                CartEntity entity = data.get(i);
+                if (isNightProduct != entity.isNightProduct()){ // 判断是否为夜间商品，如果不是则提醒用户
+                    showNotNightProductDialog(entity.getDisplayName(), isNightProduct);
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 展现非直营模式时间的商品
+     * @param name
+     */
+    private void showNotNightProductDialog(String name, boolean isNightProduct){
+        String message = isNightProduct ? "当前时间段属于直营模式，而购物车中包含非直营模式的商品(" + name + "),请删除后再进行下单"
+                : "当前时间段不属于直营模式，而购物车中包含直营模式的商品(" + name + "),请删除后再进行下单";
+        new AlertDialog.Builder(getActivity())
+                .setTitle("提示")
+                .setMessage(message)
+                .setPositiveButton("知道了", (dialog, which) -> {
+                    dialog.dismiss();
+                })
+                .show();
     }
 
     private void showDeleteDialog(List<CartEntity> deleteData){
@@ -196,12 +238,13 @@ public class CartFragment extends BaseFragment implements CartView{
         if (data.status != 1){
             settlementView.setText("未营业");
             settlementView.setEnabled(false);
-        }else if (!LocaleUtil.isOnTime()){
-            settlementView.setText("不在营业时间");
-            settlementView.setEnabled(false);
-        }else {
+        }else if (LocaleUtil.isOnNightTime() || LocaleUtil.isOnTime()){
             settlementView.setText("去结算");
             settlementView.setEnabled(true);
+        }else {
+            DebugUtil.d("CartFragment onResume不在营业时间" );
+            settlementView.setText("不在营业时间");
+            settlementView.setEnabled(false);
         }
     }
 
