@@ -11,14 +11,20 @@ public class MarketDataEntity implements Parcelable{
     private String pid;
     private String name;
     private int number;
+    /**
+     * “1” 是夜间模式
+     * "2" 是普通模式
+     */
+    private String night;
 
     public MarketDataEntity() {
     }
 
-    public MarketDataEntity(String id, String pid, String name) {
+    public MarketDataEntity(String id, String pid, String name, String night) {
         this.id = id;
         this.pid = pid;
         this.name = name;
+        this.night = night;
     }
 
     protected MarketDataEntity(Parcel in) {
@@ -26,6 +32,7 @@ public class MarketDataEntity implements Parcelable{
         pid = in.readString();
         name = in.readString();
         number = in.readInt();
+        night = in.readString();
     }
 
     public static final Creator<MarketDataEntity> CREATOR = new Creator<MarketDataEntity>() {
@@ -72,6 +79,14 @@ public class MarketDataEntity implements Parcelable{
         return number;
     }
 
+    public String getNight() {
+        return night;
+    }
+
+    public void setNight(String night) {
+        this.night = night;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -83,5 +98,6 @@ public class MarketDataEntity implements Parcelable{
         dest.writeString(pid);
         dest.writeString(name);
         dest.writeInt(number);
+        dest.writeString(night);
     }
 }

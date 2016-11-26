@@ -94,6 +94,7 @@ public class MarketPresenter implements BasePresenter{
 
                     @Override
                     public void onNext(JsonObject s) {
+                        DebugUtil.d("MarketPresenter 所有数据：" + s);
                         int status = ResponseMgr.getStatus(s);
                         if (status == 1){
                             // 缓存数据
@@ -463,7 +464,7 @@ public class MarketPresenter implements BasePresenter{
      * @param smallTypeData
      */
     private void addSmallTypeAll(String parentId, List<MarketDataEntity> smallTypeData){
-        MarketDataEntity entity = new MarketDataEntity(parentId, parentId, "全部");
+        MarketDataEntity entity = new MarketDataEntity(parentId, parentId, "全部", DataType.TYPE_NORMAL);
         smallTypeData.add(0, entity);
     }
 
@@ -523,6 +524,13 @@ public class MarketPresenter implements BasePresenter{
             }else {
                 ShopStatusData.INSTANCE.startTime = Constants.EMPTY_STRING;
                 ShopStatusData.INSTANCE.endTime = Constants.EMPTY_STRING;
+            }
+            String nightStr = dataObject.get("night").getAsString();
+            if (!TextUtils.isEmpty(nightStr)){
+                Gson gson = new Gson();
+                JsonObject timeObject = gson.fromJson(nightStr, JsonObject.class);
+                ShopStatusData.INSTANCE.nightStart = timeObject.get("start").getAsString();
+                ShopStatusData.INSTANCE.nightEnd = timeObject.get("end").getAsString();
             }
             marketView.onRequestShopStatus(true, status, ShopStatusData.INSTANCE.startTime, ShopStatusData.INSTANCE.endTime);
         }catch (Exception e) {

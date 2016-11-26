@@ -213,4 +213,40 @@ public class LocaleUtil {
         }
         return false;
     }
+
+    /**
+     * 是否在夜间模式时间范围内
+     * @return
+     */
+    public static boolean isOnNightTime(){
+        SimpleDateFormat sdf = new SimpleDateFormat("mm:ss");
+        try {
+            Date startDate = sdf.parse(ShopStatusData.INSTANCE.nightStart);
+            Date endDate = sdf.parse(ShopStatusData.INSTANCE.nightEnd);
+            Calendar calendar = Calendar.getInstance();
+            String nowTime = CalendarUtil.getStandardTime(calendar.get(Calendar.MINUTE), calendar.get(Calendar.HOUR_OF_DAY));
+            Date nowDate = sdf.parse(nowTime);
+
+            long start = startDate.getTime();
+            long end = endDate.getTime();
+            long now = nowDate.getTime();
+
+            if (end < start) {
+                if (now >= end && now <= start) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }else {
+                if (now >= start && now <= end) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

@@ -85,7 +85,32 @@ public class MarketFragment extends BaseFragment implements MarketView, MarketPr
             MarketData.INSTANCE.largeTypeIndex = position;
             MarketData.INSTANCE.smallTypeIndex = 0;
             MarketData.INSTANCE.listSelectIndex = 0;
+
             MarketDataEntity entity = largeTypeAdapter.getData().get(position);
+            String night = entity.getNight();
+            if (DataType.TYPE_NIGHT.equalsIgnoreCase(night)){ // 是夜间模式
+                if (!LocaleUtil.isOnNightTime()){
+                    showToast("当前时间不是夜间模式");
+                    return;
+                }
+
+            }else if(DataType.TYPE_NORMAL.equalsIgnoreCase(night)){ // 是普通模式
+                if (LocaleUtil.isOnNightTime()){
+                    showToast("当前时间是夜间模式，已为您自动选择夜间模式");
+                    // 选中夜间模式
+                    int size = largeTypeAdapter.getData().size();
+                    List<MarketDataEntity> data = largeTypeAdapter.getData();
+                    for (int i = 0; i < size; i++){
+                        if ("1".equalsIgnoreCase(data.get(i).getNight())){
+                            largeTypeAdapter.setCheckedPosition(i);
+                            MarketData.INSTANCE.largeTypeIndex = i;
+                            break;
+                        }
+                    }
+                    return;
+                }
+            }
+
             if (lastLargeTypeId == null || ! entity.getId().equalsIgnoreCase(lastLargeTypeId)){
                 lastLargeTypeId = entity.getId();
                 marketPresenter.parseSmallTypeData(lastLargeTypeId);
@@ -193,6 +218,9 @@ public class MarketFragment extends BaseFragment implements MarketView, MarketPr
         MarketData.INSTANCE.isChanged = false;
         isShowing = true;
         // request shop status
+        if (MarketData.INSTANCE.shopStatus == null){
+            showProgressDialog("正在获取营业时间");
+        }
         marketPresenter.shopStatus();
     }
 
@@ -327,6 +355,7 @@ public class MarketFragment extends BaseFragment implements MarketView, MarketPr
 
     @Override
     public void onRequestShopStatus(boolean isSuccess, int status, String startTime, String endTime) {
+        dismissProgressDialog();
         if (isSuccess){
             if (status != 1){
                 hintView.setText(ShopStatusData.INSTANCE.getStatus());

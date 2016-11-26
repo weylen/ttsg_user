@@ -156,6 +156,12 @@ public class CartFragment extends BaseFragment implements CartView{
             showSnakeView(containerView, "购物车为空，请先挑选商品");
             return;
         }
+        // 判断当前时间是否为夜间模式
+        if (LocaleUtil.isOnNightTime()){
+            // 是夜间模式 则判断购物车的商品有没有不属于夜间模式的
+            //TODO...
+        }
+
         Intent intent = new Intent(getActivity(), ConfirmOrderActivity.class);
         startActivity(intent);
     }

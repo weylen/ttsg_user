@@ -18,6 +18,9 @@ public enum ShopStatusData {
     public String fare = "0";
     public String fareLimit = "0";
 
+    public String nightStart = Constants.EMPTY_STRING;
+    public String nightEnd = Constants.EMPTY_STRING;
+
 
     private HashMap<Integer, String> statusStrs;
 
