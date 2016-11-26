@@ -170,7 +170,6 @@ public class MarketFragment extends BaseFragment implements MarketView, MarketPr
                     if (DataType.TYPE_NIGHT.equalsIgnoreCase(data.get(i).getNight())){
                         largeTypeAdapter.setCheckedPosition(i);
                         MarketData.INSTANCE.largeTypeIndex = i;
-                        lastLargeTypeId = data.get(i).getId();
                         break;
                     }
                 }
