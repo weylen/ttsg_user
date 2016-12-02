@@ -8,9 +8,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.guaigou.cd.minutestohome.BasePresenter;
 import com.guaigou.cd.minutestohome.entity.RegionEntity;
+import com.guaigou.cd.minutestohome.http.Client;
 import com.guaigou.cd.minutestohome.http.HttpService;
 import com.guaigou.cd.minutestohome.http.ResponseMgr;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
+import com.guaigou.cd.minutestohome.http.Transformer;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
 
 import java.util.List;
@@ -45,10 +47,10 @@ public class RegionPresenter implements BasePresenter{
      * 获取地区数据
      */
     private void getRemoteRegionData(){
-        RetrofitFactory.getRetrofit().create(HttpService.class)
+        Client.request()
                 .getRegion()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(Transformer.switchSchedulers())
+                .compose(Transformer.sTransformer())
                 .subscribe(new Observer<JsonObject>() {
                     @Override
                     public void onCompleted() {
@@ -57,13 +59,11 @@ public class RegionPresenter implements BasePresenter{
 
                     @Override
                     public void onError(Throwable e) {
-                        DebugUtil.d("e:" + e.getMessage());
                         regionView.onLoadFailure();
                     }
 
                     @Override
                     public void onNext(JsonObject s) {
-                        DebugUtil.d("LoginPresenter onNext s:" + s);
                         int status = ResponseMgr.getStatus(s);
                         if (status == 1){
                             regionView.onLoadSuccess();

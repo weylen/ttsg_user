@@ -7,9 +7,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.guaigou.cd.minutestohome.BasePresenter;
 import com.guaigou.cd.minutestohome.entity.AccountEntity;
+import com.guaigou.cd.minutestohome.http.Client;
 import com.guaigou.cd.minutestohome.http.HttpService;
 import com.guaigou.cd.minutestohome.http.ResponseMgr;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
+import com.guaigou.cd.minutestohome.http.Transformer;
 import com.guaigou.cd.minutestohome.prefs.LoginPrefs;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
 import com.guaigou.cd.minutestohome.util.DeviceUtil;
@@ -41,10 +43,10 @@ public class LoginPresenter implements BasePresenter {
      */
     public void login(String user, String pwd, String deviceId){
         loginView.showWaitDialog();
-        RetrofitFactory.getRetrofit().create(HttpService.class)
+        Client.request()
                 .login(user, pwd, 2, deviceId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(Transformer.switchSchedulers())
+                .compose(Transformer.sTransformer())
                 .subscribe(new Observer<JsonObject>() {
                     @Override
                     public void onCompleted() {
@@ -53,14 +55,12 @@ public class LoginPresenter implements BasePresenter {
 
                     @Override
                     public void onError(Throwable e) {
-                        DebugUtil.d("登录异常：" + e.getMessage());
                         loginView.dismissWaitDialog();
                         loginView.loginFailed();
                     }
 
                     @Override
                     public void onNext(JsonObject s) {
-                        DebugUtil.d("LoginPresenter onNext s:" + s);
                         parseLoginData(s);
                         loginView.dismissWaitDialog();
                     }
@@ -73,7 +73,6 @@ public class LoginPresenter implements BasePresenter {
      */
     private void parseLoginData(JsonObject source){
         int status = ResponseMgr.getStatus(source);
-        DebugUtil.d("LoginPresenter parseLoginData status:" + status);
         if (status != 1){
             loginView.loginFailed();
         }else{
@@ -82,8 +81,6 @@ public class LoginPresenter implements BasePresenter {
             // 保存登录信息
             LoginData.INSTANCE.setAccountEntity(entity);
             loginView.loginSuccess(entity);
-
-            DebugUtil.d("LoginPresenter parseLoginData 登录信息：" + entity);
         }
     }
 }

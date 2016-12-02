@@ -13,9 +13,11 @@ import com.google.gson.JsonObject;
 import com.guaigou.cd.minutestohome.BaseActivity;
 import com.guaigou.cd.minutestohome.R;
 import com.guaigou.cd.minutestohome.activity.resetpwd.ReSetPwdActivity;
+import com.guaigou.cd.minutestohome.http.Client;
 import com.guaigou.cd.minutestohome.http.HttpService;
 import com.guaigou.cd.minutestohome.http.ResponseMgr;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
+import com.guaigou.cd.minutestohome.http.Transformer;
 import com.guaigou.cd.minutestohome.util.ValidateUtil;
 
 import butterknife.Bind;
@@ -149,10 +151,10 @@ public class FindPwdActivity extends BaseActivity implements FindPwdView{
 
     private void validate(String phone, String code){
         showProgressDialog("请稍后...");
-        RetrofitFactory.getRetrofit().create(HttpService.class)
+        Client.request()
                 .validateCode(phone, code)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
+                .compose(Transformer.switchSchedulers())
+                .compose(Transformer.sTransformer())
                 .subscribe(new Subscriber<JsonObject>() {
                     @Override
                     public void onCompleted() {}

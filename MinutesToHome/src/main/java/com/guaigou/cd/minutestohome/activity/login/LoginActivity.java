@@ -57,9 +57,7 @@ public class LoginActivity extends BaseActivity implements LoginView{
             return false;
         });
         mUserLoginName.setText(PhonePrefs.getPhone(this));
-        if (!mUserLoginName.getText().toString().isEmpty()){
-            mUserLoginPass.requestFocus();
-        }
+        mUserLoginPass.setText(PhonePrefs.getPwd(this));
     }
 
     @OnClick(R.id.img_back)
@@ -125,7 +123,8 @@ public class LoginActivity extends BaseActivity implements LoginView{
     @Override
     public void loginSuccess(AccountEntity accountEntity) {
         LoginPrefs.setAccountInfo(getApplicationContext(), accountEntity);
-        DebugUtil.d("LoginActivity 设备id：" + DeviceUtil.INSTANCE.getDeviceUuid(this));
+        // 保存账户信息
+        PhonePrefs.savePhone(this, mUserLoginName.getText().toString(), mUserLoginPass.getText().toString());
         SessionUtil.sessionId = "JSESSIONID=" + accountEntity.getSid();
         MiPushClient.setAlias(this, DeviceUtil.INSTANCE.getDeviceUuid(this), null);
 

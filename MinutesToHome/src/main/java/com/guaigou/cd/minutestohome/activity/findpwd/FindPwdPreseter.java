@@ -4,9 +4,11 @@ import com.google.common.base.Preconditions;
 import com.google.gson.JsonObject;
 import com.guaigou.cd.minutestohome.BasePresenter;
 import com.guaigou.cd.minutestohome.activity.register.RegisterView;
+import com.guaigou.cd.minutestohome.http.Client;
 import com.guaigou.cd.minutestohome.http.HttpService;
 import com.guaigou.cd.minutestohome.http.ResponseMgr;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
+import com.guaigou.cd.minutestohome.http.Transformer;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
 
 import rx.Observer;
@@ -34,11 +36,10 @@ public class FindPwdPreseter implements BasePresenter{
      */
     void requestValidateCode(String phoneNum){
         findPwdView.onRequestStart();
-
-        RetrofitFactory.getRetrofit().create(HttpService.class)
+        Client.request()
                 .findPwdValidateCode(phoneNum)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(Transformer.switchSchedulers())
+                .compose(Transformer.sTransformer())
                 .subscribe(new Observer<JsonObject>() {
                     @Override
                     public void onCompleted() {
@@ -47,13 +48,11 @@ public class FindPwdPreseter implements BasePresenter{
 
                     @Override
                     public void onError(Throwable e) {
-                        DebugUtil.d("FindPwdPreseter 找回密码验证码获取失败：" + e.getMessage());
                         findPwdView.onRequestFailure("请求失败，请重新操作");
                     }
 
                     @Override
                     public void onNext(JsonObject s) {
-                        DebugUtil.d("FindPwdPreseter 找回密码验证码获取成功：" + s);
                         findPwdView.onRequestSuccess(ResponseMgr.getStatus(s), s.get("data").getAsString());
                     }
                 });

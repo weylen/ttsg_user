@@ -1,15 +1,21 @@
 package com.guaigou.cd.minutestohome.http;
 
+import android.content.Context;
+import android.widget.Toast;
+
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonObject;
+import com.guaigou.cd.minutestohome.BaseApplication;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
 
+import rx.Observable;
+import rx.Observer;
 import rx.Subscriber;
 
 /**
  * Created by zhou on 2016/9/14.
  */
-public class RespSubscribe extends Subscriber<JsonObject> {
+public class RespSubscribe extends ErrorSubscriber<JsonObject> {
 
     private static final int TOKEN_INVALID = -10;
 
@@ -22,8 +28,16 @@ public class RespSubscribe extends Subscriber<JsonObject> {
     public void onCompleted() {}
 
     @Override
-    public void onError(Throwable e) {
-        realSubscriber.onError(e);
+    protected void onError(ApiException ex) {
+        if (realSubscriber != null){
+            realSubscriber.onError(ex);
+        }
+        final Context context = BaseApplication.getLast();
+        if (context == null){
+            DebugUtil.d("RespSubscribe Token Invalid but context == null");
+            return;
+        }
+        Toast.makeText(context, ex.message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -36,4 +50,20 @@ public class RespSubscribe extends Subscriber<JsonObject> {
             realSubscriber.onNext(jsonObject);
         }
     }
+}
+abstract class ErrorSubscriber<T> implements Observer<T> {
+
+    @Override
+    public void onError(Throwable e) {
+        if(e instanceof ApiException){
+            onError((ApiException)e);
+        }else{
+            onError(new ApiException(e, 123));
+        }
+    }
+
+    /**
+     * 错误回调
+     */
+    protected abstract void onError(ApiException ex);
 }

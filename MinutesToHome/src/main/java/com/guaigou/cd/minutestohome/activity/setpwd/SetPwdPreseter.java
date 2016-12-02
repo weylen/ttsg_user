@@ -3,9 +3,11 @@ package com.guaigou.cd.minutestohome.activity.setpwd;
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonObject;
 import com.guaigou.cd.minutestohome.BasePresenter;
+import com.guaigou.cd.minutestohome.http.Client;
 import com.guaigou.cd.minutestohome.http.HttpService;
 import com.guaigou.cd.minutestohome.http.ResponseMgr;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
+import com.guaigou.cd.minutestohome.http.Transformer;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
 
 import rx.Observer;
@@ -34,10 +36,10 @@ public class SetPwdPreseter implements BasePresenter{
     void register(String phoneNum, String pwd){
         setPwdView.onRequestStart();
 
-        RetrofitFactory.getRetrofit().create(HttpService.class)
+        Client.request()
                 .register(phoneNum, pwd)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(Transformer.switchSchedulers())
+                .compose(Transformer.sTransformer())
                 .subscribe(new Observer<JsonObject>() {
                     @Override
                     public void onCompleted() {
@@ -46,7 +48,6 @@ public class SetPwdPreseter implements BasePresenter{
 
                     @Override
                     public void onError(Throwable e) {
-                        DebugUtil.d("SetPwdPresenter 注册设置密码失败：" + e.getMessage());
                         setPwdView.onRequestFailure();
                     }
 

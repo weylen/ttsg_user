@@ -6,10 +6,12 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.guaigou.cd.minutestohome.entity.OrderDetailsEntity;
 import com.guaigou.cd.minutestohome.entity.OrderDetailsProductsEntity;
+import com.guaigou.cd.minutestohome.http.Client;
 import com.guaigou.cd.minutestohome.http.HttpService;
 import com.guaigou.cd.minutestohome.http.RespSubscribe;
 import com.guaigou.cd.minutestohome.http.ResponseMgr;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
+import com.guaigou.cd.minutestohome.http.Transformer;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
 
 import java.util.ArrayList;
@@ -42,10 +44,10 @@ public class OrderDetailsPresenter {
     void remote(String orderId){
         this.orderId = orderId;
         DebugUtil.d("OrderDetailsPresenter 获取订单详情：" + orderId);
-        RetrofitFactory.getRetrofit().create(HttpService.class)
+        Client.request()
                 .getOrderDetails(orderId)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
+                .compose(Transformer.switchSchedulers())
+                .compose(Transformer.sTransformer())
                 .subscribe(new RespSubscribe(new Subscriber<JsonObject>() {
                     @Override
                     public void onCompleted() {
@@ -54,7 +56,6 @@ public class OrderDetailsPresenter {
 
                     @Override
                     public void onError(Throwable e) {
-                        DebugUtil.d("OrderDetailsPresenter 获取订单详情失败：" + e.getMessage());
                         orderDetailsView.onRequestOrderDetailsFailure();
                     }
 
@@ -105,17 +106,16 @@ public class OrderDetailsPresenter {
 
     void validatePayment(String orderId){
         orderDetailsView.onStartValidateOrder();
-        RetrofitFactory.getRetrofit().create(HttpService.class)
+        Client.request()
                 .validateOrder(orderId)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
+                .compose(Transformer.switchSchedulers())
+                .compose(Transformer.sTransformer())
                 .subscribe(new RespSubscribe(new Subscriber<JsonObject>() {
                     @Override
                     public void onCompleted() {}
 
                     @Override
                     public void onError(Throwable e) {
-                        DebugUtil.d("OrderPresenter 验证支付订单失败：" + e.getMessage());
                         orderDetailsView.onValidateOrderFailure("");
                     }
 
@@ -138,10 +138,10 @@ public class OrderDetailsPresenter {
      */
     void alertOrderStatus(String orderId, int status){
         orderDetailsView.onStartAlertStatus();
-        RetrofitFactory.getRetrofit().create(HttpService.class)
+        Client.request()
                 .alertOrderStatus(orderId, String.valueOf(status))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
+                .compose(Transformer.switchSchedulers())
+                .compose(Transformer.sTransformer())
                 .subscribe(new RespSubscribe(new Subscriber<JsonObject>() {
                     @Override
                     public void onCompleted() {

@@ -8,10 +8,12 @@ import com.google.gson.reflect.TypeToken;
 import com.guaigou.cd.minutestohome.BasePresenter;
 import com.guaigou.cd.minutestohome.activity.shoppingcart.CartData;
 import com.guaigou.cd.minutestohome.entity.ProductEntity;
+import com.guaigou.cd.minutestohome.http.Client;
 import com.guaigou.cd.minutestohome.http.Constants;
 import com.guaigou.cd.minutestohome.http.HttpService;
 import com.guaigou.cd.minutestohome.http.ResponseMgr;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
+import com.guaigou.cd.minutestohome.http.Transformer;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
 
 import java.util.List;
@@ -65,10 +67,10 @@ public class SearchPresenter implements BasePresenter {
      * @param pageNum
      */
     private void requestRemoteData(String keyword, int pageNum){
-        RetrofitFactory.getRetrofit().create(HttpService.class)
+        Client.request()
                 .getRegionProducts(regionId, "", pageNum, keyword)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(Transformer.switchSchedulers())
+                .compose(Transformer.sTransformer())
                 .subscribe(new Observer<JsonObject>() {
                     @Override
                     public void onCompleted() {}

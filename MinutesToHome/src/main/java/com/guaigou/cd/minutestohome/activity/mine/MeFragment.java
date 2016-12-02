@@ -22,8 +22,10 @@ import com.guaigou.cd.minutestohome.activity.market.ShopStatusData;
 import com.guaigou.cd.minutestohome.activity.myorders.OrderActivity;
 import com.guaigou.cd.minutestohome.entity.AccountEntity;
 import com.guaigou.cd.minutestohome.entity.RegionEntity;
+import com.guaigou.cd.minutestohome.http.Client;
 import com.guaigou.cd.minutestohome.http.HttpService;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
+import com.guaigou.cd.minutestohome.http.Transformer;
 import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
 import com.guaigou.cd.minutestohome.util.DeviceUtil;
@@ -145,11 +147,10 @@ public class MeFragment extends BaseFragment {
     @OnClick(R.id.text_logout)
     public void onLogoutClick(){
         showProgressDialog("请稍后");
-        RetrofitFactory.getRetrofit()
-                .create(HttpService.class)
+        Client.request()
                 .logout()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
+                .compose(Transformer.switchSchedulers())
+                .compose(Transformer.sTransformer())
                 .subscribe(new Subscriber<JsonObject>() {
                     @Override
                     public void onCompleted() {}

@@ -16,9 +16,11 @@ import com.guaigou.cd.minutestohome.BaseActivity;
 import com.guaigou.cd.minutestohome.R;
 import com.guaigou.cd.minutestohome.activity.login.LoginData;
 import com.guaigou.cd.minutestohome.entity.AccountEntity;
+import com.guaigou.cd.minutestohome.http.Client;
 import com.guaigou.cd.minutestohome.http.HttpService;
 import com.guaigou.cd.minutestohome.http.ResponseMgr;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
+import com.guaigou.cd.minutestohome.http.Transformer;
 import com.guaigou.cd.minutestohome.prefs.LoginPrefs;
 import com.guaigou.cd.minutestohome.util.DimensUtil;
 import com.guaigou.cd.minutestohome.util.KeyboardUtil;
@@ -149,10 +151,10 @@ public class UserInfoActivity extends BaseActivity {
 
     void remote(String nickName){
         showProgressDialog("保存中...");
-        RetrofitFactory.getRetrofit().create(HttpService.class)
+        Client.request()
                 .saveAccountInfos(sex, nickName)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
+                .compose(Transformer.switchSchedulers())
+                .compose(Transformer.sTransformer())
                 .subscribe(new Subscriber<JsonObject>() {
                     @Override
                     public void onCompleted() {
@@ -162,7 +164,6 @@ public class UserInfoActivity extends BaseActivity {
                     @Override
                     public void onError(Throwable e) {
                         dismissProgressDialog();
-                        showSnakeView(mTextTitleView, "保存失败，请重新操作");
                     }
 
                     @Override

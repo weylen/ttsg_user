@@ -249,6 +249,14 @@ public class OrderDetailsActivity extends BaseActivity implements OrderDetailsVi
      */
     @OnClick(R.id.text_confirmGoods)
     void onConfirmGoods(){
+        OrderDetailsEntity detailsEntity = detailsEntities.get(0);
+        // 获取商品列表信息
+        List<OrderDetailsProductsEntity> products = detailsEntity.getProducts();
+        OrderDetailsProductsEntity productsEntity = products.get(0);
+        if ("3".equals(productsEntity.getStauts())){
+            showToast("请等待商家接单");
+            return;
+        }
         showConfirmDelivery();
     }
 

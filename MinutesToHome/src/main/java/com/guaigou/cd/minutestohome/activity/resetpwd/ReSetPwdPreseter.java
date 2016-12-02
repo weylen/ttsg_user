@@ -4,9 +4,11 @@ import com.google.common.base.Preconditions;
 import com.google.gson.JsonObject;
 import com.guaigou.cd.minutestohome.BasePresenter;
 import com.guaigou.cd.minutestohome.activity.setpwd.SetPwdView;
+import com.guaigou.cd.minutestohome.http.Client;
 import com.guaigou.cd.minutestohome.http.HttpService;
 import com.guaigou.cd.minutestohome.http.ResponseMgr;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
+import com.guaigou.cd.minutestohome.http.Transformer;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
 
 import rx.Observer;
@@ -40,10 +42,10 @@ public class ReSetPwdPreseter implements BasePresenter{
     void resePwd(String phoneNum, String pwd, String validateCode){
         reSetPwdView.onRequestStart();
 
-        RetrofitFactory.getRetrofit().create(HttpService.class)
+        Client.request()
                 .resetPwd(phoneNum, pwd, validateCode)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(Transformer.switchSchedulers())
+                .compose(Transformer.sTransformer())
                 .subscribe(new Observer<JsonObject>() {
                     @Override
                     public void onCompleted() {

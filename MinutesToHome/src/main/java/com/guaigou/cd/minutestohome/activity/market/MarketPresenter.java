@@ -15,10 +15,12 @@ import com.guaigou.cd.minutestohome.cache.Data;
 import com.guaigou.cd.minutestohome.cache.DataCache;
 import com.guaigou.cd.minutestohome.entity.MarketDataEntity;
 import com.guaigou.cd.minutestohome.entity.ProductEntity;
+import com.guaigou.cd.minutestohome.http.Client;
 import com.guaigou.cd.minutestohome.http.Constants;
 import com.guaigou.cd.minutestohome.http.HttpService;
 import com.guaigou.cd.minutestohome.http.ResponseMgr;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
+import com.guaigou.cd.minutestohome.http.Transformer;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
 import com.guaigou.cd.minutestohome.util.LocaleUtil;
 
@@ -76,10 +78,10 @@ public class MarketPresenter implements BasePresenter{
      * 获取所有品种数据
      */
     private void getRemoteAllKindData(){
-        RetrofitFactory.getRetrofit().create(HttpService.class)
+        Client.request()
                 .getAllKind()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(Transformer.switchSchedulers())
+                .compose(Transformer.sTransformer())
                 .subscribe(new Observer<JsonObject>() {
                     @Override
                     public void onCompleted() {
@@ -111,10 +113,10 @@ public class MarketPresenter implements BasePresenter{
      * 获取选择地区品种数据
      */
     private void getRemoteRegionKindData(RegionEntity entity){
-        RetrofitFactory.getRetrofit().create(HttpService.class)
+        Client.request()
                 .getRegionKind(entity.getId())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(Transformer.switchSchedulers())
+                .compose(Transformer.sTransformer())
                 .subscribe(new Observer<JsonObject>() {
                     @Override
                     public void onCompleted() {
@@ -191,11 +193,10 @@ public class MarketPresenter implements BasePresenter{
      * @param typeId
      */
     private void getRemoteProductData(boolean isRefresh, String typeId, int pageNum){
-        DebugUtil.d("MarketPresenter getRemoteProductData pageNum:" + pageNum);
-        RetrofitFactory.getRetrofit().create(HttpService.class)
+        Client.request()
                 .getRegionProducts(entity.getId(), typeId, pageNum, "")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(Transformer.switchSchedulers())
+                .compose(Transformer.sTransformer())
                 .subscribe(new Observer<JsonObject>() {
                     @Override
                     public void onCompleted() {}
@@ -492,10 +493,10 @@ public class MarketPresenter implements BasePresenter{
     }
 
     void remoteShopStatus(){
-        RetrofitFactory.getRetrofit().create(HttpService.class)
+        Client.request()
                 .getShopStatus(entity.getId())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
+                .compose(Transformer.switchSchedulers())
+                .compose(Transformer.sTransformer())
                 .subscribe(new Subscriber<JsonObject>() {
                     @Override
                     public void onCompleted() {}

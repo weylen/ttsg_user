@@ -7,10 +7,12 @@ import com.guaigou.cd.minutestohome.BasePresenter;
 import com.guaigou.cd.minutestohome.activity.shoppingcart.CartData;
 import com.guaigou.cd.minutestohome.entity.CartEntity;
 import com.guaigou.cd.minutestohome.entity.ConfirmOrderEntity;
+import com.guaigou.cd.minutestohome.http.Client;
 import com.guaigou.cd.minutestohome.http.HttpService;
 import com.guaigou.cd.minutestohome.http.RespSubscribe;
 import com.guaigou.cd.minutestohome.http.ResponseMgr;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
+import com.guaigou.cd.minutestohome.http.Transformer;
 import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
 
@@ -56,11 +58,10 @@ public class ConfirmOrderPresenter implements BasePresenter {
         String orderInfo = builder.toString();
         DebugUtil.d("ConfirmOrderPresenter 订单请求信息：Key:" + orderInfo+"  note:" + note+"  address:" + address +"  time:" + time
             + " name:" + name + " phone:" + phone);
-        RetrofitFactory.getRetrofit()
-                .create(HttpService.class)
+        Client.request()
                 .requestOrder(orderInfo, note, address, time, name, phone)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(Transformer.switchSchedulers())
+                .compose(Transformer.sTransformer())
                 .subscribe(new RespSubscribe(new Subscriber<JsonObject>() {
                     @Override
                     public void onCompleted() {
@@ -69,7 +70,6 @@ public class ConfirmOrderPresenter implements BasePresenter {
 
                     @Override
                     public void onError(Throwable e) {
-                        DebugUtil.d("ConfirmOrderPresenter 订单获取失败：" + e.getMessage());
                         confirmOrderView.onRequestFailure();
                     }
 

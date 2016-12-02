@@ -2,6 +2,7 @@ package com.guaigou.cd.minutestohome.http;
 
 import com.google.gson.JsonObject;
 
+import retrofit2.Response;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.POST;
@@ -23,7 +24,7 @@ public interface HttpService {
      */
     @FormUrlEncoded
     @POST("scca-clogin")
-    Observable<JsonObject> login(
+    Observable<Response<JsonObject>> login(
             @Field("uname") String name, // 用户名
             @Field("upass") String pwd, // 密码
             @Field("sort") int sort,
@@ -37,7 +38,7 @@ public interface HttpService {
      */
     @FormUrlEncoded
     @POST("scca-smsyzm")
-    Observable<JsonObject> requestValidateCode(
+    Observable<Response<JsonObject>> requestValidateCode(
             @Field("uname") String phoneNum);
 
     /**
@@ -48,7 +49,7 @@ public interface HttpService {
      */
     @FormUrlEncoded
     @POST("scca-creg")
-    Observable<JsonObject> register(
+    Observable<Response<JsonObject>> register(
             @Field("uname") String phoneNum, // 手机号
             @Field("upass") String pwd // 密码
     );
@@ -60,7 +61,7 @@ public interface HttpService {
      */
     @FormUrlEncoded
     @POST("scca- ransom")
-    Observable<JsonObject> findPwdValidateCode(
+    Observable<Response<JsonObject>> findPwdValidateCode(
             @Field("uname") String phoneNum
     );
 
@@ -76,7 +77,7 @@ public interface HttpService {
      */
     @FormUrlEncoded
     @POST("scca- updatePass")
-    Observable<JsonObject> resetPwd(
+    Observable<Response<JsonObject>> resetPwd(
             @Field("uname") String phoneNum,
             @Field("upass") String newPwd,
             @Field("sort") String validateCode
@@ -87,14 +88,14 @@ public interface HttpService {
      * @return
      */
     @POST("scca-")
-    Observable<JsonObject> getRegion();
+    Observable<Response<JsonObject>> getRegion();
 
     /**
      * 获取所有品种 包括大类和小类
      * @return
      */
     @POST("scca-getKind")
-    Observable<JsonObject> getAllKind();
+    Observable<Response<JsonObject>> getAllKind();
 
     /**
      * 获取选择地区的品种数据
@@ -102,7 +103,7 @@ public interface HttpService {
      */
     @FormUrlEncoded
     @POST("scca-getAreaKind")
-    Observable<JsonObject> getRegionKind(@Field("areaId") String areaId);
+    Observable<Response<JsonObject>> getRegionKind(@Field("areaId") String areaId);
 
     /**
      * 地区商品获取
@@ -112,7 +113,7 @@ public interface HttpService {
      */
     @FormUrlEncoded
     @POST("scca-getAreaProduct")
-    Observable<JsonObject> getRegionProducts(
+    Observable<Response<JsonObject>> getRegionProducts(
             @Field("areaId") String areaId,
             @Field("sort") String sortId,
             @Field("pageNum") int pageNum,
@@ -124,7 +125,7 @@ public interface HttpService {
      */
     @FormUrlEncoded
     @POST("csca-add")
-    Observable<JsonObject> addProductToCart(
+    Observable<Response<JsonObject>> addProductToCart(
             @Field("key") String info
     );
 
@@ -135,7 +136,7 @@ public interface HttpService {
      */
     @FormUrlEncoded
     @POST("csca-detail")
-    Observable<JsonObject> getCartList(
+    Observable<Response<JsonObject>> getCartList(
             @Field("Key") String info,
             @Field("areaId") String areaId
     );
@@ -147,7 +148,7 @@ public interface HttpService {
      */
     @FormUrlEncoded
     @POST("oda-save")
-    Observable<JsonObject> requestOrder(
+    Observable<Response<JsonObject>> requestOrder(
             @Field("Key") String orderInfo,
             @Field("note") String note,
             @Field("addr") String addr,
@@ -165,7 +166,7 @@ public interface HttpService {
      */
     @FormUrlEncoded
     @POST("oda-")
-    Observable<JsonObject> requestOrderList(
+    Observable<Response<JsonObject>> requestOrderList(
             @Field("begin") String begin,
             @Field("end") String end,
             @Field("pageNum") int pageNum
@@ -178,7 +179,7 @@ public interface HttpService {
      */
     @FormUrlEncoded
     @POST("oda-del")
-    Observable<JsonObject> deleteOrder(
+    Observable<Response<JsonObject>> deleteOrder(
             @Field("Key") String orderId
     );
 
@@ -190,7 +191,7 @@ public interface HttpService {
      */
     @FormUrlEncoded
     @POST("oda-modify")
-    Observable<JsonObject> alertOrderStatus(
+    Observable<Response<JsonObject>> alertOrderStatus(
             @Field("key") String orderId,
             @Field("end") String status
     );
@@ -202,7 +203,7 @@ public interface HttpService {
      */
     @FormUrlEncoded
     @POST("oda-saveOld")
-    Observable<JsonObject> validateOrder(
+    Observable<Response<JsonObject>> validateOrder(
             @Field("Key") String orderId
     );
 
@@ -212,7 +213,7 @@ public interface HttpService {
      */
     @FormUrlEncoded
     @POST("payat-asign")
-    Observable<JsonObject> aliPay(
+    Observable<Response<JsonObject>> aliPay(
             @Field("orderNum") String orderNum,
             @Field("body") String details,
             @Field("describe") String desc
@@ -224,7 +225,7 @@ public interface HttpService {
      */
     @FormUrlEncoded
     @POST("payat-wx")
-    Observable<JsonObject> wxPay(
+    Observable<Response<JsonObject>> wxPay(
             @Field("describe") String describe,
             @Field("orderNum") String orderNum,
             @Field("payId") String payId
@@ -236,7 +237,7 @@ public interface HttpService {
      */
     @FormUrlEncoded
     @POST("oda-orderDetail")
-    Observable<JsonObject> getOrderDetails(
+    Observable<Response<JsonObject>> getOrderDetails(
             @Field("key") String orderId
     );
 
@@ -245,7 +246,7 @@ public interface HttpService {
      * @return
      */
     @POST("scca-logout")
-    Observable<JsonObject> logout();
+    Observable<Response<JsonObject>> logout();
 
 
     /**
@@ -256,7 +257,7 @@ public interface HttpService {
      */
     @FormUrlEncoded
     @POST("cia- suggest")
-    Observable<JsonObject> feedBack(
+    Observable<Response<JsonObject>> feedBack(
             @Field("key") String key,
             @Field("text") String content
     );
@@ -267,7 +268,7 @@ public interface HttpService {
      */
     @FormUrlEncoded
     @POST("cia- updateInfo")
-    Observable<JsonObject> saveAccountInfos(
+    Observable<Response<JsonObject>> saveAccountInfos(
             @Field("key") String sex,
             @Field("text") String nickname
     );
@@ -279,7 +280,7 @@ public interface HttpService {
      */
     @FormUrlEncoded
     @POST("scca-getLatestVersion")
-    Observable<JsonObject> newVersion(
+    Observable<Response<JsonObject>> newVersion(
             @Field("sort") int type
     );
 
@@ -291,7 +292,7 @@ public interface HttpService {
      */
     @FormUrlEncoded
     @POST("scca-vilcode")
-    Observable<JsonObject> validateCode(
+    Observable<Response<JsonObject>> validateCode(
             @Field("uname") String phone,
             @Field("upass") String code
     );
@@ -303,7 +304,7 @@ public interface HttpService {
      */
     @FormUrlEncoded
     @POST("scca-getTradeState")
-    Observable<JsonObject> getShopStatus(
+    Observable<Response<JsonObject>> getShopStatus(
             @Field("areaId") String areaId
     );
 }

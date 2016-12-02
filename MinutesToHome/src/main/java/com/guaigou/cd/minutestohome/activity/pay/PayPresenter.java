@@ -3,10 +3,12 @@ package com.guaigou.cd.minutestohome.activity.pay;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.guaigou.cd.minutestohome.entity.WxPayEntity;
+import com.guaigou.cd.minutestohome.http.Client;
 import com.guaigou.cd.minutestohome.http.HttpService;
 import com.guaigou.cd.minutestohome.http.RespSubscribe;
 import com.guaigou.cd.minutestohome.http.ResponseMgr;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
+import com.guaigou.cd.minutestohome.http.Transformer;
 import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
 
@@ -31,10 +33,10 @@ public class PayPresenter {
      */
     void onStart(String orderId, String status){
         payView.onStartAlertOrderStatus();
-        RetrofitFactory.getRetrofit().create(HttpService.class)
+        Client.request()
                 .alertOrderStatus(orderId, status)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
+                .compose(Transformer.switchSchedulers())
+                .compose(Transformer.sTransformer())
                 .subscribe(new RespSubscribe(new Subscriber<JsonObject>() {
                     @Override
                     public void onCompleted() {
@@ -43,7 +45,6 @@ public class PayPresenter {
 
                     @Override
                     public void onError(Throwable e) {
-                        DebugUtil.d("PayPresenter 修改支付状态失败：" + e.getMessage());
                         payView.onAlertOrderStatusFailure();
                     }
 
@@ -61,10 +62,10 @@ public class PayPresenter {
 
     void aliPay(String order, String details, String desc){
         payView.onStartRequestAliPay();
-        RetrofitFactory.getRetrofit().create(HttpService.class)
+        Client.request()
                 .aliPay(order, details, desc)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
+                .compose(Transformer.switchSchedulers())
+                .compose(Transformer.sTransformer())
                 .subscribe(new RespSubscribe(new Subscriber<JsonObject>() {
                     @Override
                     public void onCompleted() {
@@ -78,7 +79,6 @@ public class PayPresenter {
 
                     @Override
                     public void onNext(JsonObject jsonObject) {
-                        DebugUtil.d("PayPresenter 支付宝结果：" + jsonObject);
                         if (ResponseMgr.getStatus(jsonObject) == 1){
                             payView.onRequestAliPaySuccess(jsonObject.get("data").getAsString());
                         }else {
@@ -90,10 +90,10 @@ public class PayPresenter {
 
     void wxPay(String describe, String orderNum, String payId){
         payView.onStartWxPay();
-        RetrofitFactory.getRetrofit().create(HttpService.class)
+        Client.request()
                 .wxPay(describe, orderNum, payId)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
+                .compose(Transformer.switchSchedulers())
+                .compose(Transformer.sTransformer())
                 .subscribe(new RespSubscribe(new Subscriber<JsonObject>() {
                     @Override
                     public void onCompleted() {
@@ -102,13 +102,11 @@ public class PayPresenter {
 
                     @Override
                     public void onError(Throwable e) {
-                        DebugUtil.d("PayPresenter 微信下单失败：" + e.getMessage());
                         payView.onWxPayFailure();
                     }
 
                     @Override
                     public void onNext(JsonObject jsonObject) {
-                        DebugUtil.d("PayPresenter 微信下单成功：" + jsonObject);
                         if (ResponseMgr.getStatus(jsonObject) == 1){
                             payView.onWxPaySuccess(parseWxResult(jsonObject));
                         }else {

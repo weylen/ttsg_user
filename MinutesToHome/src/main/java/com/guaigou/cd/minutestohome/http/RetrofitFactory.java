@@ -52,17 +52,11 @@ public class RetrofitFactory {
                                 .addHeader("Connection", "keep-alive")
                                 .addHeader("Accept", "*/*")
                                 .build();
-                        Response response = null;
-                        try{
-                            response = chain.proceed(request);
-                        }catch (SocketTimeoutException e){
-                            e.printStackTrace();
-                        }
-                        return response;
+                        return chain.proceed(request);
                     })
-                    .connectTimeout(5, TimeUnit.SECONDS)
-                    .writeTimeout(5, TimeUnit.SECONDS)
-                    .readTimeout(5, TimeUnit.SECONDS)
+                    .connectTimeout(10, TimeUnit.SECONDS)
+                    .writeTimeout(10, TimeUnit.SECONDS)
+                    .readTimeout(10, TimeUnit.SECONDS)
                     .build();
         }
         return okHttpClient;

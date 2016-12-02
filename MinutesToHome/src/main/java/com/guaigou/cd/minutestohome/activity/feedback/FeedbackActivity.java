@@ -11,10 +11,12 @@ import com.google.gson.JsonObject;
 import com.guaigou.cd.minutestohome.BaseActivity;
 import com.guaigou.cd.minutestohome.R;
 import com.guaigou.cd.minutestohome.entity.RegionEntity;
+import com.guaigou.cd.minutestohome.http.Client;
 import com.guaigou.cd.minutestohome.http.HttpService;
 import com.guaigou.cd.minutestohome.http.RespSubscribe;
 import com.guaigou.cd.minutestohome.http.ResponseMgr;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
+import com.guaigou.cd.minutestohome.http.Transformer;
 import com.guaigou.cd.minutestohome.prefs.RegionPrefs;
 import com.guaigou.cd.minutestohome.util.KeyboardUtil;
 
@@ -74,10 +76,10 @@ public class FeedbackActivity extends BaseActivity {
             return;
         }
         showProgressDialog("提交中...");
-        RetrofitFactory.getRetrofit().create(HttpService.class)
+        Client.request()
                 .feedBack(entity.getId(), mTextEdit.getText().toString())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
+                .compose(Transformer.switchSchedulers())
+                .compose(Transformer.sTransformer())
                 .subscribe(new RespSubscribe(new Subscriber<JsonObject>() {
                     @Override
                     public void onCompleted() {}
@@ -85,7 +87,6 @@ public class FeedbackActivity extends BaseActivity {
                     @Override
                     public void onError(Throwable e) {
                         dismissProgressDialog();
-                        showSnakeView(containerView, "请求失败");
                     }
 
                     @Override

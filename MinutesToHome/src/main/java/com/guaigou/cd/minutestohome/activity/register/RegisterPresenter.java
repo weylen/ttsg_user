@@ -3,9 +3,11 @@ package com.guaigou.cd.minutestohome.activity.register;
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonObject;
 import com.guaigou.cd.minutestohome.BasePresenter;
+import com.guaigou.cd.minutestohome.http.Client;
 import com.guaigou.cd.minutestohome.http.HttpService;
 import com.guaigou.cd.minutestohome.http.ResponseMgr;
 import com.guaigou.cd.minutestohome.http.RetrofitFactory;
+import com.guaigou.cd.minutestohome.http.Transformer;
 import com.guaigou.cd.minutestohome.util.DebugUtil;
 
 import rx.Observer;
@@ -34,10 +36,10 @@ public class RegisterPresenter implements BasePresenter{
     void requestValidateCode(String phoneNum){
         registerView.onRequestStart();
 
-        RetrofitFactory.getRetrofit().create(HttpService.class)
+        Client.request()
                 .requestValidateCode(phoneNum)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(Transformer.switchSchedulers())
+                .compose(Transformer.sTransformer())
                 .subscribe(new Observer<JsonObject>() {
                     @Override
                     public void onCompleted() {
