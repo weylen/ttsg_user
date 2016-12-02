@@ -8,6 +8,7 @@ import android.os.Process;
 import android.util.Log;
 
 import com.guaigou.cd.minutestohome.util.LocaleUtil;
+import com.tencent.bugly.crashreport.CrashReport;
 import com.xiaomi.channel.commonutils.logger.LoggerInterface;
 import com.xiaomi.mipush.sdk.Logger;
 import com.xiaomi.mipush.sdk.MiPushClient;
@@ -40,6 +41,8 @@ public class BaseApplication extends Application{
         if (shouldInit()) {
             MiPushClient.registerPush(this, APP_ID, APP_KEY);
         }
+
+        CrashReport.initCrashReport(this, "0c87c68816", true);
 
         LoggerInterface newLogger = new LoggerInterface() {
 

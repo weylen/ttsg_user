@@ -91,6 +91,8 @@ dependencies {
     compile files('libs/MiPush_SDK_Client_3_0_3.jar')
 
     compile 'com.github.weylen:AppUpdate:1.1.6'
+
+    compile 'com.tencent.bugly:crashreport:latest.release'
 }
 retrolambda {
     javaVersion JavaVersion.VERSION_1_6
