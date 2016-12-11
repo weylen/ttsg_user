@@ -9,8 +9,8 @@ android {
         applicationId "com.guaigou.cd.minutestohome"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 13
-        versionName "1.13"
+        versionCode 15
+        versionName "1.15"
     }
 
     signingConfigs {
@@ -92,7 +92,7 @@ dependencies {
 
     compile 'com.github.weylen:AppUpdate:1.1.6'
 
-    compile 'com.tencent.bugly:crashreport:latest.release'
+//    compile 'com.tencent.bugly:crashreport:latest.release'
 }
 retrolambda {
     javaVersion JavaVersion.VERSION_1_6
