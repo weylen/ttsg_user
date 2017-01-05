@@ -9,8 +9,8 @@ android {
         applicationId "com.guaigou.cd.minutestohome"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 15
-        versionName "1.15"
+        versionCode 16
+        versionName "1.16"
     }
 
     signingConfigs {
@@ -37,7 +37,7 @@ android {
             // 不显示Log
             buildConfigField "boolean", "LOG_DEBUG", "false"
             //混淆
-            minifyEnabled false
+            minifyEnabled true
             //Zipalign优化
             zipAlignEnabled true
             // 移除无用的resource文件

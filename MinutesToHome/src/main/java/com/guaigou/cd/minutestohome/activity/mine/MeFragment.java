@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.google.gson.JsonObject;
 import com.guaigou.cd.minutestohome.BaseFragment;
 import com.guaigou.cd.minutestohome.R;
+import com.guaigou.cd.minutestohome.activity.about.AboutActivity;
 import com.guaigou.cd.minutestohome.activity.addressmgr.AddressActivity;
 import com.guaigou.cd.minutestohome.activity.feedback.FeedbackActivity;
 import com.guaigou.cd.minutestohome.activity.login.LoginActivity;
@@ -87,6 +88,11 @@ public class MeFragment extends BaseFragment {
 
         Intent intent = new Intent(getActivity(), OrderActivity.class);
         startActivity(intent);
+    }
+
+    @OnClick(R.id.text_about)
+    void onAboutClick(){
+        startActivity(new Intent(getActivity(), AboutActivity.class));
     }
 
     /**

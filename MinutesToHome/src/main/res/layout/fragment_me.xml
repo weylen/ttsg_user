@@ -177,6 +177,21 @@
                     android:background="@drawable/abc_item_pressed"
                     android:textSize="@dimen/TextSize_14"
                     />
+
+                <TextView
+                    android:id="@+id/text_about"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:drawableLeft="@mipmap/icon_about_us"
+                    android:drawableRight="@mipmap/icon_arrow_right"
+                    android:text="关于我们"
+                    android:gravity="center_vertical"
+                    android:drawablePadding="20dp"
+                    android:padding="10dp"
+                    android:background="@drawable/abc_item_pressed"
+                    android:textSize="@dimen/TextSize_14"
+                    />
             </LinearLayout>
 
             <TextView

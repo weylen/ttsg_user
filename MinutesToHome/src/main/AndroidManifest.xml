@@ -51,6 +51,12 @@
             android:windowSoftInputMode="adjustPan|stateHidden"
             />
 
+        <activity android:name=".activity.about.AboutActivity" android:screenOrientation="portrait"
+            android:configChanges="screenSize|keyboard|orientation|uiMode|screenLayout"
+            android:windowSoftInputMode="adjustPan|stateHidden"
+            />
+
+
         <activity android:name=".activity.addressmgr.AddressActivity" android:screenOrientation="portrait"
             android:configChanges="screenSize|keyboard|orientation|uiMode|screenLayout"
             android:windowSoftInputMode="adjustPan|stateHidden"
