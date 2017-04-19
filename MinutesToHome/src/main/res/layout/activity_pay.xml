@@ -134,6 +134,7 @@
                     android:id="@+id/weixin_layout" android:gravity="center_vertical"
                     style="@style/GenericItem" android:orientation="horizontal"
                     android:background="@drawable/abc_generic_pressed"
+                    android:visibility="gone"
                     >
                     <ImageView
                         android:layout_width="wrap_content"
@@ -147,6 +148,7 @@
                         android:textColor="@color/blackText"
                         android:text="微信支付"
                         android:paddingLeft="12dp"
+
                         />
                     <RadioButton
                         android:id="@+id/radio_pay_weixin"
